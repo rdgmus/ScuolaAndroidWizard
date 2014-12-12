@@ -1,8 +1,11 @@
 package it.keyorchestra.registroandroid.admin.options;
 
-import java.util.ArrayList;
 import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
+import it.keyorchestra.registroandroid.admin.options.interfaces.CallableOptionsInterface;
+
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -24,21 +28,22 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TabHost.TabSpec;
 
 @SuppressWarnings("deprecation")
 public class ScuolaWizard extends TabActivity implements
-		ActivitiesCommonFunctions {
+		ActivitiesCommonFunctions, CallableOptionsInterface {
 
-	static Intent intent;
-	static String action;
-	static String type;
+	Intent intent;
+	String action;
+	String type;
 	private DatabaseOps databaseOps;
-	private static SharedPreferences getPrefs;
+	private SharedPreferences getPrefs;
 
 	TextView tvUserName, tvHash;
+	ImageButton ibBack;
 
 	/*
 	 * (non-Javadoc)
@@ -62,6 +67,17 @@ public class ScuolaWizard extends TabActivity implements
 		tvHash = (TextView) findViewById(R.id.tvHash);
 
 		tvUserName = (TextView) findViewById(R.id.tvUserName);
+
+		ibBack = (ImageButton) findViewById(R.id.ibBack);
+		ibBack.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				startAnimation((ImageButton) v, 2000);
+				ScuolaWizard.this.finish();
+			}
+		});
 		// TAB
 		// create the TabHost that will contain the Tabs
 		TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
@@ -71,15 +87,15 @@ public class ScuolaWizard extends TabActivity implements
 		// Set the Tab name and Activity
 		// that will be opened when particular Tab will be selected
 		tab1.setIndicator("Scuole",
-				getResources().getDrawable(R.drawable.scuola));
-		tab1.setContent(new Intent(this, Tab1Activity.class));
+				getResources().getDrawable(R.drawable.school128));
+		tab1.setContent(new Intent(this, SchoolCreatorActivity.class));
 
 		tab2.setIndicator("Anni Scolastici",
-				getResources().getDrawable(R.drawable.orario_lezioni));
+				getResources().getDrawable(R.drawable.calendar_schedule128));
 		tab2.setContent(new Intent(this, Tab2Activity.class));
 
-		tab3.setIndicator("Classi",
-				getResources().getDrawable(R.drawable.studenti));
+		tab3.setIndicator("Periodi A.S.",
+				getResources().getDrawable(R.drawable.time_session128));
 		tab3.setContent(new Intent(this, Tab3Activity.class));
 
 		/** Add the tabs to the TabHost to display. */
@@ -91,6 +107,7 @@ public class ScuolaWizard extends TabActivity implements
 				.equals(action) && type != null) {
 			if ("text/plain".equals(type)) {
 				handleSendText(intent); // Handle text being sent
+
 			} else if (type.startsWith("image/")) {
 				handleSendImage(intent); // Handle single image being sent
 			}
@@ -103,7 +120,7 @@ public class ScuolaWizard extends TabActivity implements
 			// Handle other intents, such as being started from the home
 			// screen
 		}
-		new AuthorizeUserWithHash().execute();
+		AuthorizeUserWithHash();
 	}
 
 	@Override
@@ -230,12 +247,12 @@ public class ScuolaWizard extends TabActivity implements
 			super.onPostExecute(result);
 
 			if (result) {
-				Toast.makeText(getApplicationContext(), "Autorizzazione rimossa!",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(),
+						"Autorizzazione rimossa!", Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(getApplicationContext(),
-						"Non è stato possibile\n"
-						+ "rimuovere l'Autorizzazione!", Toast.LENGTH_LONG).show();
+						"Autorizzazione non presente!", Toast.LENGTH_LONG)
+						.show();
 			}
 		}
 
@@ -244,10 +261,9 @@ public class ScuolaWizard extends TabActivity implements
 	private class AuthorizeUserWithHash extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			boolean retval = databaseOps
-					.testUserHasHash(getApplicationContext(),
-							getPrefs.getLong("id_utente", -1),
-							getPrefs.getString("hash", ""));
+			boolean retval = databaseOps.testUserHasHash(
+					getApplicationContext(), getPrefs.getLong("id_utente", -1),
+					getPrefs.getString("hash", ""));
 			return retval;
 		}
 
@@ -265,10 +281,12 @@ public class ScuolaWizard extends TabActivity implements
 				String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
 				if (sharedText != null) {
 					// Update UI to reflect text being shared
+					tvUserName.setVisibility(TextView.VISIBLE);
 					tvUserName.setText(sharedText);
 					Toast.makeText(getApplicationContext(), sharedText,
 							Toast.LENGTH_LONG).show();
 				}
+				tvHash.setVisibility(TextView.VISIBLE);
 				tvHash.setText(getPrefs.getString("hash", ""));
 				Toast.makeText(getApplicationContext(),
 						"hash:" + getPrefs.getString("hash", ""),
@@ -286,7 +304,7 @@ public class ScuolaWizard extends TabActivity implements
 
 	}
 
-	private static void handleSendMultipleImages(Intent intent) {
+	private void handleSendMultipleImages(Intent intent) {
 		// TODO Auto-generated method stub
 		ArrayList<Uri> imageUris = intent
 				.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
@@ -295,7 +313,7 @@ public class ScuolaWizard extends TabActivity implements
 		}
 	}
 
-	private static void handleSendImage(Intent intent) {
+	private void handleSendImage(Intent intent) {
 		// TODO Auto-generated method stub
 		Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 		if (imageUri != null) {
@@ -303,40 +321,12 @@ public class ScuolaWizard extends TabActivity implements
 		}
 	}
 
-	@SuppressLint("NewApi")
-	private static void handleSendText(Intent intent) {
+	private void handleSendText(Intent intent) {
 		// TODO Auto-generated method stub
 		Bundle basket = intent.getExtras();
 
 		if (basket != null) {
-			Editor editor = getPrefs.edit();
-			editor.putLong("id_utente", basket.getLong("id_utente", -1l));
-			editor.putString("hash", basket.getString("hash", ""));
-
-			editor.putString("databaseList",
-					basket.getString("databaseList", ""));
-
-			editor.putString("ipPostgreSQL",
-					basket.getString("ipPostgreSQL", ""));
-			editor.putString("userNamePostgreSQL",
-					basket.getString("userNamePostgreSQL", ""));
-			editor.putString("userPasswdPostgreSQL",
-					basket.getString("userPasswdPostgreSQL", ""));
-			editor.putString("portPostgreSQL",
-					basket.getString("portPostgreSQL", ""));
-			editor.putString("schemaPostgreSQL",
-					basket.getString("schemaPostgreSQL", ""));
-
-			editor.putString("ipMySQL", basket.getString("ipMySQL", ""));
-			editor.putString("userNameMySQL",
-					basket.getString("userNameMySQL", ""));
-			editor.putString("userPasswdMySQL",
-					basket.getString("userPasswdMySQL", ""));
-			editor.putString("portMySQL", basket.getString("portMySQL", ""));
-			editor.putString("schemaMySQL", basket.getString("schemaMySQL", ""));
-
-			editor.apply();
-
+			unPackPreferences(basket);
 		}
 	}
 
@@ -350,10 +340,63 @@ public class ScuolaWizard extends TabActivity implements
 		// TODO Auto-generated method stub
 		super.onDestroy();
 
-		new RemoveHashTask().execute();
+		RemoveHashTask();
 
 		Toast.makeText(getApplicationContext(), "Scuola Wizard terminata!",
 				Toast.LENGTH_LONG).show();
+	}
+
+	@SuppressLint("NewApi")
+	@Override
+	public void unPackPreferences(Bundle basket) {
+		Editor editor = getPrefs.edit();
+		editor.putLong("id_utente", basket.getLong("id_utente", -1l));
+		editor.putString("hash", basket.getString("hash", ""));
+
+		// DATABASE
+		editor.putString("databaseList", basket.getString("databaseList", ""));
+
+		// PostgreSQL
+		editor.putString("ipPostgreSQL", basket.getString("ipPostgreSQL", ""));
+		editor.putString("userNamePostgreSQL",
+				basket.getString("userNamePostgreSQL", ""));
+		editor.putString("userPasswdPostgreSQL",
+				basket.getString("userPasswdPostgreSQL", ""));
+		editor.putString("portPostgreSQL",
+				basket.getString("portPostgreSQL", ""));
+		editor.putString("schemaPostgreSQL",
+				basket.getString("schemaPostgreSQL", ""));
+
+		// MySQL
+		editor.putString("ipMySQL", basket.getString("ipMySQL", ""));
+		editor.putString("userNameMySQL", basket.getString("userNameMySQL", ""));
+		editor.putString("userPasswdMySQL",
+				basket.getString("userPasswdMySQL", ""));
+		editor.putString("portMySQL", basket.getString("portMySQL", ""));
+		editor.putString("schemaMySQL", basket.getString("schemaMySQL", ""));
+
+		// PhpMySqlAndroid - SERVER SIDE SCRIPTINGs
+		editor.putString("phpencoder", basket.getString("phpencoder", ""));
+		editor.putString("retrieveTableData",
+				basket.getString("retrieveTableData", ""));
+		editor.putString("GraphViewInterface",
+				basket.getString("GraphViewInterface", ""));
+		editor.putString("LogEventsRegisterInterface",
+				basket.getString("LogEventsRegisterInterface", ""));
+
+		editor.apply();
+	}
+
+	@Override
+	public void AuthorizeUserWithHash() {
+		// TODO Auto-generated method stub
+		new AuthorizeUserWithHash().execute();
+	}
+
+	@Override
+	public void RemoveHashTask() {
+		// TODO Auto-generated method stub
+		new RemoveHashTask().execute();
 	}
 
 }

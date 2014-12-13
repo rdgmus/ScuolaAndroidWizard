@@ -341,6 +341,8 @@ public class ScuolaWizard extends TabActivity implements
 		super.onDestroy();
 
 		RemoveHashTask();
+		Editor editor = getPrefs.edit();
+		editor.clear().commit();
 
 		Toast.makeText(getApplicationContext(), "Scuola Wizard terminata!",
 				Toast.LENGTH_LONG).show();

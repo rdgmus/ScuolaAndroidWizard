@@ -20,5 +20,18 @@
     <string name="scuolaWizardTitle">Scuola Wizard</string>
     <string name="userName">UserName</string>
     <string name="hashValue">hash</string>
+    <string name="sIdScuola">Id</string>
+    <string name="sScuolaAcronimo">Acronim</string>
+    <string name="sNomeScuola">Scuola</string>
+    <string name="sIndirizzoScuola">Indirizzo</string>
+    <string name="iconDescription">Immagine relativa a pagina wizard</string>
+    <string name="ibReloadText">Carica Scuole</string>
+    <string name="updateText">Update</string>
+    <string name="deleteText">Delete</string>
+    <string name="createText">Create</string>
+    <string name="clearText">Clear</string>
+    <string name="selectText">Select</string>
+    <string name="commitText">Commit</string>
+    <string name="rollbackText">Rollback</string>
 
 </resources>

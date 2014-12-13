@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <Button
+        android:id="@+id/bCrudUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/updateText"
+        android:textColor="@color/colorRed"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/bCrudUpdate"
+        android:text="@string/deleteText"
+        android:textColor="@color/colorRed"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bCrudDelete"
+        android:text="@string/createText"
+        android:textColor="@color/colorBlue"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudClear"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/clearText"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bCrudCreate"
+        android:text="@string/selectText"
+        android:textColor="@color/colorStart"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudCommit"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bCrudSelect"
+        android:text="@string/commitText"
+        android:textColor="@color/colorBlue"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bCrudRollback"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/bCrudCommit"
+        android:text="@string/rollbackText"
+        android:textColor="@color/colorRed"
+        android:textStyle="bold" />
+
+</RelativeLayout>

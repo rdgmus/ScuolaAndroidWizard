@@ -283,14 +283,14 @@ public class ScuolaWizard extends TabActivity implements
 					// Update UI to reflect text being shared
 					tvUserName.setVisibility(TextView.VISIBLE);
 					tvUserName.setText(sharedText);
-					Toast.makeText(getApplicationContext(), sharedText,
-							Toast.LENGTH_LONG).show();
+//					Toast.makeText(getApplicationContext(), sharedText,
+//							Toast.LENGTH_LONG).show();
 				}
 				tvHash.setVisibility(TextView.VISIBLE);
 				tvHash.setText(getPrefs.getString("hash", ""));
-				Toast.makeText(getApplicationContext(),
-						"hash:" + getPrefs.getString("hash", ""),
-						Toast.LENGTH_LONG).show();
+//				Toast.makeText(getApplicationContext(),
+//						"hash:" + getPrefs.getString("hash", ""),
+//						Toast.LENGTH_LONG).show();
 
 				Toast.makeText(getApplicationContext(), "Utente Autorizzato!",
 						Toast.LENGTH_LONG).show();

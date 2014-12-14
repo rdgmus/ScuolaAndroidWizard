@@ -4,6 +4,7 @@ import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
+import it.keyorchestra.registroandroid.admin.options.tables.Scuole;
 import it.keyorchestra.registroandroid.admin.options.util.ScuoleArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -14,11 +15,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,7 +41,7 @@ public class SchoolCreatorActivity extends Activity implements
 	Spinner spinnerScuole;
 	private ArrayList<String> scuoleArray;
 	private JSONArray jArrayScuole;
-	Button bSelect;
+	Button bSelect, bDelete, bUpdate, bCommit, bRollback, bClear;
 
 	/*
 	 * (non-Javadoc)
@@ -62,7 +66,9 @@ public class SchoolCreatorActivity extends Activity implements
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-
+				long id_scuola = (Long) view.getTag();
+				Toast.makeText(getApplicationContext(),
+						"id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 			}
 
 			@Override
@@ -81,6 +87,55 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 
+		bDelete = (Button) findViewById(R.id.bCrudDelete);
+		bDelete.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				// DeleteRow("scuole", -1);
+			}
+		});
+
+		bUpdate = (Button) findViewById(R.id.bCrudUpdate);
+		bUpdate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					UpdateRow(jArrayScuole.getJSONObject(spinnerScuole
+							.getSelectedItemPosition()));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		bCommit = (Button)findViewById(R.id.bCrudCommit);
+		bCommit.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				bCommit.setVisibility(Button.INVISIBLE);
+				bRollback.setVisibility(Button.INVISIBLE);
+				Commit();
+			}
+		});
+		bRollback = (Button)findViewById(R.id.bCrudRollback);
+		bRollback.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				bCommit.setVisibility(Button.INVISIBLE);
+				bRollback.setVisibility(Button.INVISIBLE);	
+				Rollback();
+			}
+		});
+		
 		Thread timer = new Thread() {
 
 			@Override
@@ -233,20 +288,76 @@ public class SchoolCreatorActivity extends Activity implements
 
 	}
 
+	@SuppressLint("NewApi")
 	@Override
-	public boolean UpdateRow(String table, JSONObject data) {
+	public boolean UpdateRow(JSONObject data) {
+		// TODO Auto-generated method stub
+		// options.putParcelable("data", (Parcelable) data);
+		Bundle basket = new Bundle();
+		try {
+			basket.putLong("id_scuola", data.getLong("id_scuola"));
+			basket.putString("tipo_scuola_acronimo",
+					data.getString("tipo_scuola_acronimo"));
+			basket.putString("nome_scuola", data.getString("nome_scuola"));
+			basket.putString("indirizzo", data.getString("indirizzo"));
+			basket.putString("cap", data.getString("cap"));
+			basket.putString("citta", data.getString("citta"));
+			basket.putString("provincia", data.getString("provincia"));
+			basket.putString("telefono", data.getString("telefono"));
+			basket.putString("fax", data.getString("fax"));
+			basket.putString("email", data.getString("email"));
+			basket.putString("web", data.getString("web"));
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		basket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
+
+		// INTENT
+		Intent d = new Intent(this, Scuole.class);
+		d.putExtras(basket);
+		startActivityForResult(d, 0);
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onActivityResult(int, int,
+	 * android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		Bundle basket = data.getExtras();
+
+		if (resultCode == RESULT_OK) {
+			String s = basket.getString("answer");
+			Toast.makeText(getApplicationContext(), "" + s,
+					Toast.LENGTH_LONG).show();
+		} else if (resultCode == RESULT_CANCELED) {
+			switch (basket.getInt("action")) {
+			case CRUD_ACTION.UPDATE:
+//				Toast.makeText(getApplicationContext(),
+//						"Devo fare un UPDATE ora!", Toast.LENGTH_LONG).show();
+				//FACCIO COMPARIRE I BOTTONI
+				bCommit.setVisibility(Button.VISIBLE);
+				bRollback.setVisibility(Button.VISIBLE);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public boolean DeleteRow(JSONObject data) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean DeleteRow(String table, long id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean CreateRow(String table, JSONObject data) {
+	public boolean CreateRow(JSONObject data) {
 		// TODO Auto-generated method stub
 		return false;
 	}

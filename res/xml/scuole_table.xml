@@ -1,75 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Tabella scuole" 
+    android:summary="Editor"
+    android:icon="@drawable/school96">
 
     <EditTextPreference
-        android:id="@+id/editTextPreferenceNomeScuola"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="Rosa Luxemburg"
-        android:key="nome_scuola"
-        android:title="Nome Scuola" />
+        android:key="id_scuola"
+        android:title="Id Scuola"
+        android:selectable="false"/>
     <EditTextPreference
-        android:id="@+id/editTextPreferenceTipoScuolaAcronimo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="IPIA"
         android:key="tipo_scuola_acronimo"
         android:title="Tipo Scuola (acronimo)" />
     <EditTextPreference
-        android:id="@+id/editTextPreferenceIndirizzo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="Via Caetani, 43"
+        android:key="nome_scuola"
+        android:title="Nome Scuola" />
+    <EditTextPreference
         android:key="indirizzo"
         android:title="Indirizzo, Num.Civico" />
     <EditTextPreference
-        android:id="@+id/editTextPreferenceCap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="20129"
         android:key="cap"
         android:title="CAP" />
     <EditTextPreference
-        android:id="@+id/editTextPreferenceCitta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="Roma"
         android:key="citta"
         android:title="Città" />
     <EditTextPreference
-        android:id="@+id/editTextPreferenceProvincia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="MI"
         android:key="provincia"
         android:title="Provincia" />
     <EditTextPreference
-        android:id="@+id/editTextPreferenceTelefono"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="0289123876"
         android:key="telefono"
         android:title="Telefono" />
-        <EditTextPreference
-        android:id="@+id/editTextPreferenceFax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="08976543"
+    <EditTextPreference
         android:key="fax"
         android:title="Fax" />
-        <EditTextPreference
-        android:id="@+id/editTextPreferenceEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="rdgmus@capperi.it"
+    <EditTextPreference
         android:key="email"
         android:title="Email" />
-            <EditTextPreference
-        android:id="@+id/editTextPreferenceWeb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:defaultValue="http://..."
+    <EditTextPreference
         android:key="web"
         android:title="WEB" />
-        
+
 </PreferenceScreen>

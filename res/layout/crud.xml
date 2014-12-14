@@ -59,7 +59,8 @@
         android:layout_toRightOf="@+id/bCrudSelect"
         android:text="@string/commitText"
         android:textColor="@color/colorBlue"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/bCrudRollback"
@@ -70,6 +71,7 @@
         android:layout_toRightOf="@+id/bCrudCommit"
         android:text="@string/rollbackText"
         android:textColor="@color/colorRed"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
 </RelativeLayout>

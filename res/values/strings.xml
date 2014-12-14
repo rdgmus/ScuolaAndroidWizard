@@ -33,5 +33,6 @@
     <string name="selectText">Select</string>
     <string name="commitText">Commit</string>
     <string name="rollbackText">Rollback</string>
+    <string name="scuoleTable">Tabella Scuole</string>
 
 </resources>

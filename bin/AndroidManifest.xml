@@ -41,6 +41,16 @@
         </activity>
         <activity android:name="it.keyorchestra.registroandroid.admin.options.Tab3Activity" >
         </activity>
-    </application>
+        <activity
+            android:name="it.keyorchestra.registroandroid.admin.options.tables.Scuole"
+            android:label="@string/scuoleTable"
+            android:screenOrientation="fullUser" >
+            <intent-filter>
+                <action android:name="it.keyorchestra.registroandroid.admin.options.tables.DATABASE_TABLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        </application>
 
 </manifest>

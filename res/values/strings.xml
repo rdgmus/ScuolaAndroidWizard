@@ -34,5 +34,8 @@
     <string name="commitText">Commit</string>
     <string name="rollbackText">Rollback</string>
     <string name="scuoleTable">Tabella Scuole</string>
+    <string name="crudMessage">Operazione in corso...</string>
+    <string name="sEmail">Email</string>
+    <string name="sWeb">WEB</string>
 
 </resources>

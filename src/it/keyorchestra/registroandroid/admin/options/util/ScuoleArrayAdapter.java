@@ -50,6 +50,10 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 				.findViewById(R.id.tvNomeScuola);
 		TextView tvIndirizzoScuola = (TextView) rowView
 				.findViewById(R.id.tvIndirizzoScuola);
+//		TextView tvEmail = (TextView) rowView
+//				.findViewById(R.id.tvEmail);
+//		TextView tvWeb = (TextView) rowView
+//				.findViewById(R.id.tvWeb);
 
 		try {
 			JSONObject s = (JSONObject) _objects.get(position);
@@ -80,6 +84,21 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
 					.getColor(R.color.colorBlack));
 			tvIndirizzoScuola.setTextSize(12);
+			
+//			tvEmail.setText(s.getString("email"));
+//			tvEmail.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvEmail.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvEmail.setTextSize(12);
+//			
+//			tvWeb.setText(s.getString("web"));
+//			tvWeb.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvWeb.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvWeb.setTextSize(12);
+			
 			rowView.setTag(s.getLong("id_scuola"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -124,6 +143,10 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 				.findViewById(R.id.tvNomeScuola);
 		TextView tvIndirizzoScuola = (TextView) rowView
 				.findViewById(R.id.tvIndirizzoScuola);
+//		TextView tvEmail = (TextView) rowView
+//				.findViewById(R.id.tvEmail);
+//		TextView tvWeb = (TextView) rowView
+//				.findViewById(R.id.tvWeb);
 
 		try {
 			JSONObject s = (JSONObject) _objects.get(position);
@@ -154,6 +177,22 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
 					.getColor(R.color.colorBlack));
 			tvIndirizzoScuola.setTextSize(12);
+			
+//			tvEmail.setText(s.getString("email"));
+//			tvEmail.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvEmail.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvEmail.setTextSize(12);
+//			
+//			tvWeb.setText(s.getString("web"));
+//			tvWeb.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvWeb.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvWeb.setTextSize(12);
+			
+
 			rowView.setTag(s.getLong("id_scuola"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

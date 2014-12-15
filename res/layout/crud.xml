@@ -74,4 +74,19 @@
         android:textStyle="bold"
         android:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/tvCrudMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bCrudUpdate"
+        android:background="@color/colorBlack"
+        android:gravity="center_horizontal"
+        android:text="@string/crudMessage"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorOrange"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
 </RelativeLayout>

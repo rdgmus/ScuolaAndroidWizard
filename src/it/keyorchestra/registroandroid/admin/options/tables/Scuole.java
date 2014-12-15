@@ -14,9 +14,10 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 public class Scuole extends PreferenceActivity {
-	
+
 	private int crudAction;
 	private Bundle data;
+	@SuppressWarnings("unused")
 	private SharedPreferences getPrefs;
 	private int activityResult = RESULT_OK;
 
@@ -41,8 +42,7 @@ public class Scuole extends PreferenceActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.scuole_table);
-		
-		
+
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getBaseContext());
 
@@ -81,7 +81,12 @@ public class Scuole extends PreferenceActivity {
 
 	}
 
-	
+	/**
+	 * Ritorna il valore della chiave nelle preferenze come String
+	 * 
+	 * @param elementKey
+	 * @return
+	 */
 	private String getElementValueAsString(String elementKey) {
 		@SuppressWarnings("deprecation")
 		EditTextPreference myPrefText = (EditTextPreference) super
@@ -98,10 +103,13 @@ public class Scuole extends PreferenceActivity {
 		EditTextPreference myPrefText = (EditTextPreference) super
 				.findPreference(elementKey);
 
-		myPrefText.setTitle(myPrefText.getTitle() + ":" + value);
+		myPrefText.setSummary("" + value);
 		// Now, manually update it's value to default/empty
-		myPrefText.setText(value.toString()); // Now, if you click on the item, you'll see
-									// the value you've just set here
+		myPrefText.setText(value.toString()); // Now, if you click on the item,
+												// you'll see
+		myPrefText.setDialogIcon(R.drawable.mago48);
+//		myPrefText.setWidgetLayoutResource(android.R.layout.activity_list_item);
+		// the value you've just set here
 		myPrefText
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
@@ -116,25 +124,11 @@ public class Scuole extends PreferenceActivity {
 						if (!newValue.toString().equals(
 								getElementValueAsString(preference.getKey()))) {
 							setActivityResult(RESULT_CANCELED);
-							resetElementTitle(elementKey, newValue);
+							resetElementValue(elementKey, newValue);
 						}
 						return true;
 					}
 				});
-	}
-
-	protected void resetElementTitle(String elementKey, Object newValue) {
-		// TODO Auto-generated method stub
-		@SuppressWarnings("deprecation")
-		EditTextPreference myPrefText = (EditTextPreference) super
-				.findPreference(elementKey);
-		String title = (String)myPrefText.getTitle();
-		int index = title.lastIndexOf(':');
-		if(index > 0){
-			title = title.substring(0, index+1);
-			title += newValue;
-			myPrefText.setTitle(title);
-		}
 	}
 
 	/*
@@ -158,13 +152,10 @@ public class Scuole extends PreferenceActivity {
 		// SETTA IL RISULTATO IN BASE AI CAMBIAMENTI EFFETTUATI O MENO
 		setResult(getActivityResult(), person);
 
-		Editor editor = getPrefs.edit();
-		editor.clear();
-		editor.commit();
-
 		super.finish();
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	private void packPreferencesIntoBundle(Bundle backPack) {
 		// TODO Auto-generated method stub
@@ -172,19 +163,24 @@ public class Scuole extends PreferenceActivity {
 		backPack.putLong("id_scuola", data.getLong("id_scuola", -1l));
 
 		backPack.putString("tipo_scuola_acronimo",
-				data.getString("tipo_scuola_acronimo", ""));
-		backPack.putString("nome_scuola", data.getString("nome_scuola", ""));
-		backPack.putString("indirizzo", data.getString("indirizzo", ""));
-		backPack.putString("cap", data.getString("cap", ""));
-		backPack.putString("citta", data.getString("citta", ""));
-		backPack.putString("provincia", data.getString("provincia", ""));
-		backPack.putString("telefono", data.getString("telefono", ""));
-		backPack.putString("fax", data.getString("fax", ""));
-		backPack.putString("email", data.getString("email", ""));
-		backPack.putString("web", data.getString("web", ""));
-		
+ (String) super
+				.findPreference("tipo_scuola_acronimo").getSummary());
+		backPack.putString("nome_scuola",
+				(String) super.findPreference("nome_scuola").getSummary());
+		backPack.putString("indirizzo",
+				(String) super.findPreference("indirizzo").getSummary());
+		backPack.putString("cap", (String) super.findPreference("cap").getSummary());
+		backPack.putString("citta", (String) super.findPreference("citta").getSummary());
+		backPack.putString("provincia",
+				(String) super.findPreference("provincia").getSummary());
+		backPack.putString("telefono",
+				(String) super.findPreference("telefono").getSummary());
+		backPack.putString("fax", (String) super.findPreference("fax").getSummary());
+		backPack.putString("email", (String) super.findPreference("email").getSummary());
+		backPack.putString("web", (String) super.findPreference("web").getSummary());
+
 		backPack.putInt("action", crudAction);
-		
+
 	}
 
 }

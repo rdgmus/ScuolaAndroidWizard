@@ -5,13 +5,18 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Format;
+import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 public class DatabaseOps {
 	SharedPreferences getPrefs;
+	private boolean addStartComma = false;
 
 	public DatabaseOps(Context context) {
 		super();
@@ -116,7 +121,9 @@ public class DatabaseOps {
 
 	/**
 	 * Rimuove l'hash creato al momento di entrare nell'attività Scuola Wizard
-	 * in modo da non permettere l'accesso all'applicazione, senza autorizzazione.
+	 * in modo da non permettere l'accesso all'applicazione, senza
+	 * autorizzazione.
+	 * 
 	 * @param context
 	 * @param id_utente
 	 * @param hash
@@ -151,4 +158,90 @@ public class DatabaseOps {
 		return false;
 	}
 
+	/**
+	 * Update della tabella scuole con i Bundle inviato e ricevuto facendo un
+	 * confronto tra i dati inviati e ricevuti effettua l'update della riga in
+	 * tabella.
+	 * 
+	 * @param context
+	 * @param sendBasket
+	 * @param returnBasket
+	 * @return
+	 */
+	@SuppressLint("DefaultLocale")
+	public boolean updateScuola(Context context, Bundle sendBasket,
+			Bundle returnBasket) {
+		// TODO Auto-generated method stub
+		long id_scuola = sendBasket.getLong("id_scuola");
+		String url = getUrl(context);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			 addStartComma  = false;
+			
+			sql = "UPDATE `scuole` " + "SET ";
+			sql = integrateSqlWithField(sendBasket, returnBasket,
+					"nome_scuola", sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket,
+					"tipo_scuola_acronimo", sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "indirizzo",
+					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "cap", sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "citta",
+					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "provincia",
+					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "telefono",
+					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "fax", sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "email",
+					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "web", sql);
+
+			sql += " WHERE id_scuola=" + id_scuola;
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Aggiunge campi alla query se sono stati cambiati dall'utente per
+	 * effettuare l'operazione di Commit con una query dove figurano solo i
+	 * campi effettivamente cambiati. Onde evitare effetti indesiderati sui dati
+	 * in tabella.
+	 * 
+	 * @param sendBasket - Bundle inviato
+	 * @param returnBasket - Bundle ricevuto
+	 * @param key - campo della tabella e chiave dei Bundles
+	 * @param sql - query
+	 * @param adStartComma - se TRUE => aggiunge comma (virgola) prima di
+	 * aggiungere il campo alla query
+	 * @return - query integrat con il campo aggiunto
+	 */
+	private String integrateSqlWithField(Bundle sendBasket,
+			Bundle returnBasket, String key, String sql) {
+		// TODO Auto-generated method stub
+		if (!sendBasket.getString(key).equals(returnBasket.getString(key))) {
+			if (addStartComma) {
+				sql += ",";
+			}
+			sql += " " + key + "='" + returnBasket.getString(key) + "' ";
+			addStartComma = true;
+		}
+		return sql;
+	}
 }

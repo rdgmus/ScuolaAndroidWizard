@@ -21,8 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +29,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SchoolCreatorActivity extends Activity implements
@@ -41,7 +40,11 @@ public class SchoolCreatorActivity extends Activity implements
 	Spinner spinnerScuole;
 	private ArrayList<String> scuoleArray;
 	private JSONArray jArrayScuole;
-	Button bSelect, bDelete, bUpdate, bCommit, bRollback, bClear;
+	Button bSelect, bDelete, bUpdate, bCreate, bCommit, bRollback, bClear;
+	private Bundle sendBasket;
+	private Bundle returnBasket;
+	TextView tvCrudMessage;
+	protected Long id_scuola;
 
 	/*
 	 * (non-Javadoc)
@@ -66,7 +69,7 @@ public class SchoolCreatorActivity extends Activity implements
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				long id_scuola = (Long) view.getTag();
+				id_scuola = (Long) view.getTag();
 				Toast.makeText(getApplicationContext(),
 						"id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 			}
@@ -112,30 +115,55 @@ public class SchoolCreatorActivity extends Activity implements
 				}
 			}
 		});
-		
-		bCommit = (Button)findViewById(R.id.bCrudCommit);
+
+		bCreate = (Button) findViewById(R.id.bCrudCreate);
+		bCreate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		bCommit = (Button) findViewById(R.id.bCrudCommit);
 		bCommit.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				bCommit.setVisibility(Button.INVISIBLE);
 				bRollback.setVisibility(Button.INVISIBLE);
+				tvCrudMessage.setVisibility(TextView.INVISIBLE);
+
+				bUpdate.setVisibility(Button.VISIBLE);
+				bCreate.setVisibility(Button.VISIBLE);
+				bDelete.setVisibility(Button.VISIBLE);
+				bSelect.setVisibility(Button.VISIBLE);
+
 				Commit();
 			}
 		});
-		bRollback = (Button)findViewById(R.id.bCrudRollback);
+		bRollback = (Button) findViewById(R.id.bCrudRollback);
 		bRollback.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				bCommit.setVisibility(Button.INVISIBLE);
-				bRollback.setVisibility(Button.INVISIBLE);	
+				bRollback.setVisibility(Button.INVISIBLE);
+				tvCrudMessage.setVisibility(TextView.INVISIBLE);
+
+				bUpdate.setVisibility(Button.VISIBLE);
+				bCreate.setVisibility(Button.VISIBLE);
+				bDelete.setVisibility(Button.VISIBLE);
+				bSelect.setVisibility(Button.VISIBLE);
+
 				Rollback();
 			}
 		});
-		
+		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
+
 		Thread timer = new Thread() {
 
 			@Override
@@ -277,6 +305,9 @@ public class SchoolCreatorActivity extends Activity implements
 				// Apply the adapter to the spinner
 				spinnerScuole.setAdapter(scuoleAdapter);
 
+				// spinnerScuole.setSelection(getScuolaIdPositionIntoSpinner(
+				// spinnerScuole, id_scuola));
+
 				Toast.makeText(getApplicationContext(), "Scuole caricate!",
 						Toast.LENGTH_LONG).show();
 			} else {
@@ -288,35 +319,67 @@ public class SchoolCreatorActivity extends Activity implements
 
 	}
 
+	private class UpdateScuolaTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.updateScuola(getApplicationContext(),
+					sendBasket, returnBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadScuoleTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
 	@SuppressLint("NewApi")
 	@Override
 	public boolean UpdateRow(JSONObject data) {
 		// TODO Auto-generated method stub
 		// options.putParcelable("data", (Parcelable) data);
-		Bundle basket = new Bundle();
+		sendBasket = new Bundle();
 		try {
-			basket.putLong("id_scuola", data.getLong("id_scuola"));
-			basket.putString("tipo_scuola_acronimo",
+			sendBasket.putLong("id_scuola", data.getLong("id_scuola"));
+			sendBasket.putString("tipo_scuola_acronimo",
 					data.getString("tipo_scuola_acronimo"));
-			basket.putString("nome_scuola", data.getString("nome_scuola"));
-			basket.putString("indirizzo", data.getString("indirizzo"));
-			basket.putString("cap", data.getString("cap"));
-			basket.putString("citta", data.getString("citta"));
-			basket.putString("provincia", data.getString("provincia"));
-			basket.putString("telefono", data.getString("telefono"));
-			basket.putString("fax", data.getString("fax"));
-			basket.putString("email", data.getString("email"));
-			basket.putString("web", data.getString("web"));
+			sendBasket.putString("nome_scuola", data.getString("nome_scuola"));
+			sendBasket.putString("indirizzo", data.getString("indirizzo"));
+			sendBasket.putString("cap", data.getString("cap"));
+			sendBasket.putString("citta", data.getString("citta"));
+			sendBasket.putString("provincia", data.getString("provincia"));
+			sendBasket.putString("telefono", data.getString("telefono"));
+			sendBasket.putString("fax", data.getString("fax"));
+			sendBasket.putString("email", data.getString("email"));
+			sendBasket.putString("web", data.getString("web"));
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		basket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
+		sendBasket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
 
 		// INTENT
 		Intent d = new Intent(this, Scuole.class);
-		d.putExtras(basket);
+		d.putExtras(sendBasket);
 		startActivityForResult(d, 0);
 		return true;
 	}
@@ -331,20 +394,27 @@ public class SchoolCreatorActivity extends Activity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		Bundle basket = data.getExtras();
+		returnBasket = data.getExtras();
 
 		if (resultCode == RESULT_OK) {
-			String s = basket.getString("answer");
-			Toast.makeText(getApplicationContext(), "" + s,
-					Toast.LENGTH_LONG).show();
+			String s = returnBasket.getString("answer");
+			Toast.makeText(getApplicationContext(), "" + s, Toast.LENGTH_LONG)
+					.show();
 		} else if (resultCode == RESULT_CANCELED) {
-			switch (basket.getInt("action")) {
+			switch (returnBasket.getInt("action")) {
 			case CRUD_ACTION.UPDATE:
-//				Toast.makeText(getApplicationContext(),
-//						"Devo fare un UPDATE ora!", Toast.LENGTH_LONG).show();
-				//FACCIO COMPARIRE I BOTTONI
+				// Toast.makeText(getApplicationContext(),
+				// "Devo fare un UPDATE ora!", Toast.LENGTH_LONG).show();
+				// FACCIO COMPARIRE I BOTTONI
 				bCommit.setVisibility(Button.VISIBLE);
 				bRollback.setVisibility(Button.VISIBLE);
+				tvCrudMessage.setVisibility(TextView.VISIBLE);
+				tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
+
+				bUpdate.setVisibility(Button.INVISIBLE);
+				bCreate.setVisibility(Button.INVISIBLE);
+				bDelete.setVisibility(Button.INVISIBLE);
+				bSelect.setVisibility(Button.INVISIBLE);
 				break;
 			}
 		}
@@ -365,6 +435,7 @@ public class SchoolCreatorActivity extends Activity implements
 	@Override
 	public boolean Select(String table, String filter) {
 		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -377,13 +448,36 @@ public class SchoolCreatorActivity extends Activity implements
 	@Override
 	public void Commit() {
 		// TODO Auto-generated method stub
+		if (returnBasket.getInt("action") == CRUD_ACTION.UPDATE) {
+			new UpdateScuolaTask().execute();
+		}
+	}
 
+	/**
+	 * Ricava la posizione dell'utente indicato nel relativo spinner.
+	 * 
+	 * @param spinner
+	 * @param id
+	 * @return
+	 */
+	protected int getScuolaIdPositionIntoSpinner(Spinner spinner, long id) {
+		// TODO Auto-generated method stub
+		int count = spinner.getCount();
+		for (int i = 0; i < count; i++) {
+			View rowView = spinner.getAdapter().getView(i, null, spinner);
+			if ((Long) rowView.getTag() == id) {
+				return i;
+			}
+
+		}
+		return 0;
 	}
 
 	@Override
 	public void Rollback() {
 		// TODO Auto-generated method stub
-
+		Toast.makeText(getApplicationContext(),
+				"Rollback! cambiamenti scartati!", Toast.LENGTH_SHORT).show();
 	}
 
 }

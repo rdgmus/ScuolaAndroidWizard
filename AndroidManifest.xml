@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -34,7 +34,14 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name="it.keyorchestra.registroandroid.admin.options.SchoolCreatorActivity"></activity>
+        <activity
+            android:name="it.keyorchestra.registroandroid.admin.options.util.MyCalendar"
+            android:theme="@style/MyTheme" >
+        </activity>
+        <activity android:name="it.keyorchestra.registroandroid.admin.options.AsCreatorActivity" >
+        </activity>
+        <activity android:name="it.keyorchestra.registroandroid.admin.options.SchoolCreatorActivity" >
+        </activity>
         <activity android:name="it.keyorchestra.registroandroid.admin.options.Tab1Activity" >
         </activity>
         <activity android:name="it.keyorchestra.registroandroid.admin.options.Tab2Activity" >
@@ -51,6 +58,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        </application>
+    </application>
 
 </manifest>

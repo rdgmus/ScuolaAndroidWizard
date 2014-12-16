@@ -52,8 +52,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/startDateHint"
             android:inputType="date" />
+
+        <Button
+            android:id="@+id/bChangeStartDate"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:text="@string/cambiaText" />
 
         <EditText
             android:id="@+id/etEndDate"
@@ -61,10 +71,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/endDateHint"
             android:inputType="date" />
-    </LinearLayout>
 
-   
+        <Button
+            android:id="@+id/bChangeEndDate"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cambiaText" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -27,7 +27,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1.0"
             android:onClick="buttonCanceDatePickerOnclick"
-            android:text="cancel" />
+            android:text="@string/cancelButtonText" />
 
         <Button
             android:id="@+id/bSave"
@@ -36,7 +36,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1.0"
             android:onClick="buttonSaveDatePickerOnclick"
-            android:text="save" />
+            android:text="@string/saveButtonText" />
     </LinearLayout>
 
 </LinearLayout>

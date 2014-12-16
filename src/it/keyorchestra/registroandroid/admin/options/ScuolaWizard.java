@@ -92,7 +92,7 @@ public class ScuolaWizard extends TabActivity implements
 
 		tab2.setIndicator("Anni Scolastici",
 				getResources().getDrawable(R.drawable.calendar_schedule128));
-		tab2.setContent(new Intent(this, Tab2Activity.class));
+		tab2.setContent(new Intent(this, AsCreatorActivity.class));
 
 		tab3.setIndicator("Periodi A.S.",
 				getResources().getDrawable(R.drawable.time_session128));

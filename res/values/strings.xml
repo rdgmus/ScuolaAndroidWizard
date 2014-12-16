@@ -55,5 +55,8 @@
     <string name="scuolaASHint">Scuola</string>
     <string name="endDateHint">Data Fine A.S.</string>
     <string name="startDateHint">Data Inizio AS</string>
+    <string name="cancelButtonText">Esci</string>
+    <string name="saveButtonText">Applica</string>
+    <string name="cambiaText">Cambia</string>
 
 </resources>

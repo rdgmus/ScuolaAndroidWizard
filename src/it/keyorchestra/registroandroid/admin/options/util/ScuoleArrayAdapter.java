@@ -48,8 +48,8 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 				.findViewById(R.id.tvScuolaAcronimo);
 		TextView tvNomeScuola = (TextView) rowView
 				.findViewById(R.id.tvNomeScuola);
-		TextView tvIndirizzoScuola = (TextView) rowView
-				.findViewById(R.id.tvIndirizzoScuola);
+//		TextView tvIndirizzoScuola = (TextView) rowView
+//				.findViewById(R.id.tvIndirizzoScuola);
 //		TextView tvEmail = (TextView) rowView
 //				.findViewById(R.id.tvEmail);
 //		TextView tvWeb = (TextView) rowView
@@ -78,12 +78,12 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 					R.color.colorBlack));
 			tvNomeScuola.setTextSize(12);
 
-			tvIndirizzoScuola.setText(formatIndirizzoScuola(s));
-			tvIndirizzoScuola.setTextColor(_context.getResources().getColor(
-					R.color.colorOrange));
-			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
-					.getColor(R.color.colorBlack));
-			tvIndirizzoScuola.setTextSize(12);
+//			tvIndirizzoScuola.setText(formatIndirizzoScuola(s));
+//			tvIndirizzoScuola.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvIndirizzoScuola.setTextSize(12);
 			
 //			tvEmail.setText(s.getString("email"));
 //			tvEmail.setTextColor(_context.getResources().getColor(
@@ -107,6 +107,7 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 		return rowView;
 	}
 
+	@SuppressWarnings("unused")
 	private String formatIndirizzoScuola(JSONObject s) {
 		// TODO Auto-generated method stub
 		String indirizzo = "";
@@ -141,8 +142,8 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 				.findViewById(R.id.tvScuolaAcronimo);
 		TextView tvNomeScuola = (TextView) rowView
 				.findViewById(R.id.tvNomeScuola);
-		TextView tvIndirizzoScuola = (TextView) rowView
-				.findViewById(R.id.tvIndirizzoScuola);
+//		TextView tvIndirizzoScuola = (TextView) rowView
+//				.findViewById(R.id.tvIndirizzoScuola);
 //		TextView tvEmail = (TextView) rowView
 //				.findViewById(R.id.tvEmail);
 //		TextView tvWeb = (TextView) rowView
@@ -171,12 +172,12 @@ public class ScuoleArrayAdapter extends ArrayAdapter<String> {
 					R.color.colorBlack));
 			tvNomeScuola.setTextSize(12);
 
-			tvIndirizzoScuola.setText(formatIndirizzoScuola(s));
-			tvIndirizzoScuola.setTextColor(_context.getResources().getColor(
-					R.color.colorOrange));
-			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
-					.getColor(R.color.colorBlack));
-			tvIndirizzoScuola.setTextSize(12);
+//			tvIndirizzoScuola.setText(formatIndirizzoScuola(s));
+//			tvIndirizzoScuola.setTextColor(_context.getResources().getColor(
+//					R.color.colorOrange));
+//			tvIndirizzoScuola.setBackgroundColor(_context.getResources()
+//					.getColor(R.color.colorBlack));
+//			tvIndirizzoScuola.setTextSize(12);
 			
 //			tvEmail.setText(s.getString("email"));
 //			tvEmail.setTextColor(_context.getResources().getColor(

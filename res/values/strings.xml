@@ -37,5 +37,17 @@
     <string name="crudMessage">Operazione in corso...</string>
     <string name="sEmail">Email</string>
     <string name="sWeb">WEB</string>
+    <string name="tableName">Table Name</string>
+    <string name="tipoScuolaHint">Tipo Scuola (acronimo)</string>
+    <string name="nomeScuolaHint">Nome Scuola</string>
+    <string name="idScuolaHint">Id</string>
+    <string name="indirizzoHint">Indirizzo</string>
+    <string name="capHint">cap</string>
+    <string name="cittaHint">Città</string>
+    <string name="provinciaHint">Pr</string>
+    <string name="telefonoHint">Telefono</string>
+    <string name="faxHint">Fax</string>
+    <string name="emailHint">Email</string>
+    <string name="webHint">Web</string>
 
 </resources>

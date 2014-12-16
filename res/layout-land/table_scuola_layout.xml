@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_color5"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etIdScuola"
+            android:layout_width="62dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/idScuolaHint"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/etTipoScuola"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/tipoScuolaHint" />
+
+        <EditText
+            android:id="@+id/etNomeScuola"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/nomeScuolaHint" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etIndirizzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/indirizzoHint" />
+
+        <EditText
+            android:id="@+id/etCap"
+            android:layout_width="74dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/capHint" />
+
+        <EditText
+            android:id="@+id/etCitta"
+            android:layout_width="164dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.15"
+            android:ems="10"
+            android:hint="@string/cittaHint" />
+
+        <EditText
+            android:id="@+id/etProvincia"
+            android:layout_width="59dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/provinciaHint" >
+
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etTelefono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/telefonoHint" />
+
+        <EditText
+            android:id="@+id/etFax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/faxHint" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/emailHint" />
+
+        <EditText
+            android:id="@+id/etWeb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/webHint" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -76,17 +76,19 @@
 
     <TextView
         android:id="@+id/tvCrudMessage"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/bCrudUpdate"
+        android:layout_alignBottom="@+id/bCrudSelect"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/bCrudClear"
+        android:layout_toRightOf="@+id/bCrudRollback"
         android:background="@color/colorBlack"
         android:gravity="center_horizontal"
         android:text="@string/crudMessage"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/colorOrange"
+        android:textSize="8sp"
         android:textStyle="bold"
         android:visibility="invisible" />
-
+    
 </RelativeLayout>

@@ -109,7 +109,7 @@ public class SchoolCreatorActivity extends Activity implements
 		etWeb.setOnFocusChangeListener(this);
 		// etWeb.addTextChangedListener(this);
 
-		spinnerScuole = (Spinner) findViewById(R.id.spinnerScuole);
+		spinnerScuole = (Spinner) findViewById(R.id.spinnerAS);
 
 		spinnerScuole.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -219,7 +219,7 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
-		tvScuoleCount = (TextView) findViewById(R.id.tvScuoleCount);
+		tvScuoleCount = (TextView) findViewById(R.id.tvAsCount);
 
 		
 		Thread timer = new Thread() {

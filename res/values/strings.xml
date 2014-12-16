@@ -50,5 +50,10 @@
     <string name="emailHint">Email</string>
     <string name="webHint">Web</string>
     <string name="rowCounter">(0)</string>
+    <string name="idAsHint">Id A.S.</string>
+    <string name="annoScolasticoHint">####/####</string>
+    <string name="scuolaASHint">Scuola</string>
+    <string name="endDateHint">Data Fine A.S.</string>
+    <string name="startDateHint">Data Inizio AS</string>
 
 </resources>

@@ -38,8 +38,8 @@
 
             <include
                 android:layout_width="wrap_content"
-                android:layout_height="212dp"
-                layout="@layout/table_scuola_layout" />
+                android:layout_height="158dp"
+                layout="@layout/table_as_layout" />
 
             <include
                 android:layout_width="wrap_content"

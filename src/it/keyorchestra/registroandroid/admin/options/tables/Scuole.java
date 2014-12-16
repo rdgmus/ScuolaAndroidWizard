@@ -41,7 +41,7 @@ public class Scuole extends PreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.scuole_table);
+		addPreferencesFromResource(R.xml.scuole_preferences);
 
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getBaseContext());

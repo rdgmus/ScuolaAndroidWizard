@@ -4,7 +4,6 @@ import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
-import it.keyorchestra.registroandroid.admin.options.tables.Scuole;
 import it.keyorchestra.registroandroid.admin.options.util.ScuoleArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -22,29 +21,37 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class SchoolCreatorActivity extends Activity implements
-		ActivitiesCommonFunctions, CrudManagerInterface {
+		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener {
 
 	private SharedPreferences getPrefs;
 	private DatabaseOps databaseOps;
 	Spinner spinnerScuole;
 	private ArrayList<String> scuoleArray;
 	private JSONArray jArrayScuole;
-	Button bSelect, bDelete, bUpdate, bCreate, bCommit, bRollback, bClear;
+	Button bCrudSelect, bCrudDelete, bCrudUpdate, bCrudCreate, bCrudCommit,
+			bCrudRollback, bClear;
 	private Bundle sendBasket;
 	private Bundle returnBasket;
 	TextView tvCrudMessage;
 	protected Long id_scuola;
+	EditText etIdScuola, etTipoScuola, etNomeScuola, etIndirizzo, etCap,
+			etCitta, etProvincia, etTelefono, etFax, etEmail, etWeb;
+	private EditText theEditTextWhichHasFocus;
 
 	/*
 	 * (non-Javadoc)
@@ -61,6 +68,49 @@ public class SchoolCreatorActivity extends Activity implements
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 
+		etIdScuola = (EditText) findViewById(R.id.etIdScuola);
+
+		etTipoScuola = (EditText) findViewById(R.id.etTipoScuola);
+		etTipoScuola.setOnFocusChangeListener(this);
+//		etTipoScuola.addTextChangedListener(this);
+
+		etNomeScuola = (EditText) findViewById(R.id.etNomeScuola);
+		etNomeScuola.setOnFocusChangeListener(this);
+//		etNomeScuola.addTextChangedListener(this);
+
+		etIndirizzo = (EditText) findViewById(R.id.etIndirizzo);
+		etIndirizzo.setOnFocusChangeListener(this);
+//		etIndirizzo.addTextChangedListener(this);
+		
+		etCap = (EditText) findViewById(R.id.etCap);
+		etCap.setOnFocusChangeListener(this);
+//		etCap.addTextChangedListener(this);
+		
+		etCitta = (EditText) findViewById(R.id.etCitta);
+		etCitta.setOnFocusChangeListener(this);
+//		etCitta.addTextChangedListener(this);
+		
+		etProvincia = (EditText) findViewById(R.id.etProvincia);
+		etProvincia.setOnFocusChangeListener(this);
+//		etProvincia.addTextChangedListener(this);
+		
+		etTelefono = (EditText) findViewById(R.id.etTelefono);
+		etTelefono.setOnFocusChangeListener(this);
+//		etTelefono.addTextChangedListener(this);
+		
+		etFax = (EditText) findViewById(R.id.etFax);
+		etFax.setOnFocusChangeListener(this);
+//		etFax.addTextChangedListener(this);
+		
+		etEmail = (EditText) findViewById(R.id.etEmail);
+		etEmail.setOnFocusChangeListener(this);
+//		etEmail.addTextChangedListener(this);
+		
+		etWeb = (EditText) findViewById(R.id.etWeb);
+		etWeb.setOnFocusChangeListener(this);
+//		etWeb.addTextChangedListener(this);
+		
+
 		spinnerScuole = (Spinner) findViewById(R.id.spinnerScuole);
 
 		spinnerScuole.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -72,6 +122,7 @@ public class SchoolCreatorActivity extends Activity implements
 				id_scuola = (Long) view.getTag();
 				Toast.makeText(getApplicationContext(),
 						"id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
+				fillFieldsWithData(position);
 			}
 
 			@Override
@@ -80,8 +131,8 @@ public class SchoolCreatorActivity extends Activity implements
 
 			}
 		});
-		bSelect = (Button) findViewById(R.id.bCrudSelect);
-		bSelect.setOnClickListener(new OnClickListener() {
+		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
+		bCrudSelect.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -90,8 +141,8 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 
-		bDelete = (Button) findViewById(R.id.bCrudDelete);
-		bDelete.setOnClickListener(new OnClickListener() {
+		bCrudDelete = (Button) findViewById(R.id.bCrudDelete);
+		bCrudDelete.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -100,8 +151,8 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 
-		bUpdate = (Button) findViewById(R.id.bCrudUpdate);
-		bUpdate.setOnClickListener(new OnClickListener() {
+		bCrudUpdate = (Button) findViewById(R.id.bCrudUpdate);
+		bCrudUpdate.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -109,6 +160,7 @@ public class SchoolCreatorActivity extends Activity implements
 				try {
 					UpdateRow(jArrayScuole.getJSONObject(spinnerScuole
 							.getSelectedItemPosition()));
+					setCommitRollback(true);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -116,8 +168,8 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 
-		bCreate = (Button) findViewById(R.id.bCrudCreate);
-		bCreate.setOnClickListener(new OnClickListener() {
+		bCrudCreate = (Button) findViewById(R.id.bCrudCreate);
+		bCrudCreate.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -126,40 +178,24 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 
-		bCommit = (Button) findViewById(R.id.bCrudCommit);
-		bCommit.setOnClickListener(new OnClickListener() {
+		bCrudCommit = (Button) findViewById(R.id.bCrudCommit);
+		bCrudCommit.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				bCommit.setVisibility(Button.INVISIBLE);
-				bRollback.setVisibility(Button.INVISIBLE);
-				tvCrudMessage.setVisibility(TextView.INVISIBLE);
-
-				bUpdate.setVisibility(Button.VISIBLE);
-				bCreate.setVisibility(Button.VISIBLE);
-				bDelete.setVisibility(Button.VISIBLE);
-				bSelect.setVisibility(Button.VISIBLE);
-
 				Commit();
+				setCommitRollback(false);
 			}
 		});
-		bRollback = (Button) findViewById(R.id.bCrudRollback);
-		bRollback.setOnClickListener(new OnClickListener() {
+		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
+		bCrudRollback.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				bCommit.setVisibility(Button.INVISIBLE);
-				bRollback.setVisibility(Button.INVISIBLE);
-				tvCrudMessage.setVisibility(TextView.INVISIBLE);
-
-				bUpdate.setVisibility(Button.VISIBLE);
-				bCreate.setVisibility(Button.VISIBLE);
-				bDelete.setVisibility(Button.VISIBLE);
-				bSelect.setVisibility(Button.VISIBLE);
-
 				Rollback();
+				setCommitRollback(false);
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
@@ -180,6 +216,51 @@ public class SchoolCreatorActivity extends Activity implements
 
 		};
 		timer.start();
+	}
+
+	protected void setCommitRollback(boolean visible) {
+		// TODO Auto-generated method stub
+		if(visible){
+			bCrudCommit.setVisibility(Button.VISIBLE);
+			bCrudRollback.setVisibility(Button.VISIBLE);
+			tvCrudMessage.setVisibility(TextView.VISIBLE);
+			tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
+
+			bCrudUpdate.setVisibility(Button.INVISIBLE);
+			bCrudCreate.setVisibility(Button.INVISIBLE);
+			bCrudDelete.setVisibility(Button.INVISIBLE);
+			bCrudSelect.setVisibility(Button.INVISIBLE);
+		}else{
+			bCrudCommit.setVisibility(Button.INVISIBLE);
+			bCrudRollback.setVisibility(Button.INVISIBLE);
+			tvCrudMessage.setVisibility(TextView.INVISIBLE);
+
+			bCrudUpdate.setVisibility(Button.VISIBLE);
+			bCrudCreate.setVisibility(Button.VISIBLE);
+			bCrudDelete.setVisibility(Button.VISIBLE);
+			bCrudSelect.setVisibility(Button.VISIBLE);
+		}
+	}
+
+	protected void fillFieldsWithData(int position) {
+		// TODO Auto-generated method stub
+		try {
+			JSONObject jsonObiect = jArrayScuole.getJSONObject(position);
+			etIdScuola.setText(jsonObiect.getString("id_scuola"));
+			etTipoScuola.setText(jsonObiect.getString("tipo_scuola_acronimo"));
+			etNomeScuola.setText(jsonObiect.getString("nome_scuola"));
+			etIndirizzo.setText(jsonObiect.getString("indirizzo"));
+			etCap.setText(jsonObiect.getString("cap"));
+			etCitta.setText(jsonObiect.getString("citta"));
+			etProvincia.setText(jsonObiect.getString("provincia"));
+			etTelefono.setText(jsonObiect.getString("telefono"));
+			etFax.setText(jsonObiect.getString("fax"));
+			etEmail.setText(jsonObiect.getString("email"));
+			etWeb.setText(jsonObiect.getString("web"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private boolean CaricaArrayScuole() {
@@ -377,10 +458,25 @@ public class SchoolCreatorActivity extends Activity implements
 		}
 		sendBasket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
 
+		returnBasket = new Bundle();
+		
+		returnBasket.putLong("id_scuola",sendBasket.getLong("id_scuola"));
+		returnBasket.putString("tipo_scuola_acronimo",
+				etTipoScuola.getText().toString());
+		returnBasket.putString("nome_scuola", etNomeScuola.getText().toString());
+		returnBasket.putString("indirizzo", etIndirizzo.getText().toString());
+		returnBasket.putString("cap", etCap.getText().toString());
+		returnBasket.putString("citta", etCitta.getText().toString());
+		returnBasket.putString("provincia", etProvincia.getText().toString());
+		returnBasket.putString("telefono", etTelefono.getText().toString());
+		returnBasket.putString("fax", etFax.getText().toString());
+		returnBasket.putString("email", etEmail.getText().toString());
+		returnBasket.putString("web", etWeb.getText().toString());
+		returnBasket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
 		// INTENT
-		Intent d = new Intent(this, Scuole.class);
-		d.putExtras(sendBasket);
-		startActivityForResult(d, 0);
+		// Intent d = new Intent(this, Scuole.class);
+		// d.putExtras(sendBasket);
+		// startActivityForResult(d, 0);
 		return true;
 	}
 
@@ -406,15 +502,7 @@ public class SchoolCreatorActivity extends Activity implements
 				// Toast.makeText(getApplicationContext(),
 				// "Devo fare un UPDATE ora!", Toast.LENGTH_LONG).show();
 				// FACCIO COMPARIRE I BOTTONI
-				bCommit.setVisibility(Button.VISIBLE);
-				bRollback.setVisibility(Button.VISIBLE);
-				tvCrudMessage.setVisibility(TextView.VISIBLE);
-				tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
-
-				bUpdate.setVisibility(Button.INVISIBLE);
-				bCreate.setVisibility(Button.INVISIBLE);
-				bDelete.setVisibility(Button.INVISIBLE);
-				bSelect.setVisibility(Button.INVISIBLE);
+				setCommitRollback(true);
 				break;
 			}
 		}
@@ -479,5 +567,17 @@ public class SchoolCreatorActivity extends Activity implements
 		Toast.makeText(getApplicationContext(),
 				"Rollback! cambiamenti scartati!", Toast.LENGTH_SHORT).show();
 	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		// TODO Auto-generated method stub
+		if (hasFocus) {
+			Toast.makeText(getApplicationContext(),
+					"" + ((EditText) v).getHint(), Toast.LENGTH_SHORT).show();
+			theEditTextWhichHasFocus = (EditText) v;
+		}
+	}
+
+	
 
 }

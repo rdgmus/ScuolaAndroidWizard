@@ -182,8 +182,8 @@ public class DatabaseOps {
 			Statement st = conn.createStatement();
 			String sql = null;
 
-			 addStartComma  = false;
-			
+			addStartComma = false;
+
 			sql = "UPDATE `scuole` " + "SET ";
 			sql = integrateSqlWithField(sendBasket, returnBasket,
 					"nome_scuola", sql);
@@ -192,15 +192,13 @@ public class DatabaseOps {
 			sql = integrateSqlWithField(sendBasket, returnBasket, "indirizzo",
 					sql);
 			sql = integrateSqlWithField(sendBasket, returnBasket, "cap", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "citta",
-					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "citta", sql);
 			sql = integrateSqlWithField(sendBasket, returnBasket, "provincia",
 					sql);
 			sql = integrateSqlWithField(sendBasket, returnBasket, "telefono",
 					sql);
 			sql = integrateSqlWithField(sendBasket, returnBasket, "fax", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "email",
-					sql);
+			sql = integrateSqlWithField(sendBasket, returnBasket, "email", sql);
 			sql = integrateSqlWithField(sendBasket, returnBasket, "web", sql);
 
 			sql += " WHERE id_scuola=" + id_scuola;
@@ -224,12 +222,17 @@ public class DatabaseOps {
 	 * campi effettivamente cambiati. Onde evitare effetti indesiderati sui dati
 	 * in tabella.
 	 * 
-	 * @param sendBasket - Bundle inviato
-	 * @param returnBasket - Bundle ricevuto
-	 * @param key - campo della tabella e chiave dei Bundles
-	 * @param sql - query
-	 * @param adStartComma - se TRUE => aggiunge comma (virgola) prima di
-	 * aggiungere il campo alla query
+	 * @param sendBasket
+	 *            - Bundle inviato
+	 * @param returnBasket
+	 *            - Bundle ricevuto
+	 * @param key
+	 *            - campo della tabella e chiave dei Bundles
+	 * @param sql
+	 *            - query
+	 * @param adStartComma
+	 *            - se TRUE => aggiunge comma (virgola) prima di aggiungere il
+	 *            campo alla query
 	 * @return - query integrat con il campo aggiunto
 	 */
 	private String integrateSqlWithField(Bundle sendBasket,
@@ -243,5 +246,77 @@ public class DatabaseOps {
 			addStartComma = true;
 		}
 		return sql;
+	}
+
+	public Boolean deleteScuola(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `scuole`" + " WHERE  id_scuola="
+					+ beforeChangeBasket.getLong("id_scuola");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean createScuola(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "INSERT INTO `scuole`"
+					+ "(`nome_scuola`, `tipo_scuola_acronimo`, "
+					+ "`indirizzo`, `cap`, `citta`, "
+					+ "`provincia`, `telefono`, `fax`, `email`, `web`) "
+					+ "VALUES ("
+					+"'"+beforeChangeBasket.getString("nome_scuola")+"',"
+					+"'"+beforeChangeBasket.getString("tipo_scuola_acronimo")+"',"
+					+"'"+beforeChangeBasket.getString("indirizzo")+"',"
+					+"'"+beforeChangeBasket.getString("cap")+"',"
+					+"'"+beforeChangeBasket.getString("citta")+"',"
+					+"'"+beforeChangeBasket.getString("provincia")+"',"
+					+"'"+beforeChangeBasket.getString("telefono")+"',"
+					+"'"+beforeChangeBasket.getString("fax")+"',"
+					+"'"+beforeChangeBasket.getString("email")+"',"
+					+"'"+beforeChangeBasket.getString("web")+"'"
+					+ ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

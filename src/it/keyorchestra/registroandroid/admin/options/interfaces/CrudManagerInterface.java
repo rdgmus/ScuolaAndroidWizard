@@ -20,7 +20,7 @@ public interface CrudManagerInterface {
 
 	public boolean CreateRow(JSONObject data);
 
-	public boolean Select(String table, String filter);
+	public boolean Select();
 
 	public void Clear();
 

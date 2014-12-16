@@ -4,6 +4,7 @@ import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
+import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.ScuoleArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -21,8 +22,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -44,10 +43,10 @@ public class SchoolCreatorActivity extends Activity implements
 	private ArrayList<String> scuoleArray;
 	private JSONArray jArrayScuole;
 	Button bCrudSelect, bCrudDelete, bCrudUpdate, bCrudCreate, bCrudCommit,
-			bCrudRollback, bClear;
-	private Bundle sendBasket;
-	private Bundle returnBasket;
-	TextView tvCrudMessage;
+			bCrudRollback, bCrudClear;
+	private Bundle beforeChangeBasket;
+	private Bundle afterChangeBasket;
+	TextView tvCrudMessage, tvScuoleCount;
 	protected Long id_scuola;
 	EditText etIdScuola, etTipoScuola, etNomeScuola, etIndirizzo, etCap,
 			etCitta, etProvincia, etTelefono, etFax, etEmail, etWeb;
@@ -72,44 +71,43 @@ public class SchoolCreatorActivity extends Activity implements
 
 		etTipoScuola = (EditText) findViewById(R.id.etTipoScuola);
 		etTipoScuola.setOnFocusChangeListener(this);
-//		etTipoScuola.addTextChangedListener(this);
+		// etTipoScuola.addTextChangedListener(this);
 
 		etNomeScuola = (EditText) findViewById(R.id.etNomeScuola);
 		etNomeScuola.setOnFocusChangeListener(this);
-//		etNomeScuola.addTextChangedListener(this);
+		// etNomeScuola.addTextChangedListener(this);
 
 		etIndirizzo = (EditText) findViewById(R.id.etIndirizzo);
 		etIndirizzo.setOnFocusChangeListener(this);
-//		etIndirizzo.addTextChangedListener(this);
-		
+		// etIndirizzo.addTextChangedListener(this);
+
 		etCap = (EditText) findViewById(R.id.etCap);
 		etCap.setOnFocusChangeListener(this);
-//		etCap.addTextChangedListener(this);
-		
+		// etCap.addTextChangedListener(this);
+
 		etCitta = (EditText) findViewById(R.id.etCitta);
 		etCitta.setOnFocusChangeListener(this);
-//		etCitta.addTextChangedListener(this);
-		
+		// etCitta.addTextChangedListener(this);
+
 		etProvincia = (EditText) findViewById(R.id.etProvincia);
 		etProvincia.setOnFocusChangeListener(this);
-//		etProvincia.addTextChangedListener(this);
-		
+		// etProvincia.addTextChangedListener(this);
+
 		etTelefono = (EditText) findViewById(R.id.etTelefono);
 		etTelefono.setOnFocusChangeListener(this);
-//		etTelefono.addTextChangedListener(this);
-		
+		// etTelefono.addTextChangedListener(this);
+
 		etFax = (EditText) findViewById(R.id.etFax);
 		etFax.setOnFocusChangeListener(this);
-//		etFax.addTextChangedListener(this);
-		
+		// etFax.addTextChangedListener(this);
+
 		etEmail = (EditText) findViewById(R.id.etEmail);
 		etEmail.setOnFocusChangeListener(this);
-//		etEmail.addTextChangedListener(this);
-		
+		// etEmail.addTextChangedListener(this);
+
 		etWeb = (EditText) findViewById(R.id.etWeb);
 		etWeb.setOnFocusChangeListener(this);
-//		etWeb.addTextChangedListener(this);
-		
+		// etWeb.addTextChangedListener(this);
 
 		spinnerScuole = (Spinner) findViewById(R.id.spinnerScuole);
 
@@ -120,8 +118,8 @@ public class SchoolCreatorActivity extends Activity implements
 					int position, long id) {
 				// TODO Auto-generated method stub
 				id_scuola = (Long) view.getTag();
-				Toast.makeText(getApplicationContext(),
-						"id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
+				// Toast.makeText(getApplicationContext(),
+				// "id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
 			}
 
@@ -131,13 +129,23 @@ public class SchoolCreatorActivity extends Activity implements
 
 			}
 		});
+		bCrudClear = (Button)findViewById(R.id.bCrudClear);
+		bCrudClear.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Clear();
+			}
+		});
+		
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
 		bCrudSelect.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				new LoadScuoleTask().execute();
+				Select();
 			}
 		});
 
@@ -147,7 +155,14 @@ public class SchoolCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				// DeleteRow("scuole", -1);
+				try {
+					DeleteRow(jArrayScuole.getJSONObject(spinnerScuole
+							.getSelectedItemPosition()));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setCommitRollback(true);
 			}
 		});
 
@@ -174,7 +189,12 @@ public class SchoolCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				removeAllTextIntoFields();
+				beforeChangeBasket = new Bundle();
+				beforeChangeBasket.putInt("action",
+						CrudManagerInterface.CRUD_ACTION.CREATE);
 
+				setCommitRollback(true);
 			}
 		});
 
@@ -185,7 +205,7 @@ public class SchoolCreatorActivity extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Commit();
-				setCommitRollback(false);
+//				setCommitRollback(false);
 			}
 		});
 		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
@@ -199,7 +219,9 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
+		tvScuoleCount = (TextView) findViewById(R.id.tvScuoleCount);
 
+		
 		Thread timer = new Thread() {
 
 			@Override
@@ -220,17 +242,27 @@ public class SchoolCreatorActivity extends Activity implements
 
 	protected void setCommitRollback(boolean visible) {
 		// TODO Auto-generated method stub
-		if(visible){
+		if (visible) {
 			bCrudCommit.setVisibility(Button.VISIBLE);
 			bCrudRollback.setVisibility(Button.VISIBLE);
 			tvCrudMessage.setVisibility(TextView.VISIBLE);
-			tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
+			switch(beforeChangeBasket.getInt("action")){
+			case CRUD_ACTION.UPDATE:
+				tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
+				break;
+			case CRUD_ACTION.DELETE:
+				tvCrudMessage.setText("DELETE in attesa di elaborazione...");
+				break;
+			case CRUD_ACTION.CREATE:
+				tvCrudMessage.setText("CREATE in attesa di elaborazione...");
+				break;
+			}
 
 			bCrudUpdate.setVisibility(Button.INVISIBLE);
 			bCrudCreate.setVisibility(Button.INVISIBLE);
 			bCrudDelete.setVisibility(Button.INVISIBLE);
 			bCrudSelect.setVisibility(Button.INVISIBLE);
-		}else{
+		} else {
 			bCrudCommit.setVisibility(Button.INVISIBLE);
 			bCrudRollback.setVisibility(Button.INVISIBLE);
 			tvCrudMessage.setVisibility(TextView.INVISIBLE);
@@ -391,6 +423,7 @@ public class SchoolCreatorActivity extends Activity implements
 
 				Toast.makeText(getApplicationContext(), "Scuole caricate!",
 						Toast.LENGTH_LONG).show();
+				tvScuoleCount.setText("("+spinnerScuole.getCount()+")");
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Impossibile caricare le scuole!", Toast.LENGTH_LONG)
@@ -404,7 +437,71 @@ public class SchoolCreatorActivity extends Activity implements
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			return databaseOps.updateScuola(getApplicationContext(),
-					sendBasket, returnBasket);
+					beforeChangeBasket, afterChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadScuoleTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
+	private class DeleteScuolaTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.deleteScuola(getApplicationContext(),
+					beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadScuoleTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
+	private class CreateScuolaTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.createScuola(getApplicationContext(),
+					beforeChangeBasket);
 		}
 
 		/*
@@ -437,45 +534,56 @@ public class SchoolCreatorActivity extends Activity implements
 	public boolean UpdateRow(JSONObject data) {
 		// TODO Auto-generated method stub
 		// options.putParcelable("data", (Parcelable) data);
-		sendBasket = new Bundle();
+		beforeChangeBasket = new Bundle();
 		try {
-			sendBasket.putLong("id_scuola", data.getLong("id_scuola"));
-			sendBasket.putString("tipo_scuola_acronimo",
+			beforeChangeBasket.putLong("id_scuola", data.getLong("id_scuola"));
+			beforeChangeBasket.putString("tipo_scuola_acronimo",
 					data.getString("tipo_scuola_acronimo"));
-			sendBasket.putString("nome_scuola", data.getString("nome_scuola"));
-			sendBasket.putString("indirizzo", data.getString("indirizzo"));
-			sendBasket.putString("cap", data.getString("cap"));
-			sendBasket.putString("citta", data.getString("citta"));
-			sendBasket.putString("provincia", data.getString("provincia"));
-			sendBasket.putString("telefono", data.getString("telefono"));
-			sendBasket.putString("fax", data.getString("fax"));
-			sendBasket.putString("email", data.getString("email"));
-			sendBasket.putString("web", data.getString("web"));
+			beforeChangeBasket.putString("nome_scuola",
+					data.getString("nome_scuola"));
+			beforeChangeBasket.putString("indirizzo",
+					data.getString("indirizzo"));
+			beforeChangeBasket.putString("cap", data.getString("cap"));
+			beforeChangeBasket.putString("citta", data.getString("citta"));
+			beforeChangeBasket.putString("provincia",
+					data.getString("provincia"));
+			beforeChangeBasket
+					.putString("telefono", data.getString("telefono"));
+			beforeChangeBasket.putString("fax", data.getString("fax"));
+			beforeChangeBasket.putString("email", data.getString("email"));
+			beforeChangeBasket.putString("web", data.getString("web"));
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		sendBasket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
 
-		returnBasket = new Bundle();
-		
-		returnBasket.putLong("id_scuola",sendBasket.getLong("id_scuola"));
-		returnBasket.putString("tipo_scuola_acronimo",
-				etTipoScuola.getText().toString());
-		returnBasket.putString("nome_scuola", etNomeScuola.getText().toString());
-		returnBasket.putString("indirizzo", etIndirizzo.getText().toString());
-		returnBasket.putString("cap", etCap.getText().toString());
-		returnBasket.putString("citta", etCitta.getText().toString());
-		returnBasket.putString("provincia", etProvincia.getText().toString());
-		returnBasket.putString("telefono", etTelefono.getText().toString());
-		returnBasket.putString("fax", etFax.getText().toString());
-		returnBasket.putString("email", etEmail.getText().toString());
-		returnBasket.putString("web", etWeb.getText().toString());
-		returnBasket.putInt("action", CrudManagerInterface.CRUD_ACTION.UPDATE);
+		afterChangeBasket = new Bundle();
+
+		afterChangeBasket.putLong("id_scuola",
+				beforeChangeBasket.getLong("id_scuola"));
+		afterChangeBasket.putString("tipo_scuola_acronimo", etTipoScuola
+				.getText().toString());
+		afterChangeBasket.putString("nome_scuola", etNomeScuola.getText()
+				.toString());
+		afterChangeBasket.putString("indirizzo", etIndirizzo.getText()
+				.toString());
+		afterChangeBasket.putString("cap", etCap.getText().toString());
+		afterChangeBasket.putString("citta", etCitta.getText().toString());
+		afterChangeBasket.putString("provincia", etProvincia.getText()
+				.toString());
+		afterChangeBasket
+				.putString("telefono", etTelefono.getText().toString());
+		afterChangeBasket.putString("fax", etFax.getText().toString());
+		afterChangeBasket.putString("email", etEmail.getText().toString());
+		afterChangeBasket.putString("web", etWeb.getText().toString());
+		afterChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
 		// INTENT
 		// Intent d = new Intent(this, Scuole.class);
-		// d.putExtras(sendBasket);
+		// d.putExtras(beforeChangeBasket);
 		// startActivityForResult(d, 0);
 		return true;
 	}
@@ -490,14 +598,14 @@ public class SchoolCreatorActivity extends Activity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		returnBasket = data.getExtras();
+		afterChangeBasket = data.getExtras();
 
 		if (resultCode == RESULT_OK) {
-			String s = returnBasket.getString("answer");
+			String s = afterChangeBasket.getString("answer");
 			Toast.makeText(getApplicationContext(), "" + s, Toast.LENGTH_LONG)
 					.show();
 		} else if (resultCode == RESULT_CANCELED) {
-			switch (returnBasket.getInt("action")) {
+			switch (afterChangeBasket.getInt("action")) {
 			case CRUD_ACTION.UPDATE:
 				// Toast.makeText(getApplicationContext(),
 				// "Devo fare un UPDATE ora!", Toast.LENGTH_LONG).show();
@@ -511,33 +619,100 @@ public class SchoolCreatorActivity extends Activity implements
 	@Override
 	public boolean DeleteRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket = new Bundle();
+		try {
+			beforeChangeBasket.putLong("id_scuola", data.getLong("id_scuola"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.DELETE);
+
+		return true;
 	}
 
 	@Override
 	public boolean CreateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+//		beforeChangeBasket = new Bundle();
+//		beforeChangeBasket.putInt("action",
+//				CrudManagerInterface.CRUD_ACTION.CREATE);
+
+		beforeChangeBasket.putString("tipo_scuola_acronimo", etTipoScuola
+				.getText().toString());
+		beforeChangeBasket.putString("nome_scuola", etNomeScuola.getText()
+				.toString());
+		beforeChangeBasket.putString("indirizzo", etIndirizzo.getText()
+				.toString());
+		beforeChangeBasket.putString("cap", etCap.getText().toString());
+		beforeChangeBasket.putString("citta", etCitta.getText().toString());
+		beforeChangeBasket.putString("provincia", etProvincia.getText()
+				.toString());
+		beforeChangeBasket
+				.putString("telefono", etTelefono.getText().toString());
+		beforeChangeBasket.putString("fax", etFax.getText().toString());
+		beforeChangeBasket.putString("email", etEmail.getText().toString());
+		beforeChangeBasket.putString("web", etWeb.getText().toString());
+
+		return true;
 	}
 
 	@Override
-	public boolean Select(String table, String filter) {
+	public boolean Select() {
 		// TODO Auto-generated method stub
-
-		return false;
+		new LoadScuoleTask().execute();
+		return true;
 	}
 
 	@Override
 	public void Clear() {
 		// TODO Auto-generated method stub
+		removeAllTextIntoFields();
+		etTipoScuola.setError(null);
+		etNomeScuola.setError(null);
+	}
 
+	private void removeAllTextIntoFields() {
+		// TODO Auto-generated method stub
+		etIdScuola.setText("");
+		etTipoScuola.setText("");
+		etNomeScuola.setText("");
+		etIndirizzo.setText("");
+		etCap.setText("");
+		etCitta.setText("");
+		etProvincia.setText("");
+		etTelefono.setText("");
+		etFax.setText("");
+		etEmail.setText("");
+		etWeb.setText("");
 	}
 
 	@Override
 	public void Commit() {
 		// TODO Auto-generated method stub
-		if (returnBasket.getInt("action") == CRUD_ACTION.UPDATE) {
+		switch (beforeChangeBasket.getInt("action")) {
+		case CRUD_ACTION.UPDATE:
 			new UpdateScuolaTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.DELETE:
+			new DeleteScuolaTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.CREATE:
+			if(!FieldsValidator.Is_Valid_Name(etTipoScuola)){
+				etTipoScuola.requestFocus();
+				break;
+			}
+			if(!FieldsValidator.Is_Valid_Name(etNomeScuola)){
+				etNomeScuola.requestFocus();
+				break;
+			}
+			CreateRow(null);
+			new CreateScuolaTask().execute();
+			setCommitRollback(false);
+			break;
 		}
 	}
 
@@ -566,6 +741,9 @@ public class SchoolCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		Toast.makeText(getApplicationContext(),
 				"Rollback! cambiamenti scartati!", Toast.LENGTH_SHORT).show();
+		etTipoScuola.setError(null);
+		etNomeScuola.setError(null);
+		new LoadScuoleTask().execute();
 	}
 
 	@Override
@@ -574,10 +752,17 @@ public class SchoolCreatorActivity extends Activity implements
 		if (hasFocus) {
 			Toast.makeText(getApplicationContext(),
 					"" + ((EditText) v).getHint(), Toast.LENGTH_SHORT).show();
-			theEditTextWhichHasFocus = (EditText) v;
+			setTheEditTextWhichHasFocus((EditText) v);
+			// this.theEditTextWhichHasFocus.setBackgroundColor(R.color.colorOrange);
 		}
 	}
 
-	
+	public EditText getTheEditTextWhichHasFocus() {
+		return theEditTextWhichHasFocus;
+	}
+
+	public void setTheEditTextWhichHasFocus(EditText theEditTextWhichHasFocus) {
+		this.theEditTextWhichHasFocus = theEditTextWhichHasFocus;
+	}
 
 }

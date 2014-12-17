@@ -104,7 +104,7 @@ public class FieldsValidator {
 		edt.setError(null);
 		return true;
 	}
-	
+
 	public static boolean Is_Valid_Name(EditText edt)
 			throws NumberFormatException {
 		if (edt.getText().toString().length() <= 0) {
@@ -136,8 +136,8 @@ public class FieldsValidator {
 		return true;
 	}
 
-	public static boolean Is_Valid_RetypedPassword(EditText edt, Editable editable)
-			throws NumberFormatException {
+	public static boolean Is_Valid_RetypedPassword(EditText edt,
+			Editable editable) throws NumberFormatException {
 		// TODO Auto-generated method stub
 		if (edt.getText().toString().length() <= 0) {
 			edt.setError(Html
@@ -154,7 +154,8 @@ public class FieldsValidator {
 			return false;
 		}
 		if (!edt.getText().toString().equals(editable.toString())) {
-			edt.setError(Html.fromHtml("<font color='red'>Le password sono differenti</font>"));
+			edt.setError(Html
+					.fromHtml("<font color='red'>Le password sono differenti</font>"));
 			return false;
 		}
 		edt.setError(null);
@@ -203,6 +204,65 @@ public class FieldsValidator {
 		cbPK.setError(null);
 		return true;
 
+	}
+
+	public static boolean Is_Valid_AnnoScolastico(EditText edt) {
+		// TODO Auto-generated method stub
+		if (edt.getText().toString().length() <= 0) {
+			edt.setError(Html
+					.fromHtml("<font color='red'>Informazione necessaria</font>"));
+			return false;
+		} else {
+			String[] split = edt.getText().toString().split("/");
+			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{4}")) {
+				edt.setError(Html
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['/'][0-9]{4}</font>"));
+				return false;
+			}
+		}
+
+		edt.setError(null);
+		return true;
+	}
+
+	public static boolean Is_Valid_StartDate(EditText edt) {
+		// TODO Auto-generated method stub
+		if (edt.getText().toString().length() <= 0) {
+			edt.setError(Html
+					.fromHtml("<font color='red'>Informazione necessaria</font>"));
+			return false;
+		} else {
+			String[] split = edt.getText().toString().split("-");
+			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{2}")
+					|| !split[2].matches("[0-9]{2}")) {
+				edt.setError(Html
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['-'][0-9]{2}['-'][0-9]{2}</font>"));
+				return false;
+			}
+		}
+
+		edt.setError(null);
+		return true;
+	}
+
+	public static boolean Is_Valid_EndDate(EditText edt) {
+		// TODO Auto-generated method stub
+		if (edt.getText().toString().length() <= 0) {
+			edt.setError(Html
+					.fromHtml("<font color='red'>Informazione necessaria</font>"));
+			return false;
+		} else {
+			String[] split = edt.getText().toString().split("-");
+			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{2}")
+					|| !split[2].matches("[0-9]{2}")) {
+				edt.setError(Html
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['-'][0-9]{2}['-'][0-9]{2}</font>"));
+				return false;
+			}
+		}
+
+		edt.setError(null);
+		return true;
 	}
 
 }

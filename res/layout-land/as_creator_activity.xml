@@ -11,25 +11,23 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" >
+                android:layout_height="wrap_content" >
 
                 <Spinner
                     android:id="@+id/spinnerAS"
-                    android:layout_width="198dp"
+                    android:layout_width="343dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.30" />
+                    android:layout_weight="0.35" />
 
                 <TextView
                     android:id="@+id/tvAsCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.20"
+                    android:layout_weight="0.35"
                     android:gravity="left"
                     android:padding="10dp"
                     android:text="@string/rowCounter"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/colorRed"
                     android:textSize="25sp"
                     android:textStyle="bold" />
@@ -44,7 +42,6 @@
             <include
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 layout="@layout/crud" />
 
         </LinearLayout>

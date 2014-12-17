@@ -164,16 +164,16 @@ public class DatabaseOps {
 	 * tabella.
 	 * 
 	 * @param context
-	 * @param sendBasket
-	 * @param returnBasket
+	 * @param beforeChangeBasket
+	 * @param afterChangeBasket
 	 * @return
 	 */
 	@SuppressLint("DefaultLocale")
-	public boolean updateScuola(Context context, Bundle sendBasket,
-			Bundle returnBasket) {
+	public boolean updateScuola(Context applicationContext,
+			Bundle beforeChangeBasket, Bundle afterChangeBasket) {
 		// TODO Auto-generated method stub
-		long id_scuola = sendBasket.getLong("id_scuola");
-		String url = getUrl(context);
+		long id_scuola = beforeChangeBasket.getLong("id_scuola");
+		String url = getUrl(applicationContext);
 
 		Connection conn;
 		try {
@@ -185,21 +185,26 @@ public class DatabaseOps {
 			addStartComma = false;
 
 			sql = "UPDATE `scuole` " + "SET ";
-			sql = integrateSqlWithField(sendBasket, returnBasket,
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
 					"nome_scuola", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket,
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
 					"tipo_scuola_acronimo", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "indirizzo",
-					sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "cap", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "citta", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "provincia",
-					sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "telefono",
-					sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "fax", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "email", sql);
-			sql = integrateSqlWithField(sendBasket, returnBasket, "web", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"indirizzo", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"cap", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"citta", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"provincia", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"telefono", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"fax", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"email", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"web", sql);
 
 			sql += " WHERE id_scuola=" + id_scuola;
 			int result = st.executeUpdate(sql);
@@ -222,9 +227,9 @@ public class DatabaseOps {
 	 * campi effettivamente cambiati. Onde evitare effetti indesiderati sui dati
 	 * in tabella.
 	 * 
-	 * @param sendBasket
+	 * @param beforeChangeBasket
 	 *            - Bundle inviato
-	 * @param returnBasket
+	 * @param afterChangeBasket
 	 *            - Bundle ricevuto
 	 * @param key
 	 *            - campo della tabella e chiave dei Bundles
@@ -235,14 +240,28 @@ public class DatabaseOps {
 	 *            campo alla query
 	 * @return - query integrat con il campo aggiunto
 	 */
-	private String integrateSqlWithField(Bundle sendBasket,
-			Bundle returnBasket, String key, String sql) {
+	private String integrateSqlWithField(Bundle beforeChangeBasket,
+			Bundle afterChangeBasket, String key, String sql) {
 		// TODO Auto-generated method stub
-		if (!sendBasket.getString(key).equals(returnBasket.getString(key))) {
+		if (!beforeChangeBasket.getString(key).equals(
+				afterChangeBasket.getString(key))) {
 			if (addStartComma) {
 				sql += ",";
 			}
-			sql += " " + key + "='" + returnBasket.getString(key) + "' ";
+			sql += " " + key + "='" + afterChangeBasket.getString(key) + "' ";
+			addStartComma = true;
+		}
+		return sql;
+	}
+
+	private String integrateSqlWithNumberField(Bundle beforeChangeBasket,
+			Bundle afterChangeBasket, String key, String sql) {
+		// TODO Auto-generated method stub
+		if (beforeChangeBasket.getLong(key) != afterChangeBasket.getLong(key)) {
+			if (addStartComma) {
+				sql += ",";
+			}
+			sql += " " + key + "=" + afterChangeBasket.getString(key) + " ";
 			addStartComma = true;
 		}
 		return sql;
@@ -293,17 +312,140 @@ public class DatabaseOps {
 					+ "(`nome_scuola`, `tipo_scuola_acronimo`, "
 					+ "`indirizzo`, `cap`, `citta`, "
 					+ "`provincia`, `telefono`, `fax`, `email`, `web`) "
-					+ "VALUES ("
-					+"'"+beforeChangeBasket.getString("nome_scuola")+"',"
-					+"'"+beforeChangeBasket.getString("tipo_scuola_acronimo")+"',"
-					+"'"+beforeChangeBasket.getString("indirizzo")+"',"
-					+"'"+beforeChangeBasket.getString("cap")+"',"
-					+"'"+beforeChangeBasket.getString("citta")+"',"
-					+"'"+beforeChangeBasket.getString("provincia")+"',"
-					+"'"+beforeChangeBasket.getString("telefono")+"',"
-					+"'"+beforeChangeBasket.getString("fax")+"',"
-					+"'"+beforeChangeBasket.getString("email")+"',"
-					+"'"+beforeChangeBasket.getString("web")+"'"
+					+ "VALUES (" + "'"
+					+ beforeChangeBasket.getString("nome_scuola")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("tipo_scuola_acronimo")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("indirizzo")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("cap")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("citta")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("provincia")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("telefono")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("fax")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("email")
+					+ "',"
+					+ "'"
+					+ beforeChangeBasket.getString("web") + "'" + ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean updateAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket, Bundle afterChangeBasket) {
+		// TODO Auto-generated method stub
+		long id_anno_scolastico = beforeChangeBasket
+				.getLong("id_anno_scolastico");
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			addStartComma = false;
+
+			sql = "UPDATE `anni_scolastici` " + "SET ";
+			sql = integrateSqlWithNumberField(beforeChangeBasket,
+					afterChangeBasket, "id_scuola", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"anno_scolastico", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"start_date", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"end_date", sql);
+
+			sql += " WHERE id_anno_scolastico=" + id_anno_scolastico;
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean deleteAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `anni_scolastici`"
+					+ " WHERE  id_anno_scolastico="
+					+ beforeChangeBasket.getLong("id_anno_scolastico");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean createAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "INSERT INTO `anni_scolastici`"
+					+ "( `id_scuola`, `anno_scolastico`, `start_date`, `end_date`) "
+					+ "VALUES (" + "" + beforeChangeBasket.getLong("id_scuola")
+					+ "," + "'"
+					+ beforeChangeBasket.getString("anno_scolastico") + "',"
+					+ "'" + beforeChangeBasket.getString("start_date") + "',"
+					+ "'" + beforeChangeBasket.getString("end_date") + "'"
 					+ ")";
 			int result = st.executeUpdate(sql);
 			if (result == 1) {

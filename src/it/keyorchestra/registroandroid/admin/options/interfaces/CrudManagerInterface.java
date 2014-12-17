@@ -27,4 +27,10 @@ public interface CrudManagerInterface {
 	public void Commit();
 
 	public void Rollback();
+	
+	public void removeAllTextIntoFields();
+	
+	public void setCommitRollback(boolean visible);
+	
+	public void fillFieldsWithData(int position);
 }

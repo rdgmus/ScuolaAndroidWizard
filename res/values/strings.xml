@@ -2,11 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="app_name">Scuola Wizard</string>
-    <string name="hello_world">Benvenuti al corso Android</string>
     <string name="action_settings">Settings</string>
-    <string android:id="@+id/string1" name="school" android:layout_width="wrap_content" android:layout_height="wrap_content">Rosa Luxemburg</string>
-    <string android:id="@+id/string1" name="lesson" android:layout_width="wrap_content" android:layout_height="wrap_content">Lezione 1</string>
-
     <color name="colorBlue">#0000ff</color>
     <color name="colorRed">#ff0000</color>
     <color name="colorStart">#008080</color>
@@ -14,8 +10,8 @@
     <color name="colorCyan">#1eecf4</color>
     <color name="colorGrey">#c3d3d3</color>
     <color name="colorBlack">#000000</color>
-    <color android:id="@+id/color1" name="colorNavy" android:layout_width="wrap_content" android:layout_height="wrap_content">#000084</color>
-    <color android:id="@+id/color1" name="colorListItem" android:layout_width="wrap_content" android:layout_height="wrap_content">#d1cab0</color>
+    <color name="colorNavy">#000084</color>
+    <color name="colorListItem">#d1cab0</color>
     <string name="ibBackDescription">Torna al Menu</string>
     <string name="scuolaWizardTitle">Scuola Wizard</string>
     <string name="userName">UserName</string>
@@ -23,9 +19,7 @@
     <string name="sIdScuola">Id</string>
     <string name="sScuolaAcronimo">Acronim</string>
     <string name="sNomeScuola">Scuola</string>
-    <string name="sIndirizzoScuola">Indirizzo</string>
     <string name="iconDescription">Immagine relativa a pagina wizard</string>
-    <string name="ibReloadText">Carica Scuole</string>
     <string name="updateText">Update</string>
     <string name="deleteText">Delete</string>
     <string name="createText">Create</string>
@@ -34,10 +28,6 @@
     <string name="commitText">Commit</string>
     <string name="rollbackText">Rollback</string>
     <string name="scuoleTable">Tabella Scuole</string>
-    <string name="crudMessage">Operazione in corso...</string>
-    <string name="sEmail">Email</string>
-    <string name="sWeb">WEB</string>
-    <string name="tableName">Table Name</string>
     <string name="tipoScuolaHint">Tipo Scuola (acronimo)</string>
     <string name="nomeScuolaHint">Nome Scuola</string>
     <string name="idScuolaHint">Id</string>
@@ -54,9 +44,11 @@
     <string name="annoScolasticoHint">####/####</string>
     <string name="scuolaASHint">Scuola</string>
     <string name="endDateHint">Data Fine A.S.</string>
-    <string name="startDateHint">Data Inizio AS</string>
+    <string name="startDateHint">Data Inizio A.S.</string>
     <string name="cancelButtonText">Esci</string>
     <string name="saveButtonText">Applica</string>
     <string name="cambiaText">Cambia</string>
+    <string name="crudMessage">Operazione in corso</string>
+    <string name="idScuola">Id Scuola</string>
 
 </resources>

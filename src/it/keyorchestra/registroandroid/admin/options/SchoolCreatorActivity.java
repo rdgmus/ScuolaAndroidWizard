@@ -19,6 +19,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -109,7 +110,7 @@ public class SchoolCreatorActivity extends Activity implements
 		etWeb.setOnFocusChangeListener(this);
 		// etWeb.addTextChangedListener(this);
 
-		spinnerScuole = (Spinner) findViewById(R.id.spinnerAS);
+		spinnerScuole = (Spinner) findViewById(R.id.spinnerScuole);
 
 		spinnerScuole.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -118,6 +119,10 @@ public class SchoolCreatorActivity extends Activity implements
 					int position, long id) {
 				// TODO Auto-generated method stub
 				id_scuola = (Long) view.getTag();
+				//Salva id_scuola nelle preferenze
+				Editor editor = getPrefs.edit();
+				editor.putLong("id_scuola", id_scuola);
+				editor.apply();
 				// Toast.makeText(getApplicationContext(),
 				// "id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
@@ -219,7 +224,7 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
-		tvScuoleCount = (TextView) findViewById(R.id.tvAsCount);
+		tvScuoleCount = (TextView) findViewById(R.id.tvScuoleCount);
 
 		
 		Thread timer = new Thread() {
@@ -240,7 +245,8 @@ public class SchoolCreatorActivity extends Activity implements
 		timer.start();
 	}
 
-	protected void setCommitRollback(boolean visible) {
+	@Override
+	public void setCommitRollback(boolean visible) {
 		// TODO Auto-generated method stub
 		if (visible) {
 			bCrudCommit.setVisibility(Button.VISIBLE);
@@ -274,7 +280,8 @@ public class SchoolCreatorActivity extends Activity implements
 		}
 	}
 
-	protected void fillFieldsWithData(int position) {
+	@Override
+	public void fillFieldsWithData(int position) {
 		// TODO Auto-generated method stub
 		try {
 			JSONObject jsonObiect = jArrayScuole.getJSONObject(position);
@@ -294,6 +301,7 @@ public class SchoolCreatorActivity extends Activity implements
 			e.printStackTrace();
 		}
 	}
+
 
 	private boolean CaricaArrayScuole() {
 		// TODO Auto-generated method stub
@@ -417,9 +425,6 @@ public class SchoolCreatorActivity extends Activity implements
 
 				// Apply the adapter to the spinner
 				spinnerScuole.setAdapter(scuoleAdapter);
-
-				// spinnerScuole.setSelection(getScuolaIdPositionIntoSpinner(
-				// spinnerScuole, id_scuola));
 
 				Toast.makeText(getApplicationContext(), "Scuole caricate!",
 						Toast.LENGTH_LONG).show();
@@ -581,10 +586,6 @@ public class SchoolCreatorActivity extends Activity implements
 		afterChangeBasket.putString("web", etWeb.getText().toString());
 		afterChangeBasket.putInt("action",
 				CrudManagerInterface.CRUD_ACTION.UPDATE);
-		// INTENT
-		// Intent d = new Intent(this, Scuole.class);
-		// d.putExtras(beforeChangeBasket);
-		// startActivityForResult(d, 0);
 		return true;
 	}
 
@@ -635,9 +636,6 @@ public class SchoolCreatorActivity extends Activity implements
 	@Override
 	public boolean CreateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-//		beforeChangeBasket = new Bundle();
-//		beforeChangeBasket.putInt("action",
-//				CrudManagerInterface.CRUD_ACTION.CREATE);
 
 		beforeChangeBasket.putString("tipo_scuola_acronimo", etTipoScuola
 				.getText().toString());
@@ -673,7 +671,8 @@ public class SchoolCreatorActivity extends Activity implements
 		etNomeScuola.setError(null);
 	}
 
-	private void removeAllTextIntoFields() {
+	@Override
+	public void removeAllTextIntoFields() {
 		// TODO Auto-generated method stub
 		etIdScuola.setText("");
 		etTipoScuola.setText("");

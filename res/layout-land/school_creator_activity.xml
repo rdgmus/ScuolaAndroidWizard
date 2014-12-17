@@ -11,17 +11,16 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" >
+                android:layout_height="wrap_content" >
 
                 <Spinner
-                    android:id="@+id/spinnerAS"
+                    android:id="@+id/spinnerScuole"
                     android:layout_width="198dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.30" />
+                    android:layout_weight="0.35" />
 
                 <TextView
-                    android:id="@+id/tvAsCount"
+                    android:id="@+id/tvScuoleCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -44,7 +43,6 @@
             <include
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 layout="@layout/crud" />
 
         </LinearLayout>

@@ -27,8 +27,6 @@
             android:layout_width="119dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:hint="@string/annoScolasticoHint" />
 
         <EditText
@@ -40,6 +38,7 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:hint="@string/scuolaASHint" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -52,8 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:hint="@string/startDateHint"
             android:inputType="date" />
 
@@ -63,7 +60,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:text="@string/cambiaText" />
+            android:text="@string/cambiaText"
+            android:visibility="visible" />
 
         <EditText
             android:id="@+id/etEndDate"
@@ -71,8 +69,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:hint="@string/endDateHint"
             android:inputType="date" />
 
@@ -81,7 +77,8 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cambiaText" />
+            android:text="@string/cambiaText"
+            android:visibility="visible" />
 
     </LinearLayout>
 

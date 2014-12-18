@@ -56,5 +56,8 @@
     <string name="periodoStringHint">PERIODO</string>
     <string name="startPeriodHint">Inizio Periodo</string>
     <string name="endPeriodHint">Fine Periodo</string>
+    <string name="idPeriodoText">Id Per.</string>
+    <string name="periodoHint">PERIODO</string>
+    <string name="timeSessionDescription">Periodo Scolastico</string>
 
 </resources>

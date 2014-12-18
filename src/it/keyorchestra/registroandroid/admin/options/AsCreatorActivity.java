@@ -72,6 +72,15 @@ public class AsCreatorActivity extends Activity implements
 	private JSONArray jArrayAnniScolastici;
 	Spinner spinnerAS;
 	long id_anno_scolastico;
+	long id_scuola;
+	
+	/**
+	 * @return the id_scuola
+	 */
+	public long getId_scuola() {
+		id_scuola = getPrefs.getLong("id_scuola", -1);
+		return id_scuola;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -88,6 +97,8 @@ public class AsCreatorActivity extends Activity implements
 
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
+		
+		getId_scuola();
 
 		tvAsCount = (TextView) findViewById(R.id.tvRecordsCount);
 
@@ -329,7 +340,7 @@ public class AsCreatorActivity extends Activity implements
 	private class GetScuolaDescriptionTask extends AsyncTask<Void, Void, String> {
 		@Override
 		protected String doInBackground(Void... params) {
-			long id_scuola = getPrefs.getLong("id_scuola", -1);
+			
 			etScuola.setTag(id_scuola);
 			return 		databaseOps.getScuolaDescription(getApplicationContext(),id_scuola);
 		}
@@ -353,7 +364,7 @@ public class AsCreatorActivity extends Activity implements
 		anniScolasticiArray = new ArrayList<String>();
 		String retrieveTableData = getPrefs
 				.getString("retrieveTableData", null);
-		long id_scuola = getPrefs.getLong("id_scuola", -1);
+		
 
 		String ip = getDatabaseIpFromPreferences();
 
@@ -514,9 +525,6 @@ public class AsCreatorActivity extends Activity implements
 		if (hasFocus) {
 			Toast.makeText(getApplicationContext(),
 					"" + ((EditText) v).getHint(), Toast.LENGTH_SHORT).show();
-
-			// this.theEditTextWhichHasFocus.setBackgroundColor(R.color.colorOrange);
-
 		}
 	}
 
@@ -618,6 +626,7 @@ public class AsCreatorActivity extends Activity implements
 	@Override
 	public boolean Select() {
 		// TODO Auto-generated method stub
+		getId_scuola();
 		new LoadAnniScolasticiTask().execute();
 		return true;
 	}
@@ -788,13 +797,14 @@ public class AsCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		getId_scuola();
 		if(jArrayAnniScolastici==null)
 			return;
 		// SE LA SCUOLA SELEZIONATA E' CAMBIATA RICARICO FLI ANNI SCOLASTICI
 		if (jArrayAnniScolastici.length() > 0) {
 			JSONObject jsonObject;
 			try {
-				long id_scuola = getPrefs.getLong("id_scuola", -1);
+				
 				jsonObject = jArrayAnniScolastici.getJSONObject(0);
 				long oldId = jsonObject.getLong("id_scuola");
 				if (id_scuola != oldId) {

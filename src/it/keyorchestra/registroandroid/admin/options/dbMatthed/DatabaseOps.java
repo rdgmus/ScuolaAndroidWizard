@@ -499,4 +499,33 @@ public class DatabaseOps {
 		}
 		return description;
 	}
+	public String getAnnoScolasticoDescription(Context applicationContext,
+			long id_anno_scolastico) {
+		// TODO Auto-generated method stub
+		String description = "";
+		
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "SELECT `id_anno_scolastico`, `anno_scolastico` FROM `anni_scolastici` WHERE `id_anno_scolastico`="
+					+ id_anno_scolastico;
+			ResultSet result = st.executeQuery(sql);
+			while (result.next()) {
+				description += "["+result.getLong("id_anno_scolastico")+"] ";
+				description += result.getString("anno_scolastico");				
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return description;
+	}
 }

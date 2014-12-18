@@ -623,6 +623,20 @@ public class AsCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		switch (beforeChangeBasket.getInt("action")) {
 		case CRUD_ACTION.UPDATE:
+			if (!FieldsValidator.Is_Valid_AnnoScolastico(etAnnoScolastico)) {
+				etAnnoScolastico.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_StartDate(etStartDate)) {
+				etStartDate.setFocusable(true);
+				etStartDate.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_EndDate(etEndDate)) {
+				etEndDate.setFocusable(true);
+				etEndDate.requestFocus();
+				break;
+			}
 			new UpdateAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
@@ -789,22 +803,14 @@ public class AsCreatorActivity extends Activity implements
 					.getJSONObject(position);
 			etIdAs.setText(jsonObiect.getString("id_anno_scolastico"));
 			etAnnoScolastico.setText(jsonObiect.getString("anno_scolastico"));
-			etScuola.setText(jsonObiect.getString("tipo_scuola_acronimo") + "-"
+			
+			etScuola.setText("["+jsonObiect.getLong("id_scuola")+"] "+
+					jsonObiect.getString("tipo_scuola_acronimo") + " - "
 					+ jsonObiect.getString("nome_scuola"));
 			etScuola.setTag(jsonObiect.getLong("id_scuola"));
+			
 			etStartDate.setText(jsonObiect.getString("start_date"));
 			etEndDate.setText(jsonObiect.getString("end_date"));
-
-			// Calendar c = Calendar.getInstance();
-			// mYear = c.get(Calendar.YEAR);
-			// mMonth = c.get(Calendar.MONTH);
-			// mDay = c.get(Calendar.DAY_OF_MONTH);
-			//
-			// Date startDate = new Date();
-			//
-			// Class<? extends List> c = l.getClass();
-			// etStartDate.setText(jsonObiect.getClass());
-
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

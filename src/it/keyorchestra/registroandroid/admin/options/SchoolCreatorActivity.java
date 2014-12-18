@@ -692,6 +692,14 @@ public class SchoolCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		switch (beforeChangeBasket.getInt("action")) {
 		case CRUD_ACTION.UPDATE:
+			if(!FieldsValidator.Is_Valid_Name(etTipoScuola)){
+				etTipoScuola.requestFocus();
+				break;
+			}
+			if(!FieldsValidator.Is_Valid_Name(etNomeScuola)){
+				etNomeScuola.requestFocus();
+				break;
+			}
 			new UpdateScuolaTask().execute();
 			setCommitRollback(false);
 			break;

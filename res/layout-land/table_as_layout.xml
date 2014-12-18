@@ -17,7 +17,9 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:hint="@string/idAsHint"
-            android:inputType="number" >
+            android:inputType="number"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold" >
 
             <requestFocus />
         </EditText>
@@ -37,7 +39,9 @@
             android:ems="10"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:hint="@string/scuolaASHint" />
+            android:hint="@string/scuolaASHint"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -61,6 +65,8 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:text="@string/cambiaText"
+            android:textColor="@color/colorNavy"
+            android:textStyle="bold"
             android:visibility="visible" />
 
         <EditText
@@ -78,6 +84,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cambiaText"
+            android:textColor="@color/colorNavy"
+            android:textStyle="bold"
             android:visibility="visible" />
 
     </LinearLayout>

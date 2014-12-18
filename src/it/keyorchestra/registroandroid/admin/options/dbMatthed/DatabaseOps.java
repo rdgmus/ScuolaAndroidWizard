@@ -461,4 +461,42 @@ public class DatabaseOps {
 		}
 		return false;
 	}
+
+	/**
+	 * Descrizione della scuola per anni scolastici nel campo
+	 * foreign key id_scuola
+	 * @param applicationContext
+	 * @param id_scuola
+	 * @return
+	 */
+	public String getScuolaDescription(Context applicationContext,
+			long id_scuola) {
+		// TODO Auto-generated method stub
+		String description = "";
+		
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "SELECT `id_scuola`,`tipo_scuola_acronimo`,`nome_scuola` FROM `scuole` WHERE `id_scuola`="
+					+ id_scuola;
+			ResultSet result = st.executeQuery(sql);
+			while (result.next()) {
+				description += "["+result.getLong("id_scuola")+"] ";
+				description += result.getString("tipo_scuola_acronimo")+" - ";
+				description += result.getString("nome_scuola");				
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return description;
+	}
 }

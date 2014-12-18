@@ -294,6 +294,10 @@ public class AsCreatorActivity extends Activity implements
 		displayEndDate();
 
 		etAnnoScolastico.setText(mYear + "/" + (mYear + 1));
+		
+		long id_scuola = getPrefs.getLong("id_scuola", -1);
+		etScuola.setTag(id_scuola);
+		new GetScuolaDescriptionTask().execute();
 	}
 
 	private class LoadAnniScolasticiTask extends AsyncTask<Void, Void, Boolean> {
@@ -326,11 +330,35 @@ public class AsCreatorActivity extends Activity implements
 				Toast.makeText(getApplicationContext(),
 						"Anni Scolastici caricati!", Toast.LENGTH_LONG).show();
 				tvAsCount.setText("(" + spinnerAS.getCount() + ")");
+				if(spinnerAS.getCount() ==0){
+					inizializzaNuovoAnnoScolastico();
+				}
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Impossibile caricare gli anni scolastici!",
 						Toast.LENGTH_LONG).show();
 			}
+		}
+
+	}
+
+	private class GetScuolaDescriptionTask extends AsyncTask<Void, Void, String> {
+		@Override
+		protected String doInBackground(Void... params) {
+			long id_scuola = getPrefs.getLong("id_scuola", -1);
+			return 		databaseOps.getScuolaDescription(getApplicationContext(),id_scuola);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			etScuola.setText(result);			
 		}
 
 	}

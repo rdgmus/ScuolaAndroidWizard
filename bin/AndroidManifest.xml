@@ -38,6 +38,8 @@
             android:name="it.keyorchestra.registroandroid.admin.options.util.MyCalendar"
             android:theme="@style/MyTheme" >
         </activity>
+        <activity android:name="it.keyorchestra.registroandroid.admin.options.PeriodiAsCreatorActivity" >
+        </activity>
         <activity android:name="it.keyorchestra.registroandroid.admin.options.AsCreatorActivity" >
         </activity>
         <activity android:name="it.keyorchestra.registroandroid.admin.options.SchoolCreatorActivity" >

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <string name="app_name">Scuola Wizard</string>
+    <string name="app_name">Scuola Wizard - Registro Scolastico Android v0.9-alpha</string>
     <string name="action_settings">Settings</string>
     <color name="colorBlue">#0000ff</color>
     <color name="colorRed">#ff0000</color>
@@ -50,5 +50,11 @@
     <string name="cambiaText">Cambia</string>
     <string name="crudMessage">Operazione in corso</string>
     <string name="idScuola">Id Scuola</string>
+    <string name="idPeriodoHint">Id Per.</string>
+    <string name="scuolaFKHint">Scuola</string>
+    <string name="asFkHint">A.S.</string>
+    <string name="periodoStringHint">PERIODO</string>
+    <string name="startPeriodHint">Inizio Periodo</string>
+    <string name="endPeriodHint">Fine Periodo</string>
 
 </resources>

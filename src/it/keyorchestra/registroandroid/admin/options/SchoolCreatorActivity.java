@@ -110,7 +110,7 @@ public class SchoolCreatorActivity extends Activity implements
 		etWeb.setOnFocusChangeListener(this);
 		// etWeb.addTextChangedListener(this);
 
-		spinnerScuole = (Spinner) findViewById(R.id.spinnerScuole);
+		spinnerScuole = (Spinner) findViewById(R.id.spinnerRecords);
 
 		spinnerScuole.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -120,9 +120,7 @@ public class SchoolCreatorActivity extends Activity implements
 				// TODO Auto-generated method stub
 				id_scuola = (Long) view.getTag();
 				//Salva id_scuola nelle preferenze
-				Editor editor = getPrefs.edit();
-				editor.putLong("id_scuola", id_scuola);
-				editor.apply();
+				saveTableIdIntoPreferences("id_scuola", id_scuola);
 				// Toast.makeText(getApplicationContext(),
 				// "id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
@@ -195,6 +193,7 @@ public class SchoolCreatorActivity extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				removeAllTextIntoFields();
+				inizializzaNuovoRecord();
 				beforeChangeBasket = new Bundle();
 				beforeChangeBasket.putInt("action",
 						CrudManagerInterface.CRUD_ACTION.CREATE);
@@ -224,7 +223,7 @@ public class SchoolCreatorActivity extends Activity implements
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
-		tvScuoleCount = (TextView) findViewById(R.id.tvScuoleCount);
+		tvScuoleCount = (TextView) findViewById(R.id.tvRecordsCount);
 
 		
 		Thread timer = new Thread() {
@@ -770,6 +769,21 @@ public class SchoolCreatorActivity extends Activity implements
 
 	public void setTheEditTextWhichHasFocus(EditText theEditTextWhichHasFocus) {
 		this.theEditTextWhichHasFocus = theEditTextWhichHasFocus;
+	}
+
+	@Override
+	public void saveTableIdIntoPreferences(String field_name, long table_id) {
+		// TODO Auto-generated method stub
+		Editor editor = getPrefs.edit();
+		editor.putLong(field_name, table_id);
+		editor.apply();
+	}
+
+	@Override
+	public void inizializzaNuovoRecord() {
+		// TODO Auto-generated method stub
+		//NON FA NULLA IN QUESTA TABELLA PERCHE' PULIRE I CAMPI 
+		//E' SUFFICIENTE, NON VI SONO FOREIGN KEY, ESSENDO LA TABELLA BASE
 	}
 
 }

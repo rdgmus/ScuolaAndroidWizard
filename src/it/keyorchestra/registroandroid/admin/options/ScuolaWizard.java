@@ -96,7 +96,7 @@ public class ScuolaWizard extends TabActivity implements
 
 		tab3.setIndicator("Periodi A.S.",
 				getResources().getDrawable(R.drawable.time_session128));
-		tab3.setContent(new Intent(this, Tab3Activity.class));
+		tab3.setContent(new Intent(this, PeriodiAsCreatorActivity.class));
 
 		/** Add the tabs to the TabHost to display. */
 		tabHost.addTab(tab1);

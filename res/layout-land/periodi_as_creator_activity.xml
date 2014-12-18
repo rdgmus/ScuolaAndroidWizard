@@ -12,12 +12,23 @@
             <include
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 layout="@layout/spinner_counter" />
 
             <include
                 android:layout_width="wrap_content"
-                android:layout_height="158dp"
-                layout="@layout/table_as_layout" />
+                android:layout_height="188dp"
+                layout="@layout/table_periodi_as_layout" />
+
+            <ProgressBar
+                android:id="@+id/progressBarCoperturaAs"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100"
+                android:padding="5dp"
+                android:progress="0" />
 
             <include
                 android:layout_width="wrap_content"

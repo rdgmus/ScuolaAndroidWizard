@@ -6,34 +6,41 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/etIdAs"
-            android:layout_width="74dp"
+            android:id="@+id/etIdPeriodo"
+            android:layout_width="105dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/idAsHint"
+            android:hint="@string/idPeriodoHint"
             android:inputType="number"
             android:textColor="@color/colorRed"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etIdScuolaFK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.80"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/scuolaFKHint"
+            android:inputType="number"
+            android:textColor="@color/colorOrange"
             android:textStyle="bold" >
 
             <requestFocus />
         </EditText>
 
         <EditText
-            android:id="@+id/etAnnoScolastico"
-            android:layout_width="119dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/annoScolasticoHint" />
-
-        <EditText
-            android:id="@+id/etScuola"
+            android:id="@+id/etIdAnnoScolasticoFK"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -41,56 +48,73 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/scuolaASHint"
+            android:hint="@string/asFkHint"
+            android:inputType="number"
             android:textColor="@color/colorOrange"
             android:textStyle="bold" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/etStartDate"
-            android:layout_width="wrap_content"
+            android:id="@+id/etPeriodoString"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.87"
             android:ems="10"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/startDateHint"
-            android:inputType="date" />
+            android:hint="@string/periodoStringHint" />
 
-        <Button
-            android:id="@+id/bChangeStartDate"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/spinnerPeriods"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:text="@string/cambiaText"
-            android:textColor="@color/colorNavy"
-            android:textStyle="bold"
-            android:visibility="visible" />
+            android:layout_weight="1.87"
+            android:entries="@array/PeriodsArray" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/etEndDate"
+            android:id="@+id/etStartPeriod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:gravity="center_vertical|center_horizontal"
-            android:hint="@string/endDateHint"
+            android:hint="@string/startPeriodHint"
             android:inputType="date" />
 
         <Button
-            android:id="@+id/bChangeEndDate"
+            android:id="@+id/bChangeStartPeriod"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cambiaText"
-            android:textColor="@color/colorNavy"
-            android:textStyle="bold"
-            android:visibility="visible" />
+            android:text="@string/cambiaText" />
+
+        <EditText
+            android:id="@+id/etEndPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/endPeriodHint"
+            android:inputType="date" />
+
+        <Button
+            android:id="@+id/bChangeEndPeriod"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cambiaText" />
 
     </LinearLayout>
 

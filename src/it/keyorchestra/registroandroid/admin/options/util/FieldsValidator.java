@@ -213,10 +213,9 @@ public class FieldsValidator {
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
 		} else {
-			String[] split = edt.getText().toString().split("/");
-			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{4}")) {
+			if (!edt.getText().toString().matches("[0-9]{4}\\/[0-9]{4}")) {
 				edt.setError(Html
-						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['/'][0-9]{4}</font>"));
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}\\/[0-9]{4}</font>"));
 				return false;
 			}
 		}
@@ -232,13 +231,12 @@ public class FieldsValidator {
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
 		} else {
-			String[] split = edt.getText().toString().split("-");
-			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{2}")
-					|| !split[2].matches("[0-9]{2}")) {
+			if (!edt.getText().toString().matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
 				edt.setError(Html
-						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['-'][0-9]{2}['-'][0-9]{2}</font>"));
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}-[0-9]{2}-[0-9]{2}</font>"));
 				return false;
 			}
+
 		}
 
 		edt.setError(null);
@@ -252,13 +250,12 @@ public class FieldsValidator {
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
 		} else {
-			String[] split = edt.getText().toString().split("-");
-			if (!split[0].matches("[0-9]{4}") || !split[1].matches("[0-9]{2}")
-					|| !split[2].matches("[0-9]{2}")) {
+			if (!edt.getText().toString().matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
 				edt.setError(Html
-						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}['-'][0-9]{2}['-'][0-9]{2}</font>"));
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}-[0-9]{2}-[0-9]{2}</font>"));
 				return false;
 			}
+
 		}
 
 		edt.setError(null);

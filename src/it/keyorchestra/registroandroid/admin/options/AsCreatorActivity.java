@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -88,7 +89,7 @@ public class AsCreatorActivity extends Activity implements
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 
-		tvAsCount = (TextView) findViewById(R.id.tvAsCount);
+		tvAsCount = (TextView) findViewById(R.id.tvRecordsCount);
 
 		bChangeStartDate = (Button) findViewById(R.id.bChangeStartDate);
 		bChangeStartDate.setOnClickListener(new OnClickListener() {
@@ -195,7 +196,7 @@ public class AsCreatorActivity extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				removeAllTextIntoFields();
-				inizializzaNuovoAnnoScolastico();
+				inizializzaNuovoRecord();
 				beforeChangeBasket = new Bundle();
 				beforeChangeBasket.putInt("action",
 						CrudManagerInterface.CRUD_ACTION.CREATE);
@@ -225,7 +226,7 @@ public class AsCreatorActivity extends Activity implements
 			}
 		});
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
-		tvAsCount = (TextView) findViewById(R.id.tvAsCount);
+		tvAsCount = (TextView) findViewById(R.id.tvRecordsCount);
 
 		// get the current date and time
 		final Calendar c = Calendar.getInstance();
@@ -241,7 +242,7 @@ public class AsCreatorActivity extends Activity implements
 		// display the current time
 		// displayTime();
 
-		spinnerAS = (Spinner) findViewById(R.id.spinnerAS);
+		spinnerAS = (Spinner) findViewById(R.id.spinnerRecords);
 		spinnerAS.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -249,6 +250,9 @@ public class AsCreatorActivity extends Activity implements
 					int position, long id) {
 				// TODO Auto-generated method stub
 				id_anno_scolastico = (Long) view.getTag();
+				//Salva id_anno_scolastico nelle preferenze
+				saveTableIdIntoPreferences("id_anno_scolastico", id_anno_scolastico);
+				
 				Toast.makeText(getApplicationContext(),
 						"id_anno_scolastico:" + id_anno_scolastico,
 						Toast.LENGTH_SHORT).show();
@@ -280,27 +284,7 @@ public class AsCreatorActivity extends Activity implements
 		timer.start();
 	}
 
-	protected void inizializzaNuovoAnnoScolastico() {
-		// TODO Auto-generated method stub
-		final Calendar c = Calendar.getInstance();
-		mYear = c.get(Calendar.YEAR);
-		mMonth = c.get(Calendar.MONTH);
-		mDay = c.get(Calendar.DAY_OF_MONTH);
-		mHour = c.get(Calendar.HOUR_OF_DAY);
-		mMinute = c.get(Calendar.MINUTE);
-
-		// display the current date
-		displayStartDate();
-		displayEndDate();
-
-		etAnnoScolastico.setText(mYear + "/" + (mYear + 1));
-		
-		long id_scuola = getPrefs.getLong("id_scuola", -1);
-		etScuola.setTag(id_scuola);
-		new GetScuolaDescriptionTask().execute();
-	}
-
-	private class LoadAnniScolasticiTask extends AsyncTask<Void, Void, Boolean> {
+		private class LoadAnniScolasticiTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			return CaricaArrayAnniScolastici();
@@ -331,7 +315,7 @@ public class AsCreatorActivity extends Activity implements
 						"Anni Scolastici caricati!", Toast.LENGTH_LONG).show();
 				tvAsCount.setText("(" + spinnerAS.getCount() + ")");
 				if(spinnerAS.getCount() ==0){
-					inizializzaNuovoAnnoScolastico();
+					inizializzaNuovoRecord();
 				}
 			} else {
 				Toast.makeText(getApplicationContext(),
@@ -346,6 +330,7 @@ public class AsCreatorActivity extends Activity implements
 		@Override
 		protected String doInBackground(Void... params) {
 			long id_scuola = getPrefs.getLong("id_scuola", -1);
+			etScuola.setTag(id_scuola);
 			return 		databaseOps.getScuolaDescription(getApplicationContext(),id_scuola);
 		}
 
@@ -942,6 +927,33 @@ public class AsCreatorActivity extends Activity implements
 			}
 		}
 
+	}
+
+	@Override
+	public void saveTableIdIntoPreferences(String field_name, long table_id) {
+		// TODO Auto-generated method stub
+		Editor editor = getPrefs.edit();
+		editor.putLong(field_name, table_id);
+		editor.apply();
+	}
+
+	@Override
+	public void inizializzaNuovoRecord() {
+		// TODO Auto-generated method stub
+		final Calendar c = Calendar.getInstance();
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		mHour = c.get(Calendar.HOUR_OF_DAY);
+		mMinute = c.get(Calendar.MINUTE);
+
+		// display the current date
+		displayStartDate();
+		displayEndDate();
+
+		etAnnoScolastico.setText(mYear + "/" + (mYear + 1));
+		
+		new GetScuolaDescriptionTask().execute();
 	}
 
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.Format;
+import java.util.Calendar;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -463,8 +464,9 @@ public class DatabaseOps {
 	}
 
 	/**
-	 * Descrizione della scuola per anni scolastici nel campo
-	 * foreign key id_scuola
+	 * Descrizione della scuola per anni scolastici nel campo foreign key
+	 * id_scuola
+	 * 
 	 * @param applicationContext
 	 * @param id_scuola
 	 * @return
@@ -473,7 +475,7 @@ public class DatabaseOps {
 			long id_scuola) {
 		// TODO Auto-generated method stub
 		String description = "";
-		
+
 		String url = getUrl(applicationContext);
 
 		Connection conn;
@@ -487,9 +489,9 @@ public class DatabaseOps {
 					+ id_scuola;
 			ResultSet result = st.executeQuery(sql);
 			while (result.next()) {
-				description += "["+result.getLong("id_scuola")+"] ";
-				description += result.getString("tipo_scuola_acronimo")+" - ";
-				description += result.getString("nome_scuola");				
+				description += "[" + result.getLong("id_scuola") + "] ";
+				description += result.getString("tipo_scuola_acronimo") + " - ";
+				description += result.getString("nome_scuola");
 			}
 
 			st.close();
@@ -499,11 +501,12 @@ public class DatabaseOps {
 		}
 		return description;
 	}
+
 	public String getAnnoScolasticoDescription(Context applicationContext,
 			long id_anno_scolastico) {
 		// TODO Auto-generated method stub
 		String description = "";
-		
+
 		String url = getUrl(applicationContext);
 
 		Connection conn;
@@ -517,8 +520,9 @@ public class DatabaseOps {
 					+ id_anno_scolastico;
 			ResultSet result = st.executeQuery(sql);
 			while (result.next()) {
-				description += "["+result.getLong("id_anno_scolastico")+"] ";
-				description += result.getString("anno_scolastico");				
+				description += "[" + result.getLong("id_anno_scolastico")
+						+ "] ";
+				description += result.getString("anno_scolastico");
 			}
 
 			st.close();
@@ -527,5 +531,115 @@ public class DatabaseOps {
 			e.printStackTrace();
 		}
 		return description;
+	}
+
+	/**
+	 * Ottiene la data da impostare come inizio del periodo dell'anno scolastico
+	 * indicato. Se non vi sono periodi ritorna la data di inizio A.S.
+	 * Altrimenti la data MAX('end_date') dei periodi presenti in tabella.
+	 * 
+	 * @param applicationContext
+	 * @param id_anno_scolastico
+	 * @return
+	 */
+	public String getNextPeriodStartDateAsString(Context applicationContext,
+			long id_anno_scolastico) {
+		// TODO Auto-generated method stub
+		String startDateAsString = "";
+
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "SELECT COUNT(*) AS count FROM `periodi_anno_scolastico` WHERE `id_anno_scolastico`="
+					+ id_anno_scolastico;
+
+			ResultSet result = st.executeQuery(sql);
+			int count = 0;
+			while (result.next()) {
+				count = result.getInt("count");
+			}
+
+			if (count > 0) {
+				sql = "SELECT MAX(`end_date`) AS max_date FROM `periodi_anno_scolastico` WHERE `id_anno_scolastico`="
+						+ id_anno_scolastico;
+
+				result = st.executeQuery(sql);
+				while (result.next()) {
+					startDateAsString = result.getString("max_date");
+					String[] split = startDateAsString.split("-");
+					int year = Integer.valueOf(split[0]);
+					int month = Integer.valueOf(split[1]);
+					int day = Integer.valueOf(split[2]);
+					Calendar c = Calendar.getInstance();
+					c.set(year, month, day);
+					c.add(Calendar.DAY_OF_MONTH, 1);
+					startDateAsString = c.get(Calendar.YEAR) + "-"
+							+ pad(c.get(Calendar.MONTH)) + "-"
+							+ pad(c.get(Calendar.DAY_OF_MONTH));
+				}
+			}else{
+				startDateAsString = getPrefs.getString("start_date", "");
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return startDateAsString;
+	}
+
+	public String pad(int c) {
+		if (c >= 10)
+			return String.valueOf(c);
+		else
+			return "0" + String.valueOf(c);
+	}
+
+	/**
+	 * Crea un record PERIODO ANNO SCOLASTICO
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean createPeriodoAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "INSERT INTO `periodi_anno_scolastico`"
+					+ "( `id_scuola`, `id_anno_scolastico`, `periodo`, `start_date`, `end_date`) "
+					+ "VALUES (" + "" + beforeChangeBasket.getLong("id_scuola")
+					+ "," + beforeChangeBasket.getLong("id_anno_scolastico")
+					+ "," + "'" + beforeChangeBasket.getString("periodo")
+					+ "'," + "'" + beforeChangeBasket.getString("start_date")
+					+ "'," + "'" + beforeChangeBasket.getString("end_date")
+					+ "'" + ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

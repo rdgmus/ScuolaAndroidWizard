@@ -417,11 +417,13 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
+
 			mYear = year;
 			mMonth = monthOfYear;
 			mDay = dayOfMonth;
 
 			displayStartDate();
+			calculateEndDate();
 		}
 	};
 
@@ -430,6 +432,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
+
 			mYear = year;
 			mMonth = monthOfYear;
 			mDay = dayOfMonth;
@@ -581,7 +584,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				break;
 			}
 			CreateRow(null);
-			// new CreatePeriodoAnnoScolasticoTask().execute();
+			new CreatePeriodoAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
 		}
@@ -688,17 +691,19 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
 		calculateStartDate();
-		spinnerPeriods.setSelection(0);// Seleziona BIMESTRE
-		etPeriodoString.setText((CharSequence) spinnerPeriods
-				.getItemAtPosition(0));
-		calculateEndDate();
-
+		// spinnerPeriods.setSelection(0);// Seleziona BIMESTRE
+		// etPeriodoString.setText((CharSequence) spinnerPeriods
+		// .getItemAtPosition(0));
+		// calculateEndDate();
+		//
 		new GetScuolaDescriptionTask().execute();
 		new GetAnnoScolasticoDescriptionTask().execute();
 	}
 
 	private void calculateEndDate() {
 		// TODO Auto-generated method stub
+		// QUI COSTRUISCE UN OGGETTO Calendar
+		// con la data di inizio periodo mostrata nell'EditText
 		String start_date = etStartPeriod.getText().toString();
 		if (start_date.length() == 0)
 			return;
@@ -709,6 +714,16 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		Calendar c = Calendar.getInstance();
 		c.set(mYear, mMonth, mDay);
+
+		// Qui la data di fine anno scolastico dalle preferenze
+		String fineAS = getPrefs.getString("end_date", "");
+
+		split = fineAS.split("-");
+		int year = Integer.valueOf(split[0]);
+		int month = Integer.valueOf(split[1]) - 1;
+		int day = Integer.valueOf(split[2]);
+		Calendar d = Calendar.getInstance();
+		d.set(year, month, day);
 
 		switch (spinnerPeriods.getSelectedItemPosition()) {
 		case BIMESTRE:
@@ -727,23 +742,23 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			c.add(Calendar.MONTH, 6);
 			break;
 		}
-		mYear = c.get(Calendar.YEAR);
-		mMonth = c.get(Calendar.MONTH);
-		mDay = c.get(Calendar.DAY_OF_MONTH);
+		// TEST SE DATA FINALE SUPERA FINE ANNO SCOLASTICO
+		if (c.after(d)) {
+			mYear = d.get(Calendar.YEAR);
+			mMonth = d.get(Calendar.MONTH);
+			mDay = d.get(Calendar.DAY_OF_MONTH);
+		} else {
+
+			mYear = c.get(Calendar.YEAR);
+			mMonth = c.get(Calendar.MONTH);
+			mDay = c.get(Calendar.DAY_OF_MONTH);
+		}
 		displayEndDate();
 	}
 
 	private void calculateStartDate() {
 		// TODO Auto-generated method stub
-		now();
-		// display the current date
-		String start_date = getPrefs.getString("start_date", mYear + "-"
-				+ pad(mMonth) + "-" + pad(mDay));
-		String[] split = start_date.split("-");
-		mYear = Integer.valueOf(split[0]);
-		mMonth = Integer.valueOf(split[1]) - 1;
-		mDay = Integer.valueOf(split[2]);
-		displayStartDate();
+		new CalculateStartDateTask().execute();
 	}
 
 	@Override
@@ -807,6 +822,32 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			etIdScuolaFK.setText(result);
+		}
+
+	}
+
+	private class CreatePeriodoAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+
+			etIdScuolaFK.setTag(id_scuola);
+			return databaseOps.createPeriodoAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if (result) {
+				new LoadPeriodiAnnoScolasticoTask().execute();
+			}
 		}
 
 	}
@@ -877,6 +918,36 @@ public class PeriodiAsCreatorActivity extends Activity implements
 						"Impossibile caricare i Periodo Anno Scolastico!",
 						Toast.LENGTH_LONG).show();
 			}
+		}
+
+	}
+
+	private class CalculateStartDateTask extends AsyncTask<Void, Void, String> {
+		@Override
+		protected String doInBackground(Void... params) {
+			return databaseOps.getNextPeriodStartDateAsString(
+					getApplicationContext(), id_anno_scolastico);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			String[] split = result.split("-");
+			mYear = Integer.valueOf(split[0]);
+			mMonth = Integer.valueOf(split[1]) - 1;
+			mDay = Integer.valueOf(split[2]);
+			displayStartDate();
+			spinnerPeriods.setSelection(0);// Seleziona BIMESTRE
+			etPeriodoString.setText((CharSequence) spinnerPeriods
+					.getItemAtPosition(0));
+			calculateEndDate();
+
 		}
 
 	}

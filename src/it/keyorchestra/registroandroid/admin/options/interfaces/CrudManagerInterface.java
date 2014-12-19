@@ -64,4 +64,7 @@ public interface CrudManagerInterface {
 	 * e dipende in particolare dalle foreign keys 
 	 */
 	public void inizializzaNuovoRecord();
+
+	public void saveTableStringIntoPreferences(String key, String value);
+
 }

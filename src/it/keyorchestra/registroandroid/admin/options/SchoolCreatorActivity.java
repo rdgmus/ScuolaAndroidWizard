@@ -786,4 +786,10 @@ public class SchoolCreatorActivity extends Activity implements
 		//E' SUFFICIENTE, NON VI SONO FOREIGN KEY, ESSENDO LA TABELLA BASE
 	}
 
+	@Override
+	public void saveTableStringIntoPreferences(String key, String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

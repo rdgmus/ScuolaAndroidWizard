@@ -3,6 +3,7 @@ package it.keyorchestra.registroandroid.admin.options;
 import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
+import it.keyorchestra.registroandroid.admin.options.interfaces.MyDateTimePickersInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
 import it.keyorchestra.registroandroid.admin.options.util.AnniScolasticiArrayAdapter;
 import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
@@ -41,14 +42,15 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class AsCreatorActivity extends Activity implements
-		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener {
+		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener,
+		MyDateTimePickersInterface {
 
 	static final int DATE_DIALOG_ID = 0;
 	static final int CALENDAR_VIEW_ID = 1;
 	static final int TIME_DIALOG_ID = 2;
 	static final int START_DATE_DIALOG_ID = 3;
 	static final int END_DATE_DIALOG_ID = 4;
-	
+
 	EditText etStartDate, etEndDate, etScuola, etAnnoScolastico, etIdAs;
 	Button bChangeStartDate, bChangeEndDate;
 
@@ -73,7 +75,7 @@ public class AsCreatorActivity extends Activity implements
 	Spinner spinnerAS;
 	long id_anno_scolastico;
 	long id_scuola;
-	
+
 	/**
 	 * @return the id_scuola
 	 */
@@ -97,7 +99,7 @@ public class AsCreatorActivity extends Activity implements
 
 		getPrefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		
+
 		getId_scuola();
 
 		tvAsCount = (TextView) findViewById(R.id.tvRecordsCount);
@@ -226,6 +228,7 @@ public class AsCreatorActivity extends Activity implements
 				// setCommitRollback(false);
 			}
 		});
+
 		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
 		bCrudRollback.setOnClickListener(new OnClickListener() {
 
@@ -236,16 +239,12 @@ public class AsCreatorActivity extends Activity implements
 				setCommitRollback(false);
 			}
 		});
+
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
 		tvAsCount = (TextView) findViewById(R.id.tvRecordsCount);
 
 		// get the current date and time
-		final Calendar c = Calendar.getInstance();
-		mYear = c.get(Calendar.YEAR);
-		mMonth = c.get(Calendar.MONTH);
-		mDay = c.get(Calendar.DAY_OF_MONTH);
-		mHour = c.get(Calendar.HOUR_OF_DAY);
-		mMinute = c.get(Calendar.MINUTE);
+		now();
 
 		// display the current date
 		displayStartDate();
@@ -261,9 +260,23 @@ public class AsCreatorActivity extends Activity implements
 					int position, long id) {
 				// TODO Auto-generated method stub
 				id_anno_scolastico = (Long) view.getTag();
-				//Salva id_anno_scolastico nelle preferenze
-				saveTableIdIntoPreferences("id_anno_scolastico", id_anno_scolastico);
-				
+				// Salva id_anno_scolastico nelle preferenze
+				saveTableIdIntoPreferences("id_anno_scolastico",
+						id_anno_scolastico);
+
+				try {
+					JSONObject jsonObject = jArrayAnniScolastici
+							.getJSONObject(position);
+
+					saveTableStringIntoPreferences("start_date",
+							jsonObject.getString("start_date"));
+					saveTableStringIntoPreferences("end_date",
+							jsonObject.getString("end_date"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 				Toast.makeText(getApplicationContext(),
 						"id_anno_scolastico:" + id_anno_scolastico,
 						Toast.LENGTH_SHORT).show();
@@ -295,7 +308,20 @@ public class AsCreatorActivity extends Activity implements
 		timer.start();
 	}
 
-		private class LoadAnniScolasticiTask extends AsyncTask<Void, Void, Boolean> {
+	/**
+	 * Imposta le variabili temporali ad ora!
+	 */
+	private void now() {
+		// TODO Auto-generated method stub
+		final Calendar c = Calendar.getInstance();
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		mHour = c.get(Calendar.HOUR_OF_DAY);
+		mMinute = c.get(Calendar.MINUTE);
+	}
+
+	private class LoadAnniScolasticiTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			return CaricaArrayAnniScolastici();
@@ -325,7 +351,7 @@ public class AsCreatorActivity extends Activity implements
 				Toast.makeText(getApplicationContext(),
 						"Anni Scolastici caricati!", Toast.LENGTH_LONG).show();
 				tvAsCount.setText("(" + spinnerAS.getCount() + ")");
-				if(spinnerAS.getCount() ==0){
+				if (spinnerAS.getCount() == 0) {
 					inizializzaNuovoRecord();
 				}
 			} else {
@@ -337,12 +363,14 @@ public class AsCreatorActivity extends Activity implements
 
 	}
 
-	private class GetScuolaDescriptionTask extends AsyncTask<Void, Void, String> {
+	private class GetScuolaDescriptionTask extends
+			AsyncTask<Void, Void, String> {
 		@Override
 		protected String doInBackground(Void... params) {
-			
+
 			etScuola.setTag(id_scuola);
-			return 		databaseOps.getScuolaDescription(getApplicationContext(),id_scuola);
+			return databaseOps.getScuolaDescription(getApplicationContext(),
+					id_scuola);
 		}
 
 		/*
@@ -354,7 +382,7 @@ public class AsCreatorActivity extends Activity implements
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			etScuola.setText(result);			
+			etScuola.setText(result);
 		}
 
 	}
@@ -364,7 +392,6 @@ public class AsCreatorActivity extends Activity implements
 		anniScolasticiArray = new ArrayList<String>();
 		String retrieveTableData = getPrefs
 				.getString("retrieveTableData", null);
-		
 
 		String ip = getDatabaseIpFromPreferences();
 
@@ -482,7 +509,8 @@ public class AsCreatorActivity extends Activity implements
 	};
 
 	// updates the date in the EditText
-	private void displayStartDate() {
+	@Override
+	public void displayStartDate() {
 		etStartDate.setText(new StringBuilder()
 				// Month is 0 based so add 1
 				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
@@ -490,7 +518,8 @@ public class AsCreatorActivity extends Activity implements
 	}
 
 	// updates the date in the EditText
-	private void displayEndDate() {
+	@Override
+	public void displayEndDate() {
 		etEndDate.setText(new StringBuilder()
 				// Month is 0 based so add 1
 				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
@@ -498,8 +527,8 @@ public class AsCreatorActivity extends Activity implements
 	}
 
 	// updates the date in the EditText
-	@SuppressWarnings("unused")
-	private void displayCalendarViewDate() {
+	@Override
+	public void displayCalendarViewDate() {
 		etStartDate.setText(new StringBuilder()
 				// Month is 0 based so add 1
 				.append(mDay).append("/").append(mMonth + 1).append("/")
@@ -507,12 +536,14 @@ public class AsCreatorActivity extends Activity implements
 	}
 
 	// updates the time we display in the EditText
-	private void displayTime() {
+	@Override
+	public void displayTime() {
 		etStartDate.setText(new StringBuilder().append(pad(mHour)).append(":")
 				.append(pad(mMinute)));
 	}
 
-	private static String pad(int c) {
+	@Override
+	public String pad(int c) {
 		if (c >= 10)
 			return String.valueOf(c);
 		else
@@ -696,7 +727,7 @@ public class AsCreatorActivity extends Activity implements
 		etAnnoScolastico.setError(null);
 		etStartDate.setFocusable(false);
 		etStartDate.setError(null);
-		
+
 		etEndDate.setFocusable(false);
 		etEndDate.setError(null);
 		new LoadAnniScolasticiTask().execute();
@@ -798,13 +829,13 @@ public class AsCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		super.onResume();
 		getId_scuola();
-		if(jArrayAnniScolastici==null)
+		if (jArrayAnniScolastici == null)
 			return;
 		// SE LA SCUOLA SELEZIONATA E' CAMBIATA RICARICO FLI ANNI SCOLASTICI
 		if (jArrayAnniScolastici.length() > 0) {
 			JSONObject jsonObject;
 			try {
-				
+
 				jsonObject = jArrayAnniScolastici.getJSONObject(0);
 				long oldId = jsonObject.getLong("id_scuola");
 				if (id_scuola != oldId) {
@@ -813,6 +844,7 @@ public class AsCreatorActivity extends Activity implements
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				new LoadAnniScolasticiTask().execute();
 			}
 		}
 
@@ -826,12 +858,12 @@ public class AsCreatorActivity extends Activity implements
 					.getJSONObject(position);
 			etIdAs.setText(jsonObiect.getString("id_anno_scolastico"));
 			etAnnoScolastico.setText(jsonObiect.getString("anno_scolastico"));
-			
-			etScuola.setText("["+jsonObiect.getLong("id_scuola")+"] "+
-					jsonObiect.getString("tipo_scuola_acronimo") + " - "
+
+			etScuola.setText("[" + jsonObiect.getLong("id_scuola") + "] "
+					+ jsonObiect.getString("tipo_scuola_acronimo") + " - "
 					+ jsonObiect.getString("nome_scuola"));
 			etScuola.setTag(jsonObiect.getLong("id_scuola"));
-			
+
 			etStartDate.setText(jsonObiect.getString("start_date"));
 			etEndDate.setText(jsonObiect.getString("end_date"));
 		} catch (JSONException e) {
@@ -950,20 +982,22 @@ public class AsCreatorActivity extends Activity implements
 	@Override
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
-		final Calendar c = Calendar.getInstance();
-		mYear = c.get(Calendar.YEAR);
-		mMonth = c.get(Calendar.MONTH);
-		mDay = c.get(Calendar.DAY_OF_MONTH);
-		mHour = c.get(Calendar.HOUR_OF_DAY);
-		mMinute = c.get(Calendar.MINUTE);
-
+		now();
 		// display the current date
 		displayStartDate();
 		displayEndDate();
 
 		etAnnoScolastico.setText(mYear + "/" + (mYear + 1));
-		
+
 		new GetScuolaDescriptionTask().execute();
+	}
+
+	@Override
+	public void saveTableStringIntoPreferences(String key, String value) {
+		// TODO Auto-generated method stub
+		Editor editor = getPrefs.edit();
+		editor.putString(key, value);
+		editor.apply();
 	}
 
 }

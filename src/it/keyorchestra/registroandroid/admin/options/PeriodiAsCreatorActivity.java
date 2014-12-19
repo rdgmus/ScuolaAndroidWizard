@@ -3,18 +3,24 @@ package it.keyorchestra.registroandroid.admin.options;
 import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
 import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommonFunctions;
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
+import it.keyorchestra.registroandroid.admin.options.interfaces.MyDateTimePickersInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
+import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.PeriodiASArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
@@ -24,19 +30,27 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class PeriodiAsCreatorActivity extends Activity implements
-		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener {
+		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener,
+		MyDateTimePickersInterface {
+
 	static final int START_DATE_DIALOG_ID = 3;
 	static final int END_DATE_DIALOG_ID = 4;
+	static final int BIMESTRE = 0;
+	static final int TRIMESTRE = 1;
+	static final int QUADRIMESTRE = 2;
+	static final int PENTAMESTRE = 3;
+	static final int SEMESTRE = 4;
 
 	// CRUD
 	Button bCrudSelect, bCrudDelete, bCrudUpdate, bCrudCreate, bCrudCommit,
@@ -82,6 +96,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	 */
 	public long getId_anno_scolastico() {
 		id_anno_scolastico = getPrefs.getLong("id_anno_scolastico", -1);
+
 		return id_anno_scolastico;
 	}
 
@@ -96,8 +111,9 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		super.onResume();
 		getId_scuola();
 		getId_anno_scolastico();
-		if (jArrayPeriodiAnnoScolastico == null)
+		if (jArrayPeriodiAnnoScolastico == null) {
 			return;
+		}
 		// SE LA SCUOLA SELEZIONATA E' CAMBIATA RICARICO FLI ANNI SCOLASTICI
 		if (jArrayPeriodiAnnoScolastico.length() > 0) {
 			JSONObject jsonObject;
@@ -115,9 +131,23 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				new LoadPeriodiAnnoScolasticoTask().execute();
 			}
 		}
 
+	}
+
+	/**
+	 * Imposta le variabili temporali ad ora!
+	 */
+	private void now() {
+		// TODO Auto-generated method stub
+		final Calendar c = Calendar.getInstance();
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		mHour = c.get(Calendar.HOUR_OF_DAY);
+		mMinute = c.get(Calendar.MINUTE);
 	}
 
 	/*
@@ -138,6 +168,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		getId_scuola();
 		getId_anno_scolastico();
+		now();
 
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
 		bCrudSelect.setOnClickListener(new OnClickListener() {
@@ -149,10 +180,79 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			}
 		});
 		bCrudDelete = (Button) findViewById(R.id.bCrudDelete);
+		bCrudDelete.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					DeleteRow(jArrayPeriodiAnnoScolastico
+							.getJSONObject(spinnerRecords
+									.getSelectedItemPosition()));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setCommitRollback(true);
+			}
+		});
+
 		bCrudUpdate = (Button) findViewById(R.id.bCrudUpdate);
+		bCrudUpdate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					UpdateRow(jArrayPeriodiAnnoScolastico
+							.getJSONObject(spinnerRecords
+									.getSelectedItemPosition()));
+					setCommitRollback(true);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
 		bCrudCreate = (Button) findViewById(R.id.bCrudCreate);
+		bCrudCreate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				removeAllTextIntoFields();
+				inizializzaNuovoRecord();
+				beforeChangeBasket = new Bundle();
+				beforeChangeBasket.putInt("action",
+						CrudManagerInterface.CRUD_ACTION.CREATE);
+
+				setCommitRollback(true);
+			}
+		});
+
 		bCrudCommit = (Button) findViewById(R.id.bCrudCommit);
+		bCrudCommit.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Commit();
+				// setCommitRollback(false);
+			}
+		});
+
 		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
+		bCrudRollback.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Rollback();
+				setCommitRollback(false);
+			}
+		});
+
 		bCrudClear = (Button) findViewById(R.id.bCrudClear);
 		bCrudClear.setOnClickListener(new OnClickListener() {
 
@@ -191,6 +291,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				Toast.makeText(getApplicationContext(), "periodo:" + periodo,
 						Toast.LENGTH_SHORT).show();
 				etPeriodoString.setText(periodo);
+				calculateEndDate();
 			}
 
 			@Override
@@ -224,8 +325,26 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		});
 
 		bChangeStartPeriod = (Button) findViewById(R.id.bChangeStartPeriod);
+		bChangeStartPeriod.setOnClickListener(new OnClickListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showDialog(START_DATE_DIALOG_ID);
+			}
+		});
 
 		bChangeEndPeriod = (Button) findViewById(R.id.bChangeEndPeriod);
+		bChangeEndPeriod.setOnClickListener(new OnClickListener() {
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showDialog(END_DATE_DIALOG_ID);
+			}
+		});
 
 		progressBarCoperturaAs = (ProgressBar) findViewById(R.id.progressBarCoperturaAs);
 
@@ -246,6 +365,78 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		};
 		timer.start();
 	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		String[] split;
+		switch (id) {
+		case START_DATE_DIALOG_ID:
+			String startDate = etStartPeriod.getText().toString();
+			split = startDate.split("-");
+			return new DatePickerDialog(this, mStartDateSetListener,
+					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
+					Integer.valueOf(split[2]));
+		case END_DATE_DIALOG_ID:
+			String endDate = etEndPeriod.getText().toString();
+			split = endDate.split("-");
+			return new DatePickerDialog(this, mEndDateSetListener,
+					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
+					Integer.valueOf(split[2]));
+		}
+		return null;
+	}
+
+	@Override
+	public String pad(int c) {
+		if (c >= 10)
+			return String.valueOf(c);
+		else
+			return "0" + String.valueOf(c);
+	}
+
+	// updates the date in the EditText
+	@Override
+	public void displayStartDate() {
+		etStartPeriod.setText(new StringBuilder()
+				// Month is 0 based so add 1
+				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
+				.append(pad(mDay)));
+	}
+
+	// updates the date in the EditText
+	@Override
+	public void displayEndDate() {
+		etEndPeriod.setText(new StringBuilder()
+				// Month is 0 based so add 1
+				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
+				.append(pad(mDay)));
+	}
+
+	// the callback received when the user "sets" the date in the dialog
+	private DatePickerDialog.OnDateSetListener mStartDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+
+			displayStartDate();
+		}
+	};
+
+	// the callback received when the user "sets" the date in the dialog
+	private DatePickerDialog.OnDateSetListener mEndDateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			mYear = year;
+			mMonth = monthOfYear;
+			mDay = dayOfMonth;
+
+			displayEndDate();
+		}
+	};
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
@@ -359,13 +550,54 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	@Override
 	public void Commit() {
 		// TODO Auto-generated method stub
-
+		switch (beforeChangeBasket.getInt("action")) {
+		case CRUD_ACTION.UPDATE:
+			if (!FieldsValidator.Is_Valid_StartDate(etStartPeriod)) {
+				etStartPeriod.setFocusable(true);
+				etStartPeriod.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_EndDate(etEndPeriod)) {
+				etEndPeriod.setFocusable(true);
+				etEndPeriod.requestFocus();
+				break;
+			}
+			// new UpdatePeriodoAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.DELETE:
+			// new DeletePeriodoAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.CREATE:
+			if (!FieldsValidator.Is_Valid_StartDate(etStartPeriod)) {
+				etStartPeriod.setFocusable(true);
+				etStartPeriod.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_EndDate(etStartPeriod)) {
+				etStartPeriod.setFocusable(true);
+				etStartPeriod.requestFocus();
+				break;
+			}
+			CreateRow(null);
+			// new CreatePeriodoAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		}
 	}
 
 	@Override
 	public void Rollback() {
 		// TODO Auto-generated method stub
+		Toast.makeText(getApplicationContext(),
+				"Rollback! cambiamenti scartati!", Toast.LENGTH_SHORT).show();
+		etStartPeriod.setFocusable(false);
+		etStartPeriod.setError(null);
 
+		etEndPeriod.setFocusable(false);
+		etEndPeriod.setError(null);
+		new LoadPeriodiAnnoScolasticoTask().execute();
 	}
 
 	@Override
@@ -382,7 +614,36 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	@Override
 	public void setCommitRollback(boolean visible) {
 		// TODO Auto-generated method stub
+		if (visible) {
+			bCrudCommit.setVisibility(Button.VISIBLE);
+			bCrudRollback.setVisibility(Button.VISIBLE);
+			tvCrudMessage.setVisibility(TextView.VISIBLE);
+			switch (beforeChangeBasket.getInt("action")) {
+			case CRUD_ACTION.UPDATE:
+				tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
+				break;
+			case CRUD_ACTION.DELETE:
+				tvCrudMessage.setText("DELETE in attesa di elaborazione...");
+				break;
+			case CRUD_ACTION.CREATE:
+				tvCrudMessage.setText("CREATE in attesa di elaborazione...");
+				break;
+			}
 
+			bCrudUpdate.setVisibility(Button.INVISIBLE);
+			bCrudCreate.setVisibility(Button.INVISIBLE);
+			bCrudDelete.setVisibility(Button.INVISIBLE);
+			bCrudSelect.setVisibility(Button.INVISIBLE);
+		} else {
+			bCrudCommit.setVisibility(Button.INVISIBLE);
+			bCrudRollback.setVisibility(Button.INVISIBLE);
+			tvCrudMessage.setVisibility(TextView.INVISIBLE);
+
+			bCrudUpdate.setVisibility(Button.VISIBLE);
+			bCrudCreate.setVisibility(Button.VISIBLE);
+			bCrudDelete.setVisibility(Button.VISIBLE);
+			bCrudSelect.setVisibility(Button.VISIBLE);
+		}
 	}
 
 	@Override
@@ -426,7 +687,63 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	@Override
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
+		calculateStartDate();
+		spinnerPeriods.setSelection(0);// Seleziona BIMESTRE
+		etPeriodoString.setText((CharSequence) spinnerPeriods
+				.getItemAtPosition(0));
+		calculateEndDate();
 
+		new GetScuolaDescriptionTask().execute();
+		new GetAnnoScolasticoDescriptionTask().execute();
+	}
+
+	private void calculateEndDate() {
+		// TODO Auto-generated method stub
+		String start_date = etStartPeriod.getText().toString();
+		if (start_date.length() == 0)
+			return;
+		String[] split = start_date.split("-");
+		mYear = Integer.valueOf(split[0]);
+		mMonth = Integer.valueOf(split[1]) - 1;
+		mDay = Integer.valueOf(split[2]);
+
+		Calendar c = Calendar.getInstance();
+		c.set(mYear, mMonth, mDay);
+
+		switch (spinnerPeriods.getSelectedItemPosition()) {
+		case BIMESTRE:
+			c.add(Calendar.MONTH, 2);
+			break;
+		case TRIMESTRE:
+			c.add(Calendar.MONTH, 3);
+			break;
+		case QUADRIMESTRE:
+			c.add(Calendar.MONTH, 4);
+			break;
+		case PENTAMESTRE:
+			c.add(Calendar.MONTH, 5);
+			break;
+		case SEMESTRE:
+			c.add(Calendar.MONTH, 6);
+			break;
+		}
+		mYear = c.get(Calendar.YEAR);
+		mMonth = c.get(Calendar.MONTH);
+		mDay = c.get(Calendar.DAY_OF_MONTH);
+		displayEndDate();
+	}
+
+	private void calculateStartDate() {
+		// TODO Auto-generated method stub
+		now();
+		// display the current date
+		String start_date = getPrefs.getString("start_date", mYear + "-"
+				+ pad(mMonth) + "-" + pad(mDay));
+		String[] split = start_date.split("-");
+		mYear = Integer.valueOf(split[0]);
+		mMonth = Integer.valueOf(split[1]) - 1;
+		mDay = Integer.valueOf(split[2]);
+		displayStartDate();
 	}
 
 	@Override
@@ -552,6 +869,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 				tvPeriodiAsCount.setText("(" + spinnerRecords.getCount() + ")");
 				if (spinnerRecords.getCount() == 0) {
+					removeAllTextIntoFields();
 					inizializzaNuovoRecord();
 				}
 			} else {
@@ -591,7 +909,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				+ "\n"
 				+ "AND A.`id_anno_scolastico` = "
 				+ id_anno_scolastico
-				+ " ORDER BY C.`anno_scolastico` DESC, A.`start_date` ";
+				+ " ORDER BY C.`anno_scolastico` DESC, A.`start_date`";
 
 		try {
 			jArrayPeriodiAnnoScolastico = new MySqlAndroid().retrieveTableData(
@@ -621,6 +939,25 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void displayCalendarViewDate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void displayTime() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void saveTableStringIntoPreferences(String field_value,
+			String field_name) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

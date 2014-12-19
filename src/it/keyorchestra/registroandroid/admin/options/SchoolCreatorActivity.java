@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +120,7 @@ public class SchoolCreatorActivity extends Activity implements
 					int position, long id) {
 				// TODO Auto-generated method stub
 				id_scuola = (Long) view.getTag();
-				//Salva id_scuola nelle preferenze
+				// Salva id_scuola nelle preferenze
 				saveTableIdIntoPreferences("id_scuola", id_scuola);
 				// Toast.makeText(getApplicationContext(),
 				// "id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
@@ -132,16 +133,16 @@ public class SchoolCreatorActivity extends Activity implements
 
 			}
 		});
-		bCrudClear = (Button)findViewById(R.id.bCrudClear);
+		bCrudClear = (Button) findViewById(R.id.bCrudClear);
 		bCrudClear.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Clear();
 			}
 		});
-		
+
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
 		bCrudSelect.setOnClickListener(new OnClickListener() {
 
@@ -209,7 +210,7 @@ public class SchoolCreatorActivity extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Commit();
-//				setCommitRollback(false);
+				// setCommitRollback(false);
 			}
 		});
 		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
@@ -225,7 +226,6 @@ public class SchoolCreatorActivity extends Activity implements
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
 		tvScuoleCount = (TextView) findViewById(R.id.tvRecordsCount);
 
-		
 		Thread timer = new Thread() {
 
 			@Override
@@ -251,7 +251,7 @@ public class SchoolCreatorActivity extends Activity implements
 			bCrudCommit.setVisibility(Button.VISIBLE);
 			bCrudRollback.setVisibility(Button.VISIBLE);
 			tvCrudMessage.setVisibility(TextView.VISIBLE);
-			switch(beforeChangeBasket.getInt("action")){
+			switch (beforeChangeBasket.getInt("action")) {
 			case CRUD_ACTION.UPDATE:
 				tvCrudMessage.setText("UPDATE in attesa di elaborazione...");
 				break;
@@ -300,7 +300,6 @@ public class SchoolCreatorActivity extends Activity implements
 			e.printStackTrace();
 		}
 	}
-
 
 	private boolean CaricaArrayScuole() {
 		// TODO Auto-generated method stub
@@ -427,7 +426,12 @@ public class SchoolCreatorActivity extends Activity implements
 
 				Toast.makeText(getApplicationContext(), "Scuole caricate!",
 						Toast.LENGTH_LONG).show();
-				tvScuoleCount.setText("("+spinnerScuole.getCount()+")");
+				tvScuoleCount.setText("(" + spinnerScuole.getCount() + ")");
+				if (spinnerScuole.getCount() > 0) {
+					TabHost tabHost = ((ScuolaWizard) getParent()).getTabHost();
+					tabHost.getTabWidget().getChildAt(1)
+							.setVisibility(View.VISIBLE);
+				}
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Impossibile caricare le scuole!", Toast.LENGTH_LONG)
@@ -646,8 +650,8 @@ public class SchoolCreatorActivity extends Activity implements
 		beforeChangeBasket.putString("citta", etCitta.getText().toString());
 		beforeChangeBasket.putString("provincia", etProvincia.getText()
 				.toString());
-		beforeChangeBasket
-				.putString("telefono", etTelefono.getText().toString());
+		beforeChangeBasket.putString("telefono", etTelefono.getText()
+				.toString());
 		beforeChangeBasket.putString("fax", etFax.getText().toString());
 		beforeChangeBasket.putString("email", etEmail.getText().toString());
 		beforeChangeBasket.putString("web", etWeb.getText().toString());
@@ -691,11 +695,11 @@ public class SchoolCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		switch (beforeChangeBasket.getInt("action")) {
 		case CRUD_ACTION.UPDATE:
-			if(!FieldsValidator.Is_Valid_Name(etTipoScuola)){
+			if (!FieldsValidator.Is_Valid_Name(etTipoScuola)) {
 				etTipoScuola.requestFocus();
 				break;
 			}
-			if(!FieldsValidator.Is_Valid_Name(etNomeScuola)){
+			if (!FieldsValidator.Is_Valid_Name(etNomeScuola)) {
 				etNomeScuola.requestFocus();
 				break;
 			}
@@ -707,11 +711,11 @@ public class SchoolCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.CREATE:
-			if(!FieldsValidator.Is_Valid_Name(etTipoScuola)){
+			if (!FieldsValidator.Is_Valid_Name(etTipoScuola)) {
 				etTipoScuola.requestFocus();
 				break;
 			}
-			if(!FieldsValidator.Is_Valid_Name(etNomeScuola)){
+			if (!FieldsValidator.Is_Valid_Name(etNomeScuola)) {
 				etNomeScuola.requestFocus();
 				break;
 			}
@@ -782,14 +786,14 @@ public class SchoolCreatorActivity extends Activity implements
 	@Override
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
-		//NON FA NULLA IN QUESTA TABELLA PERCHE' PULIRE I CAMPI 
-		//E' SUFFICIENTE, NON VI SONO FOREIGN KEY, ESSENDO LA TABELLA BASE
+		// NON FA NULLA IN QUESTA TABELLA PERCHE' PULIRE I CAMPI
+		// E' SUFFICIENTE, NON VI SONO FOREIGN KEY, ESSENDO LA TABELLA BASE
 	}
 
 	@Override
 	public void saveTableStringIntoPreferences(String key, String value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -28,6 +28,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 public class ScuolaWizard extends TabActivity implements
 		ActivitiesCommonFunctions, CallableOptionsInterface {
 
+	TabHost tabHost;
 	Intent intent;
 	String action;
 	String type;
@@ -44,6 +46,19 @@ public class ScuolaWizard extends TabActivity implements
 
 	TextView tvUserName, tvHash;
 	ImageButton ibBack;
+
+	String TAB_SCUOLE_TAG = "TAB_SCUOLE_TAG";
+	String TAB_AS_TAG = "TAB_AS_TAG";
+	String TAB_PERIODI_AS_TAG = "TAB_PERIODI_AS_TAG";
+
+	
+	
+	/**
+	 * @return the tabHost
+	 */
+	public TabHost getTabHost() {
+		return tabHost;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -80,10 +95,31 @@ public class ScuolaWizard extends TabActivity implements
 		});
 		// TAB
 		// create the TabHost that will contain the Tabs
-		TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
-		TabSpec tab1 = tabHost.newTabSpec("First Tab");
-		TabSpec tab2 = tabHost.newTabSpec("Second Tab");
-		TabSpec tab3 = tabHost.newTabSpec("Third tab");
+		tabHost = (TabHost) findViewById(android.R.id.tabhost);
+		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+
+			@Override
+			public void onTabChanged(String tabId) {
+				// TODO Auto-generated method stub
+				if (TAB_SCUOLE_TAG.equals(tabId)) {
+					// destroy earth
+					tabHost.getTabWidget().getChildAt(1)
+							.setVisibility(View.GONE);
+					tabHost.getTabWidget().getChildAt(2)
+							.setVisibility(View.GONE);
+				}
+				if (TAB_AS_TAG.equals(tabId)) {
+					// destroy mars
+				}
+				if (TAB_PERIODI_AS_TAG.equals(tabId)) {
+					// destroy mars
+				}
+			}
+		});
+
+		TabSpec tab1 = tabHost.newTabSpec(TAB_SCUOLE_TAG);
+		TabSpec tab2 = tabHost.newTabSpec(TAB_AS_TAG);
+		TabSpec tab3 = tabHost.newTabSpec(TAB_PERIODI_AS_TAG);
 		// Set the Tab name and Activity
 		// that will be opened when particular Tab will be selected
 		tab1.setIndicator("Scuole",
@@ -283,14 +319,14 @@ public class ScuolaWizard extends TabActivity implements
 					// Update UI to reflect text being shared
 					tvUserName.setVisibility(TextView.VISIBLE);
 					tvUserName.setText(sharedText);
-//					Toast.makeText(getApplicationContext(), sharedText,
-//							Toast.LENGTH_LONG).show();
+					// Toast.makeText(getApplicationContext(), sharedText,
+					// Toast.LENGTH_LONG).show();
 				}
 				tvHash.setVisibility(TextView.VISIBLE);
 				tvHash.setText(getPrefs.getString("hash", ""));
-//				Toast.makeText(getApplicationContext(),
-//						"hash:" + getPrefs.getString("hash", ""),
-//						Toast.LENGTH_LONG).show();
+				// Toast.makeText(getApplicationContext(),
+				// "hash:" + getPrefs.getString("hash", ""),
+				// Toast.LENGTH_LONG).show();
 
 				Toast.makeText(getApplicationContext(), "Utente Autorizzato!",
 						Toast.LENGTH_LONG).show();

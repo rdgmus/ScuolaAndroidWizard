@@ -37,6 +37,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -281,6 +283,7 @@ public class AsCreatorActivity extends Activity implements
 						"id_anno_scolastico:" + id_anno_scolastico,
 						Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
+				setNextTabVisiblity(View.VISIBLE, 2);
 			}
 
 			@Override
@@ -422,6 +425,7 @@ public class AsCreatorActivity extends Activity implements
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					setNextTabVisiblity(View.GONE, 2);
 				}
 
 			}
@@ -819,6 +823,15 @@ public class AsCreatorActivity extends Activity implements
 		}
 	}
 
+	@Override
+	public void setNextTabVisiblity(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		TabHost tabHost = ((ScuolaWizard) getParent()).getTabHost();
+		View tab = tabHost.getTabWidget().getChildAt(tabIndex);
+		if (tab != null)
+			tab.setVisibility(visibility);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -840,6 +853,8 @@ public class AsCreatorActivity extends Activity implements
 				long oldId = jsonObject.getLong("id_scuola");
 				if (id_scuola != oldId) {
 					new LoadAnniScolasticiTask().execute();
+				} else {
+					setNextTabVisiblity(View.VISIBLE, 2);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -847,7 +862,6 @@ public class AsCreatorActivity extends Activity implements
 				new LoadAnniScolasticiTask().execute();
 			}
 		}
-
 	}
 
 	@Override

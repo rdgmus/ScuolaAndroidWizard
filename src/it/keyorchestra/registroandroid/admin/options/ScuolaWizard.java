@@ -51,8 +51,6 @@ public class ScuolaWizard extends TabActivity implements
 	String TAB_AS_TAG = "TAB_AS_TAG";
 	String TAB_PERIODI_AS_TAG = "TAB_PERIODI_AS_TAG";
 
-	
-	
 	/**
 	 * @return the tabHost
 	 */
@@ -96,26 +94,6 @@ public class ScuolaWizard extends TabActivity implements
 		// TAB
 		// create the TabHost that will contain the Tabs
 		tabHost = (TabHost) findViewById(android.R.id.tabhost);
-		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
-
-			@Override
-			public void onTabChanged(String tabId) {
-				// TODO Auto-generated method stub
-				if (TAB_SCUOLE_TAG.equals(tabId)) {
-					// destroy earth
-					tabHost.getTabWidget().getChildAt(1)
-							.setVisibility(View.GONE);
-					tabHost.getTabWidget().getChildAt(2)
-							.setVisibility(View.GONE);
-				}
-				if (TAB_AS_TAG.equals(tabId)) {
-					// destroy mars
-				}
-				if (TAB_PERIODI_AS_TAG.equals(tabId)) {
-					// destroy mars
-				}
-			}
-		});
 
 		TabSpec tab1 = tabHost.newTabSpec(TAB_SCUOLE_TAG);
 		TabSpec tab2 = tabHost.newTabSpec(TAB_AS_TAG);
@@ -138,6 +116,32 @@ public class ScuolaWizard extends TabActivity implements
 		tabHost.addTab(tab1);
 		tabHost.addTab(tab2);
 		tabHost.addTab(tab3);
+
+		tabHost.getTabWidget().getChildAt(1).setVisibility(View.GONE);
+		tabHost.getTabWidget().getChildAt(2).setVisibility(View.GONE);
+
+		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+
+			@Override
+			public void onTabChanged(String tabId) {
+				// TODO Auto-generated method stub
+				if (TAB_SCUOLE_TAG.equals(tabId)) {
+					// destroy earth
+//					tabHost.getTabWidget().getChildAt(1)
+//							.setVisibility(View.GONE);
+//					tabHost.getTabWidget().getChildAt(2)
+//							.setVisibility(View.GONE);
+				}
+				if (TAB_AS_TAG.equals(tabId)) {
+					// destroy mars
+//					tabHost.getTabWidget().getChildAt(2)
+//					.setVisibility(View.GONE);
+				}
+				if (TAB_PERIODI_AS_TAG.equals(tabId)) {
+					// destroy mars
+				}
+			}
+		});
 
 		if ("it.keyorchestra.registroandroid.admin.options.REG_ANDROID_ADMIN_OPTIONS"
 				.equals(action) && type != null) {

@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,6 +111,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		super.onResume();
 		getId_scuola();
 		getId_anno_scolastico();
+		
 		if (jArrayPeriodiAnnoScolastico == null) {
 			return;
 		}
@@ -123,10 +124,14 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				long oldId = jsonObject.getLong("id_anno_scolastico");
 				if (id_anno_scolastico != oldId) {
 					new LoadPeriodiAnnoScolasticoTask().execute();
+				}else {
+					setNextTabVisiblity(View.VISIBLE, 3);
 				}
 				oldId = jsonObject.getLong("id_scuola");
 				if (id_scuola != oldId) {
 					new LoadPeriodiAnnoScolasticoTask().execute();
+				}else {
+					setNextTabVisiblity(View.VISIBLE, 3);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -905,7 +910,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				spinnerRecords.setAdapter(periodiAsAdapter);
 
 				Toast.makeText(getApplicationContext(),
-						"Periodo Anno Scolastico caricati!", Toast.LENGTH_LONG)
+						"Periodi Anno Scolastico caricati!", Toast.LENGTH_LONG)
 						.show();
 
 				tvPeriodiAsCount.setText("(" + spinnerRecords.getCount() + ")");
@@ -1029,6 +1034,15 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			String field_name) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setNextTabVisiblity(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		TabHost tabHost = ((ScuolaWizard) getParent()).getTabHost();
+		View tab = tabHost.getTabWidget().getChildAt(tabIndex);
+		if (tab != null)
+			tab.setVisibility(visibility);
 	}
 
 }

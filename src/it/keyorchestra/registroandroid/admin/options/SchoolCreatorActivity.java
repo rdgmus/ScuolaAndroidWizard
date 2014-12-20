@@ -125,6 +125,8 @@ public class SchoolCreatorActivity extends Activity implements
 				// Toast.makeText(getApplicationContext(),
 				// "id_scuola:" + id_scuola, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
+
+				setNextTabVisiblity(View.VISIBLE,1);
 			}
 
 			@Override
@@ -245,6 +247,27 @@ public class SchoolCreatorActivity extends Activity implements
 	}
 
 	@Override
+	public void setNextTabVisiblity(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		TabHost tabHost = ((ScuolaWizard) getParent()).getTabHost();
+		View tab = tabHost.getTabWidget().getChildAt(tabIndex);
+		if (tab != null)
+			tab.setVisibility(visibility);
+	}
+
+	
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		setNextTabVisiblity(View.GONE,2);
+	}
+
+	@Override
 	public void setCommitRollback(boolean visible) {
 		// TODO Auto-generated method stub
 		if (visible) {
@@ -331,6 +354,8 @@ public class SchoolCreatorActivity extends Activity implements
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					setNextTabVisiblity(View.GONE, 1);
+					setNextTabVisiblity(View.GONE, 2);
 				}
 
 			}
@@ -384,17 +409,14 @@ public class SchoolCreatorActivity extends Activity implements
 
 	}
 
-	private String formatIndirizzoScuola(JSONObject s) {
+	private String formatIndirizzoScuola(JSONObject s) throws JSONException {
 		// TODO Auto-generated method stub
 		String indirizzo = "";
-		try {
+		
 			indirizzo = s.getString("indirizzo") + " - " + s.getString("cap")
 					+ " - " + s.getString("citta") + " ("
 					+ s.getString("provincia") + ")";
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		return indirizzo;
 	}
 
@@ -414,6 +436,7 @@ public class SchoolCreatorActivity extends Activity implements
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 
+			
 			if (result) {
 				ScuoleArrayAdapter scuoleAdapter = new ScuoleArrayAdapter(
 						getApplicationContext(), jArrayScuole, scuoleArray);
@@ -427,11 +450,7 @@ public class SchoolCreatorActivity extends Activity implements
 				Toast.makeText(getApplicationContext(), "Scuole caricate!",
 						Toast.LENGTH_LONG).show();
 				tvScuoleCount.setText("(" + spinnerScuole.getCount() + ")");
-				if (spinnerScuole.getCount() > 0) {
-					TabHost tabHost = ((ScuolaWizard) getParent()).getTabHost();
-					tabHost.getTabWidget().getChildAt(1)
-							.setVisibility(View.VISIBLE);
-				}
+
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Impossibile caricare le scuole!", Toast.LENGTH_LONG)

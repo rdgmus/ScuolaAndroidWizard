@@ -2,6 +2,8 @@ package it.keyorchestra.registroandroid.admin.options.interfaces;
 
 import org.json.JSONObject;
 
+import android.view.View;
+
 public interface CrudManagerInterface {
 
 	public class CRUD_ACTION {
@@ -66,5 +68,7 @@ public interface CrudManagerInterface {
 	public void inizializzaNuovoRecord();
 
 	public void saveTableStringIntoPreferences(String key, String value);
+	
+	public void setNextTabVisiblity(int visibility, int tabIndex) ;
 
 }

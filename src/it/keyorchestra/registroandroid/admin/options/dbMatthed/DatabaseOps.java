@@ -693,9 +693,10 @@ public class DatabaseOps {
 	 * @param beforeChangeBasket
 	 * @return
 	 */
-	public Double calculateProgressOfAsCoperture(Context applicationContext,
+	public Double[] calculateProgressOfAsCoperture(Context applicationContext,
 			Bundle beforeChangeBasket) {
 		// TODO Auto-generated method stub
+		Double[] arrayResults = { 0.0, 0.0, 0.0 };
 
 		Double dResult = (double) 0;
 		Double diffDateOfAs = (double) 0, sumDaysOfPeriodsAs = (double) 0;
@@ -720,7 +721,7 @@ public class DatabaseOps {
 				diffDateOfAs = result.getDouble("DiffDate");
 			}
 			// SOMMA GIORNI DEI PERIODI ESISTENTI
-			sql = "SELECT SUM(DATEDIFF(`end_date`,`start_date`)) AS sum FROM `periodi_anno_scolastico` WHERE `id_anno_scolastico`="
+			sql = "SELECT SUM(DATEDIFF(`end_date`,`start_date`)+1)-1 AS sum FROM `periodi_anno_scolastico` WHERE `id_anno_scolastico`="
 					+ id_anno_scolastico;
 			result = st.executeQuery(sql);
 			while (result.next()) {
@@ -736,7 +737,9 @@ public class DatabaseOps {
 			e.printStackTrace();
 		}
 
-
-		return dResult;
+		arrayResults[0] = dResult;
+		arrayResults[1] = sumDaysOfPeriodsAs;
+		arrayResults[2] = diffDateOfAs;
+		return arrayResults;
 	}
 }

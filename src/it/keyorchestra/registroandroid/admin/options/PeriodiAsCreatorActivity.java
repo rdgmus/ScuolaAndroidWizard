@@ -9,6 +9,7 @@ import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.PeriodiASArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -162,6 +163,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		if (bCrudRollback.getVisibility() == Button.VISIBLE) {
 			Rollback();
 			setCommitRollback(false);
+			progressBarCoperturaAs.setSecondaryProgress(0);
 		}
 	}
 
@@ -380,6 +382,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		});
 
 		progressBarCoperturaAs = (ProgressBar) findViewById(R.id.progressBarCoperturaAs);
+		progressBarCoperturaAs.setProgress(0);
 		tvProgress = (TextView) findViewById(R.id.tvProgress);
 
 		Thread timer = new Thread() {
@@ -445,9 +448,11 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
 				.append(pad(mDay)));
 
-		int secondaryProgress = CalcSecondaryProgress();
-		secondaryProgress += progressBarCoperturaAs.getProgress();
-		progressBarCoperturaAs.setSecondaryProgress(secondaryProgress);
+		if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+			int secondaryProgress = CalcSecondaryProgress();
+			secondaryProgress += progressBarCoperturaAs.getProgress();
+			progressBarCoperturaAs.setSecondaryProgress(secondaryProgress);
+		}
 
 	}
 
@@ -460,11 +465,13 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	 */
 	private int CalcSecondaryProgress() {
 		// TODO Auto-generated method stub
-		Double progressDiff = (double) getDiffInDaysOf(etStartPeriod.getText().toString(),
-				etEndPeriod.getText().toString());
-		Double asDiff = (double) getDiffInDaysOf(getPrefs.getString("start_date", ""),
+		Double progressDiff = (double) getDiffInDaysOf(etStartPeriod.getText()
+				.toString(), etEndPeriod.getText().toString());
+		Double asDiff = (double) getDiffInDaysOf(
+				getPrefs.getString("start_date", ""),
 				getPrefs.getString("end_date", ""));
-		double quoziente = (progressDiff / asDiff) * 100;
+		double quoziente = Math.round((progressDiff / asDiff) * 100);
+
 		return (int) quoziente;
 	}
 
@@ -761,11 +768,24 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 			etPeriodoString.setText(jsonObiect.getString("periodo"));
 
+			syncronizeSpinnerPeriods(jsonObiect.getString("periodo"));
+
 			etStartPeriod.setText(jsonObiect.getString("start_period"));
 			etEndPeriod.setText(jsonObiect.getString("end_period"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void syncronizeSpinnerPeriods(String periodo) {
+		// TODO Auto-generated method stub
+		for (int j = 0; j < spinnerPeriods.getCount(); j++) {
+			if (periodo.equalsIgnoreCase((String) spinnerPeriods
+					.getItemAtPosition(j))) {
+				spinnerPeriods.setSelection(j);
+				break;
+			}
 		}
 	}
 
@@ -781,11 +801,6 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
 		calculateStartDate();
-		// spinnerPeriods.setSelection(0);// Seleziona BIMESTRE
-		// etPeriodoString.setText((CharSequence) spinnerPeriods
-		// .getItemAtPosition(0));
-		// calculateEndDate();
-		//
 		new GetScuolaDescriptionTask().execute();
 		new GetAnnoScolasticoDescriptionTask().execute();
 
@@ -951,10 +966,10 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	 * 
 	 */
 	private class CalculateProgressOfAsCopertureTask extends
-			AsyncTask<Void, Void, Double> {
+			AsyncTask<Void, Void, Double[]> {
 
 		@Override
-		protected Double doInBackground(Void... params) {
+		protected Double[] doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			return databaseOps.calculateProgressOfAsCoperture(
 					getApplicationContext(), beforeChangeBasket);
@@ -966,11 +981,15 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 		 */
 		@Override
-		protected void onPostExecute(Double result) {
+		protected void onPostExecute(Double[] result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			progressBarCoperturaAs.setProgress((int) (result * 100));
-			tvProgress.setText(String.valueOf((int) (result * 100)) + " %");
+			progressBarCoperturaAs.setProgress((int) (Math
+					.ceil(result[0] * 100)));
+			tvProgress
+					.setText(String.valueOf((int) (Math.ceil(result[0] * 100)))
+							+ " % " + (int) (result[1] * 1) + "/"
+							+ (int) (result[2] * 1));
 		}
 
 	}

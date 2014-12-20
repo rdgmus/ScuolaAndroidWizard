@@ -864,6 +864,21 @@ public class AsCreatorActivity extends Activity implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+			Rollback();
+			setCommitRollback(false);
+		}
+	}
+
 	@Override
 	public void fillFieldsWithData(int position) {
 		// TODO Auto-generated method stub

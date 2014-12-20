@@ -12,6 +12,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.SumPathEffect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -583,7 +584,7 @@ public class DatabaseOps {
 							+ pad(c.get(Calendar.MONTH)) + "-"
 							+ pad(c.get(Calendar.DAY_OF_MONTH));
 				}
-			}else{
+			} else {
 				startDateAsString = getPrefs.getString("start_date", "");
 			}
 			st.close();
@@ -641,5 +642,101 @@ public class DatabaseOps {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/**
+	 * Cancella dal database la riga di periodo anno scolastico id nel basket
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean deletePeriodoAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `periodi_anno_scolastico`"
+					+ " WHERE  id_anno_scolastico="
+					+ beforeChangeBasket.getLong("id_anno_scolastico")
+					+ " AND id_scuola="
+					+ beforeChangeBasket.getLong("id_scuola")
+					+ " AND id_periodo="
+					+ beforeChangeBasket.getLong("id_periodo");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Calcola la copertura dell'Anno Scolastico in base ai periodi creati in
+	 * percentuale da 0% a 100%
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Double calculateProgressOfAsCoperture(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+
+		Double dResult = (double) 0;
+		Double diffDateOfAs = (double) 0, sumDaysOfPeriodsAs = (double) 0;
+
+		long id_anno_scolastico = beforeChangeBasket
+				.getLong("id_anno_scolastico");
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			// NUMERO GIORNI DURATA ANNO SCOLASTICO
+			sql = "SELECT DATEDIFF(`end_date`,`start_date`) AS DiffDate "
+					+ "FROM `anni_scolastici` WHERE id_anno_scolastico="
+					+ id_anno_scolastico;
+			ResultSet result = st.executeQuery(sql);
+			while (result.next()) {
+				diffDateOfAs = result.getDouble("DiffDate");
+			}
+			// SOMMA GIORNI DEI PERIODI ESISTENTI
+			sql = "SELECT SUM(DATEDIFF(`end_date`,`start_date`)) AS sum FROM `periodi_anno_scolastico` WHERE `id_anno_scolastico`="
+					+ id_anno_scolastico;
+			result = st.executeQuery(sql);
+			while (result.next()) {
+				sumDaysOfPeriodsAs = result.getDouble("sum");
+			}
+
+			// CALCOLA PERCENTUALE
+			dResult = sumDaysOfPeriodsAs / diffDateOfAs;
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
+		return dResult;
 	}
 }

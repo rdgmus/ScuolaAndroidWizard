@@ -98,6 +98,7 @@ public class ScuolaWizard extends TabActivity implements
 		TabSpec tab1 = tabHost.newTabSpec(TAB_SCUOLE_TAG);
 		TabSpec tab2 = tabHost.newTabSpec(TAB_AS_TAG);
 		TabSpec tab3 = tabHost.newTabSpec(TAB_PERIODI_AS_TAG);
+		
 		// Set the Tab name and Activity
 		// that will be opened when particular Tab will be selected
 		tab1.setIndicator("Scuole",
@@ -117,9 +118,11 @@ public class ScuolaWizard extends TabActivity implements
 		tabHost.addTab(tab2);
 		tabHost.addTab(tab3);
 
-		tabHost.getTabWidget().getChildAt(1).setVisibility(View.GONE);
-		tabHost.getTabWidget().getChildAt(2).setVisibility(View.GONE);
-
+		int count = tabHost.getTabWidget().getChildCount();
+		for (int j = 1; j < count; j++) {
+			tabHost.getTabWidget().getChildAt(j).setVisibility(View.GONE);
+		}
+		
 		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
 
 			@Override
@@ -127,15 +130,15 @@ public class ScuolaWizard extends TabActivity implements
 				// TODO Auto-generated method stub
 				if (TAB_SCUOLE_TAG.equals(tabId)) {
 					// destroy earth
-//					tabHost.getTabWidget().getChildAt(1)
-//							.setVisibility(View.GONE);
-//					tabHost.getTabWidget().getChildAt(2)
-//							.setVisibility(View.GONE);
+					// tabHost.getTabWidget().getChildAt(1)
+					// .setVisibility(View.GONE);
+					// tabHost.getTabWidget().getChildAt(2)
+					// .setVisibility(View.GONE);
 				}
 				if (TAB_AS_TAG.equals(tabId)) {
 					// destroy mars
-//					tabHost.getTabWidget().getChildAt(2)
-//					.setVisibility(View.GONE);
+					// tabHost.getTabWidget().getChildAt(2)
+					// .setVisibility(View.GONE);
 				}
 				if (TAB_PERIODI_AS_TAG.equals(tabId)) {
 					// destroy mars

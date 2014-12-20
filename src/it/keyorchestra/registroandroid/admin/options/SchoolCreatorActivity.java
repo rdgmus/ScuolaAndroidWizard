@@ -267,6 +267,21 @@ public class SchoolCreatorActivity extends Activity implements
 		setNextTabVisiblity(View.GONE,2);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+			Rollback();
+			setCommitRollback(false);
+		}
+	}
+
 	@Override
 	public void setCommitRollback(boolean visible) {
 		// TODO Auto-generated method stub

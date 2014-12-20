@@ -10,13 +10,20 @@ import it.keyorchestra.registroandroid.admin.options.util.PeriodiASArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -66,6 +73,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	Button bChangeStartPeriod, bChangeEndPeriod;
 
 	ProgressBar progressBarCoperturaAs;
+	TextView tvProgress;
 
 	private int mYear;
 	private int mMonth;
@@ -111,7 +119,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		super.onResume();
 		getId_scuola();
 		getId_anno_scolastico();
-		
+
 		if (jArrayPeriodiAnnoScolastico == null) {
 			return;
 		}
@@ -124,13 +132,13 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				long oldId = jsonObject.getLong("id_anno_scolastico");
 				if (id_anno_scolastico != oldId) {
 					new LoadPeriodiAnnoScolasticoTask().execute();
-				}else {
+				} else {
 					setNextTabVisiblity(View.VISIBLE, 3);
 				}
 				oldId = jsonObject.getLong("id_scuola");
 				if (id_scuola != oldId) {
 					new LoadPeriodiAnnoScolasticoTask().execute();
-				}else {
+				} else {
 					setNextTabVisiblity(View.VISIBLE, 3);
 				}
 			} catch (JSONException e) {
@@ -140,6 +148,21 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			}
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+			Rollback();
+			setCommitRollback(false);
+		}
 	}
 
 	/**
@@ -190,10 +213,13 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				if (spinnerRecords.getCount() == 0) {
+					return;
+				}
 				try {
+					spinnerRecords.setSelection(spinnerRecords.getCount() - 1);
 					DeleteRow(jArrayPeriodiAnnoScolastico
-							.getJSONObject(spinnerRecords
-									.getSelectedItemPosition()));
+							.getJSONObject(spinnerRecords.getCount() - 1));
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -255,6 +281,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				// TODO Auto-generated method stub
 				Rollback();
 				setCommitRollback(false);
+				progressBarCoperturaAs.setSecondaryProgress(0);
+
 			}
 		});
 
@@ -352,6 +380,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		});
 
 		progressBarCoperturaAs = (ProgressBar) findViewById(R.id.progressBarCoperturaAs);
+		tvProgress = (TextView) findViewById(R.id.tvProgress);
 
 		Thread timer = new Thread() {
 
@@ -415,6 +444,60 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				// Month is 0 based so add 1
 				.append(mYear).append("-").append(pad(mMonth + 1)).append("-")
 				.append(pad(mDay)));
+
+		int secondaryProgress = CalcSecondaryProgress();
+		secondaryProgress += progressBarCoperturaAs.getProgress();
+		progressBarCoperturaAs.setSecondaryProgress(secondaryProgress);
+
+	}
+
+	/**
+	 * Calcola il secondaryProgress in base alle date settate nelle EditText
+	 * View comparando i giorni con le date dell'A.S. Ritorna un intero da
+	 * aggiungere nella progressBar
+	 * 
+	 * @return
+	 */
+	private int CalcSecondaryProgress() {
+		// TODO Auto-generated method stub
+		Double progressDiff = (double) getDiffInDaysOf(etStartPeriod.getText().toString(),
+				etEndPeriod.getText().toString());
+		Double asDiff = (double) getDiffInDaysOf(getPrefs.getString("start_date", ""),
+				getPrefs.getString("end_date", ""));
+		double quoziente = (progressDiff / asDiff) * 100;
+		return (int) quoziente;
+	}
+
+	@SuppressLint("SimpleDateFormat")
+	private int getDiffInDaysOf(String start_date, String end_date) {
+		// TODO Auto-generated method stub
+
+		Calendar cal1 = new GregorianCalendar();
+		Calendar cal2 = new GregorianCalendar();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date date = null;
+		try {
+			date = sdf.parse(start_date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cal1.setTime(date);
+		try {
+			date = sdf.parse(end_date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cal2.setTime(date);
+
+		return daysBetween(cal1.getTime(), cal2.getTime());
+	}
+
+	public int daysBetween(Date d1, Date d2) {
+		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
 	}
 
 	// the callback received when the user "sets" the date in the dialog
@@ -507,6 +590,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			beforeChangeBasket.putLong("id_scuola", data.getLong("id_scuola"));
 			beforeChangeBasket.putLong("id_anno_scolastico",
 					data.getLong("id_anno_scolastico"));
+			beforeChangeBasket
+					.putLong("id_periodo", data.getLong("id_periodo"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -574,7 +659,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.DELETE:
-			// new DeletePeriodoAnnoScolasticoTask().execute();
+			new DeletePeriodoAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.CREATE:
@@ -703,6 +788,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		//
 		new GetScuolaDescriptionTask().execute();
 		new GetAnnoScolasticoDescriptionTask().execute();
+
 	}
 
 	private void calculateEndDate() {
@@ -857,6 +943,72 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 	}
 
+	/**
+	 * Copertura dell'Anno Scolastico in base ai periodi creati in percentuale
+	 * da 0% a 100%
+	 * 
+	 * @author rdgmus
+	 * 
+	 */
+	private class CalculateProgressOfAsCopertureTask extends
+			AsyncTask<Void, Void, Double> {
+
+		@Override
+		protected Double doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return databaseOps.calculateProgressOfAsCoperture(
+					getApplicationContext(), beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Double result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			progressBarCoperturaAs.setProgress((int) (result * 100));
+			tvProgress.setText(String.valueOf((int) (result * 100)) + " %");
+		}
+
+	}
+
+	private class DeletePeriodoAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+
+			etIdScuolaFK.setTag(id_scuola);
+			return databaseOps.deletePeriodoAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadPeriodiAnnoScolasticoTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
 	private class GetAnnoScolasticoDescriptionTask extends
 			AsyncTask<Void, Void, String> {
 		@Override
@@ -897,6 +1049,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		protected void onPostExecute(Boolean result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
+
+			CalculateProgressOfAsCoperture();
 
 			if (result) {
 				PeriodiASArrayAdapter periodiAsAdapter = new PeriodiASArrayAdapter(
@@ -1015,6 +1169,13 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			return false;
 		}
 		return true;
+	}
+
+	public void CalculateProgressOfAsCoperture() {
+		// TODO Auto-generated method stub
+		beforeChangeBasket = new Bundle();
+		beforeChangeBasket.putLong("id_anno_scolastico", id_anno_scolastico);
+		new CalculateProgressOfAsCopertureTask().execute();
 	}
 
 	@Override

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_color5"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etIdParamOrarioAs"
+            android:layout_width="76dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/idParamOrarioAsHint"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etScuolaParamOrario"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7.56"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/scuolaParamOrario"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etAsParamOrario"
+            android:layout_width="142dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/asParamOrarioHint"
+            android:inputType="number"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" >
+
+            <requestFocus />
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etInizioLezioni"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/inizioLezioniHint"
+            android:inputType="time" />
+
+        <Button
+            android:id="@+id/bChangeStartOrario"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cambiaText" />
+
+        <EditText
+            android:id="@+id/etDurataOra"
+            android:layout_width="132dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/durataOraHint"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/etDurataIntervallo"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/durataIntervalloHint"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+</LinearLayout>

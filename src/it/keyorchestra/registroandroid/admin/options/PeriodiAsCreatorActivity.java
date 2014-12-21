@@ -418,7 +418,9 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
-
+				Toast.makeText(getApplicationContext(),
+						"onNothingSelected:" + parent, Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 
@@ -774,6 +776,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		etEndPeriod.setFocusable(false);
 		etEndPeriod.setError(null);
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.NONE);
 		new LoadPeriodiAnnoScolasticoTask().execute();
 	}
 
@@ -855,6 +859,12 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		}
 	}
 
+	/**
+	 * Sincronizza l'item selezionato nello spinner in base all'item introdotto
+	 * nella TextView
+	 * 
+	 * @param periodo
+	 */
 	private void syncronizeSpinnerPeriods(String periodo) {
 		// TODO Auto-generated method stub
 		for (int j = 0; j < spinnerPeriods.getCount(); j++) {
@@ -1209,6 +1219,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				if (spinnerRecords.getCount() == 0) {
 					removeAllTextIntoFields();
 					inizializzaNuovoRecord();
+				}else{
+					setNextTabVisiblity(View.VISIBLE, 3);
 				}
 			} else {
 				Toast.makeText(getApplicationContext(),
@@ -1342,6 +1354,17 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		View tab = tabHost.getTabWidget().getChildAt(tabIndex);
 		if (tab != null)
 			tab.setVisibility(visibility);
+	}
+
+	@Override
+	public void setAllTabsVisibilityFrom(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		ScuolaWizard parent = (ScuolaWizard) getParent();
+		TabHost tabHost = parent.getTabHost();
+		int count = tabHost.getTabWidget().getChildCount();
+		for (int j = tabIndex; j < count; j++) {
+			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
+		}
 	}
 
 }

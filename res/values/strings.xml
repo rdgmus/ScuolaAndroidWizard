@@ -61,5 +61,11 @@
     <string name="timeSessionDescription">Periodo Scolastico</string>
     <string name="progressBarText">0.0%</string>
     <string name="durataASHint">Durata A.S.</string>
+    <string name="idParamOrarioAsHint">IdP</string>
+    <string name="scuolaParamOrario">Scuola</string>
+    <string name="asParamOrarioHint">A.S.</string>
+    <string name="inizioLezioniHint">Inizio Lez.</string>
+    <string name="durataOraHint">Ore [min.]</string>
+    <string name="durataIntervalloHint">Intervallo [min.]</string>
 
 </resources>

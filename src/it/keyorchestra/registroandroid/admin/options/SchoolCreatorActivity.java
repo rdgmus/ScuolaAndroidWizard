@@ -264,7 +264,7 @@ public class SchoolCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		setNextTabVisiblity(View.GONE,2);
+		setAllTabsVisibilityFrom(View.GONE,2);
 	}
 
 	/*
@@ -369,8 +369,7 @@ public class SchoolCreatorActivity extends Activity implements
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					setNextTabVisiblity(View.GONE, 1);
-					setNextTabVisiblity(View.GONE, 2);
+					setAllTabsVisibilityFrom(View.GONE, 1);
 				}
 
 			}
@@ -828,6 +827,17 @@ public class SchoolCreatorActivity extends Activity implements
 	public void saveTableStringIntoPreferences(String key, String value) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setAllTabsVisibilityFrom(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		ScuolaWizard parent = (ScuolaWizard) getParent();
+		TabHost tabHost = parent.getTabHost();
+		int count = tabHost.getTabWidget().getChildCount();
+		for (int j = tabIndex; j < count; j++) {
+			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
+		}
 	}
 
 }

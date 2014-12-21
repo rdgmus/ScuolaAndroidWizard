@@ -14,6 +14,7 @@ public interface CrudManagerInterface {
 		public final static int COMMIT = 5;
 		public final static int ROLLBACK = 6;
 		public final static int CLEAR = 7;
+		public final static int NONE = 8;
 	}
 
 	public boolean UpdateRow(JSONObject data);
@@ -67,8 +68,27 @@ public interface CrudManagerInterface {
 	 */
 	public void inizializzaNuovoRecord();
 
+	/**
+	 * Salva un valore nelle preferenze come String
+	 * @param key
+	 * @param value
+	 */
 	public void saveTableStringIntoPreferences(String key, String value);
 	
+	/**
+	 * Setta la visibilità del tab indicato
+	 * In genere il prossimo deve essere attivato o disattivato
+	 * secondo i risultati caricati dalla tabella del database. 
+	 * @param visibility
+	 * @param tabIndex
+	 */
 	public void setNextTabVisiblity(int visibility, int tabIndex) ;
+	
+	/**
+	 * Setta la visibilità di tutti tabs a partire da tabIndex
+	 * @param visibility
+	 * @param tabIndex
+	 */
+	public void setAllTabsVisibilityFrom(int visibility, int tabIndex);
 
 }

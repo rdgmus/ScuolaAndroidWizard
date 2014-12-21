@@ -425,7 +425,7 @@ public class AsCreatorActivity extends Activity implements
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					setNextTabVisiblity(View.GONE, 2);
+					setAllTabsVisibilityFrom(View.GONE, 2);
 				}
 
 			}
@@ -841,6 +841,8 @@ public class AsCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		setAllTabsVisibilityFrom(View.GONE,3);
+
 		getId_scuola();
 		if (jArrayAnniScolastici == null)
 			return;
@@ -1027,6 +1029,17 @@ public class AsCreatorActivity extends Activity implements
 		Editor editor = getPrefs.edit();
 		editor.putString(key, value);
 		editor.apply();
+	}
+
+	@Override
+	public void setAllTabsVisibilityFrom(int visibility, int tabIndex) {
+		// TODO Auto-generated method stub
+		ScuolaWizard parent = (ScuolaWizard) getParent();
+		TabHost tabHost = parent.getTabHost();
+		int count = tabHost.getTabWidget().getChildCount();
+		for (int j = tabIndex; j < count; j++) {
+			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
+		}
 	}
 
 }

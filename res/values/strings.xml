@@ -60,5 +60,6 @@
     <string name="periodoHint">PERIODO</string>
     <string name="timeSessionDescription">Periodo Scolastico</string>
     <string name="progressBarText">0.0%</string>
+    <string name="durataASHint">Durata A.S.</string>
 
 </resources>

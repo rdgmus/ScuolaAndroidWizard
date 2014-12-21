@@ -69,6 +69,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 	EditText etIdPeriodo, etIdScuolaFK, etIdAnnoScolasticoFK;
 	EditText etPeriodoString, etStartPeriod, etEndPeriod;
+	TextView tvDurataAS;
 	Spinner spinnerPeriods, spinnerRecords;
 
 	Button bChangeStartPeriod, bChangeEndPeriod;
@@ -91,6 +92,65 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	long id_periodo;
 	long id_scuola;
 	long id_anno_scolastico;
+	String inizioAS, fineAS;
+	Calendar inizioAsCal, fineAsCal;
+
+	
+	/**
+	 * @return the inizioAsCal
+	 */
+	@SuppressLint("SimpleDateFormat")
+	public Calendar getInizioAsCal() {
+		 inizioAsCal = new GregorianCalendar();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date date = null;
+		try {
+			date = sdf.parse(getInizioAS());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		inizioAsCal.setTime(date);
+		return inizioAsCal;
+	}
+
+	/**
+	 * @return the fineAsCal
+	 */
+	@SuppressLint("SimpleDateFormat")
+	public Calendar getFineAsCal() {
+		fineAsCal = new GregorianCalendar();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date date = null;
+		try {
+			date = sdf.parse(getFineAS());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fineAsCal.setTime(date);
+		return fineAsCal;
+	}
+
+	/**
+	 * @return the inizioAS
+	 */
+	public String getInizioAS() {
+		inizioAS = getPrefs.getString("start_date", "####-##-##");
+		return inizioAS;
+	}
+
+	/**
+	 * @return the fineAS
+	 */
+	public String getFineAS() {
+		fineAS = getPrefs.getString("end_date", "####-##-##");
+		return fineAS;
+	}
 
 	/**
 	 * @return the id_scuola
@@ -198,6 +258,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		getId_scuola();
 		getId_anno_scolastico();
+		tvDurataAS = (TextView)findViewById(R.id.tvDurataAS);
+		tvDurataAS.setText("A.S. ["+getInizioAS()+"] ["+getFineAS()+"]");
 		now();
 
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
@@ -410,15 +472,21 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		case START_DATE_DIALOG_ID:
 			String startDate = etStartPeriod.getText().toString();
 			split = startDate.split("-");
-			return new DatePickerDialog(this, mStartDateSetListener,
+			DatePickerDialog startDialog = new DatePickerDialog(this, mStartDateSetListener,
 					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
 					Integer.valueOf(split[2]));
+			startDialog.getDatePicker().setMinDate(getInizioAsCal().getTimeInMillis());
+			startDialog.getDatePicker().setMaxDate(getFineAsCal().getTimeInMillis());
+			return startDialog;
 		case END_DATE_DIALOG_ID:
 			String endDate = etEndPeriod.getText().toString();
 			split = endDate.split("-");
-			return new DatePickerDialog(this, mEndDateSetListener,
+			DatePickerDialog endDialog = new DatePickerDialog(this, mEndDateSetListener,
 					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
 					Integer.valueOf(split[2]));
+			endDialog.getDatePicker().setMinDate(getInizioAsCal().getTimeInMillis());
+			endDialog.getDatePicker().setMaxDate(getFineAsCal().getTimeInMillis());
+			return endDialog;
 		}
 		return null;
 	}
@@ -988,7 +1056,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 					.ceil(result[0] * 100)));
 			tvProgress
 					.setText(String.valueOf((int) (Math.ceil(result[0] * 100)))
-							+ " % " + (int) (result[1] * 1) + "/"
+							+ " %  gg." + (int) (result[1] * 1) + "/"
 							+ (int) (result[2] * 1));
 		}
 

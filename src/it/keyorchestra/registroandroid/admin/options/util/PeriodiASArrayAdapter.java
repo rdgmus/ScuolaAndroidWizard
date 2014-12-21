@@ -41,8 +41,8 @@ public class PeriodiASArrayAdapter extends ArrayAdapter<String>{
 		TextView tvIdPeriodo = (TextView) rowView.findViewById(R.id.tvIdPeriodo);
 		TextView tvPeriodoString = (TextView) rowView
 				.findViewById(R.id.tvPeriodoString);
-		TextView tcStartPeriod = (TextView) rowView
-				.findViewById(R.id.tcStartPeriod);
+		TextView tvStartPeriod = (TextView) rowView
+				.findViewById(R.id.tvStartPeriod);
 		TextView tvEndPeriod = (TextView) rowView
 				.findViewById(R.id.tvEndPeriod);
 		
@@ -62,12 +62,12 @@ public class PeriodiASArrayAdapter extends ArrayAdapter<String>{
 					.getColor(R.color.colorBlack));
 			tvPeriodoString.setTextSize(12);
 
-			tcStartPeriod.setText(s.getString("start_period"));
-			tcStartPeriod.setTextColor(_context.getResources().getColor(
+			tvStartPeriod.setText(s.getString("start_period"));
+			tvStartPeriod.setTextColor(_context.getResources().getColor(
 					R.color.colorOrange));
-			tcStartPeriod.setBackgroundColor(_context.getResources().getColor(
+			tvStartPeriod.setBackgroundColor(_context.getResources().getColor(
 					R.color.colorBlack));
-			tcStartPeriod.setTextSize(12);
+			tvStartPeriod.setTextSize(12);
 			
 			tvEndPeriod.setText(s.getString("end_period"));
 			tvEndPeriod.setTextColor(_context.getResources().getColor(
@@ -99,8 +99,8 @@ public class PeriodiASArrayAdapter extends ArrayAdapter<String>{
 		TextView tvIdPeriodo = (TextView) rowView.findViewById(R.id.tvIdPeriodo);
 		TextView tvPeriodoString = (TextView) rowView
 				.findViewById(R.id.tvPeriodoString);
-		TextView tcStartPeriod = (TextView) rowView
-				.findViewById(R.id.tcStartPeriod);
+		TextView tvStartPeriod = (TextView) rowView
+				.findViewById(R.id.tvStartPeriod);
 		TextView tvEndPeriod = (TextView) rowView
 				.findViewById(R.id.tvEndPeriod);
 		
@@ -120,12 +120,12 @@ public class PeriodiASArrayAdapter extends ArrayAdapter<String>{
 					.getColor(R.color.colorBlack));
 			tvPeriodoString.setTextSize(12);
 
-			tcStartPeriod.setText(s.getString("start_period"));
-			tcStartPeriod.setTextColor(_context.getResources().getColor(
+			tvStartPeriod.setText(s.getString("start_period"));
+			tvStartPeriod.setTextColor(_context.getResources().getColor(
 					R.color.colorOrange));
-			tcStartPeriod.setBackgroundColor(_context.getResources().getColor(
+			tvStartPeriod.setBackgroundColor(_context.getResources().getColor(
 					R.color.colorBlack));
-			tcStartPeriod.setTextSize(12);
+			tvStartPeriod.setTextSize(12);
 			
 			tvEndPeriod.setText(s.getString("end_period"));
 			tvEndPeriod.setTextColor(_context.getResources().getColor(

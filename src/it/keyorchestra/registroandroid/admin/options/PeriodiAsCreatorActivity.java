@@ -9,7 +9,6 @@ import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.PeriodiASArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
-import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,12 +16,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -81,7 +78,9 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	private int mMonth;
 	private int mDay;
 
+	@SuppressWarnings("unused")
 	private int mHour;
+	@SuppressWarnings("unused")
 	private int mMinute;
 
 	private SharedPreferences getPrefs;
@@ -95,13 +94,12 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	String inizioAS, fineAS;
 	Calendar inizioAsCal, fineAsCal;
 
-	
 	/**
 	 * @return the inizioAsCal
 	 */
 	@SuppressLint("SimpleDateFormat")
 	public Calendar getInizioAsCal() {
-		 inizioAsCal = new GregorianCalendar();
+		inizioAsCal = new GregorianCalendar();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -258,8 +256,9 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 		getId_scuola();
 		getId_anno_scolastico();
-		tvDurataAS = (TextView)findViewById(R.id.tvDurataAS);
-		tvDurataAS.setText("A.S. ["+getInizioAS()+"] ["+getFineAS()+"]");
+		tvDurataAS = (TextView) findViewById(R.id.tvDurataAS);
+		tvDurataAS
+				.setText("A.S. [" + getInizioAS() + "] [" + getFineAS() + "]");
 		now();
 
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
@@ -281,6 +280,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 					return;
 				}
 				try {
+					// CANCELLA SEMPRE E SOLO l'ULTIMO PERIODO IN TABELLA
+					// PER EVITARE CASINI....
 					spinnerRecords.setSelection(spinnerRecords.getCount() - 1);
 					DeleteRow(jArrayPeriodiAnnoScolastico
 							.getJSONObject(spinnerRecords.getCount() - 1));
@@ -472,20 +473,24 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		case START_DATE_DIALOG_ID:
 			String startDate = etStartPeriod.getText().toString();
 			split = startDate.split("-");
-			DatePickerDialog startDialog = new DatePickerDialog(this, mStartDateSetListener,
-					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
-					Integer.valueOf(split[2]));
-			startDialog.getDatePicker().setMinDate(getInizioAsCal().getTimeInMillis());
-			startDialog.getDatePicker().setMaxDate(getFineAsCal().getTimeInMillis());
+			DatePickerDialog startDialog = new DatePickerDialog(this,
+					mStartDateSetListener, Integer.valueOf(split[0]),
+					Integer.valueOf(split[1]) - 1, Integer.valueOf(split[2]));
+			startDialog.getDatePicker().setMinDate(
+					getInizioAsCal().getTimeInMillis());
+			startDialog.getDatePicker().setMaxDate(
+					getFineAsCal().getTimeInMillis());
 			return startDialog;
 		case END_DATE_DIALOG_ID:
 			String endDate = etEndPeriod.getText().toString();
 			split = endDate.split("-");
-			DatePickerDialog endDialog = new DatePickerDialog(this, mEndDateSetListener,
-					Integer.valueOf(split[0]), Integer.valueOf(split[1]) - 1,
-					Integer.valueOf(split[2]));
-			endDialog.getDatePicker().setMinDate(getInizioAsCal().getTimeInMillis());
-			endDialog.getDatePicker().setMaxDate(getFineAsCal().getTimeInMillis());
+			DatePickerDialog endDialog = new DatePickerDialog(this,
+					mEndDateSetListener, Integer.valueOf(split[0]),
+					Integer.valueOf(split[1]) - 1, Integer.valueOf(split[2]));
+			endDialog.getDatePicker().setMinDate(
+					getInizioAsCal().getTimeInMillis());
+			endDialog.getDatePicker().setMaxDate(
+					getFineAsCal().getTimeInMillis());
 			return endDialog;
 		}
 		return null;
@@ -625,10 +630,14 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			beforeChangeBasket.putLong("id_scuola", data.getLong("id_scuola"));
 
 			beforeChangeBasket.putString("periodo", data.getString("periodo"));
+			// Qui si fa riferimento alle date del periodo scolastico
+			// che in tabella si chiamno start_date e end_date ma che
+			// la query di caricamento periodi ha chiamato start_period e
+			// end_period
 			beforeChangeBasket.putString("start_date",
-					data.getString("start_date"));
-			beforeChangeBasket
-					.putString("end_date", data.getString("end_date"));
+					data.getString("start_period"));
+			beforeChangeBasket.putString("end_date",
+					data.getString("end_period"));
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -730,7 +739,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				etEndPeriod.requestFocus();
 				break;
 			}
-			// new UpdatePeriodoAnnoScolasticoTask().execute();
+			new UpdatePeriodoAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.DELETE:
@@ -1058,6 +1067,48 @@ public class PeriodiAsCreatorActivity extends Activity implements
 					.setText(String.valueOf((int) (Math.ceil(result[0] * 100)))
 							+ " %  gg." + (int) (result[1] * 1) + "/"
 							+ (int) (result[2] * 1));
+			if ((int) (Math.ceil(result[0] * 100)) == 100) {
+				bCrudCreate.setVisibility(Button.INVISIBLE);
+			} else {
+				// bCrudCreate.setVisibility(Button.VISIBLE);
+			}
+		}
+
+	}
+
+	private class UpdatePeriodoAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return databaseOps.updatePeriodoAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket,
+					afterChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadPeriodiAnnoScolasticoTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+			// In ogni caso per rimettere a posto i dati nella maschera
+			// new LoadPeriodiAnnoScolasticoTask().execute();
 		}
 
 	}

@@ -742,4 +742,55 @@ public class DatabaseOps {
 		arrayResults[2] = diffDateOfAs;
 		return arrayResults;
 	}
+
+	/**
+	 * UPDATE su tabella periodi anno scolastico
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @param afterChangeBasket
+	 * @return
+	 */
+	public Boolean updatePeriodoAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket, Bundle afterChangeBasket) {
+		// TODO Auto-generated method stub
+		long id_periodo = beforeChangeBasket.getLong("id_periodo");
+
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+			addStartComma = false;
+
+			sql = "UPDATE `periodi_anno_scolastico` " + "SET ";
+			sql = integrateSqlWithNumberField(beforeChangeBasket,
+					afterChangeBasket, "id_scuola", sql);
+			sql = integrateSqlWithNumberField(beforeChangeBasket,
+					afterChangeBasket, "id_anno_scolastico", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"periodo", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"start_date", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"end_date", sql);
+
+			sql += " WHERE id_periodo=" + id_periodo;
+
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

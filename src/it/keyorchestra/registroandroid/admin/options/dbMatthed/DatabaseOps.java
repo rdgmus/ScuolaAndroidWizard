@@ -263,7 +263,20 @@ public class DatabaseOps {
 			if (addStartComma) {
 				sql += ",";
 			}
-			sql += " " + key + "=" + afterChangeBasket.getString(key) + " ";
+			sql += " " + key + "=" + afterChangeBasket.getLong(key) + " ";
+			addStartComma = true;
+		}
+		return sql;
+	}
+
+	private String integrateSqlWithNumberFieldInt(Bundle beforeChangeBasket,
+			Bundle afterChangeBasket, String key, String sql) {
+		// TODO Auto-generated method stub
+		if (beforeChangeBasket.getInt(key) != afterChangeBasket.getInt(key)) {
+			if (addStartComma) {
+				sql += ",";
+			}
+			sql += " " + key + "=" + afterChangeBasket.getInt(key) + " ";
 			addStartComma = true;
 		}
 		return sql;
@@ -786,6 +799,136 @@ public class DatabaseOps {
 				conn.close();
 				return true;
 			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * UPDATE tabella parametri_orario_as
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @param afterChangeBasket
+	 * @return
+	 */
+	public Boolean updateParametriOrarioAnnoScolastico(
+			Context applicationContext, Bundle beforeChangeBasket,
+			Bundle afterChangeBasket) {
+		// TODO Auto-generated method stub
+		long id_param_orario = beforeChangeBasket.getLong("id_param_orario");
+		long id_anno_scolastico = beforeChangeBasket
+				.getLong("id_anno_scolastico");
+
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+			addStartComma = false;
+
+			sql = "UPDATE `parametri_orario_as` " + "SET ";
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"inizio_lezioni", sql);
+			sql = integrateSqlWithNumberFieldInt(beforeChangeBasket,
+					afterChangeBasket, "durata_ora_minuti", sql);
+			sql = integrateSqlWithNumberFieldInt(beforeChangeBasket,
+					afterChangeBasket, "durata_intervallo_minuti", sql);
+
+			sql += " WHERE id_anno_scolastico=" + id_anno_scolastico
+					+ " AND id_param_orario = " + id_param_orario;
+
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * DELETE tabella parametri_orario_as
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean deleteParametriOrarioAnnoScolastico(
+			Context applicationContext, Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `parametri_orario_as`"
+					+ " WHERE  id_anno_scolastico="
+					+ beforeChangeBasket.getLong("id_anno_scolastico")
+					+ " AND id_param_orario="
+					+ beforeChangeBasket.getLong("id_param_orario");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Crea una riga di parametri orario per l'anno scolastico nel basket
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean createParametriOrarioAnnoScolastico(
+			Context applicationContext, Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "INSERT INTO `parametri_orario_as`("
+					+ "`id_anno_scolastico`, `inizio_lezioni`, `durata_ora_minuti`, "
+					+ "`durata_intervallo_minuti`) VALUES ("
+					+ beforeChangeBasket.getLong("id_anno_scolastico") + ", '"
+					+ beforeChangeBasket.getString("inizio_lezioni") + "', "
+					+ beforeChangeBasket.getString("durata_ora_minuti") + ","
+					+ beforeChangeBasket.getString("durata_intervallo_minuti")
+					+ ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
 			st.close();
 			conn.close();
 		} catch (SQLException e) {

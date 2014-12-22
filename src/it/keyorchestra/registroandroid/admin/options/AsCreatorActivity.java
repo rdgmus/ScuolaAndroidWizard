@@ -38,7 +38,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -931,6 +930,7 @@ public class AsCreatorActivity extends Activity implements
 			} else {
 				Toast.makeText(getApplicationContext(), "Commit fallito!",
 						Toast.LENGTH_SHORT).show();
+				new LoadAnniScolasticiTask().execute();
 			}
 		}
 

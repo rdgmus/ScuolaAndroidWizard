@@ -262,4 +262,23 @@ public class FieldsValidator {
 		return true;
 	}
 
+	public static boolean Is_Valid_MinuteExpression(EditText edt) {
+		// TODO Auto-generated method stub
+		if (edt.getText().toString().length() <= 0) {
+			edt.setError(Html
+					.fromHtml("<font color='red'>Informazione necessaria</font>"));
+			return false;
+		} else {
+			if (!edt.getText().toString().matches("[0-9]{2}")) {
+				edt.setError(Html
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{2}</font>"));
+				return false;
+			}
+
+		}
+
+		edt.setError(null);
+		return true;
+	}
+
 }

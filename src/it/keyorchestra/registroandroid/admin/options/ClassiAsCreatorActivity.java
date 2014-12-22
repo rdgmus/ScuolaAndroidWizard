@@ -5,6 +5,8 @@ import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommon
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
 import it.keyorchestra.registroandroid.admin.options.util.ClassiArrayAdapter;
+import it.keyorchestra.registroandroid.admin.options.util.NomiClasseArrayAdapter;
+import it.keyorchestra.registroandroid.admin.options.util.SpecializzazioniArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -44,8 +46,10 @@ public class ClassiAsCreatorActivity extends Activity implements
 	private SharedPreferences getPrefs;
 	private DatabaseOps databaseOps;
 
-	private ArrayList<String> classiAnnoScolasticoArray;
-	private JSONArray jArrayClassiAnnoScolastico;
+	private ArrayList<String> classiAnnoScolasticoArray, nomiClasseArray,
+			specializzazioniArray;
+	private JSONArray jArrayClassiAnnoScolastico, jArrayNomiClasse,
+			jArraySpecializzazioni;
 
 	EditText etIdClasse, etIdScuolaClasse, etIdAsClasse, etNomeClasse,
 			etSpecializzazione;
@@ -55,6 +59,7 @@ public class ClassiAsCreatorActivity extends Activity implements
 	long id_anno_scolastico;
 	long id_scuola;
 	long id_classe;
+
 	/**
 	 * @return the id_scuola
 	 */
@@ -140,7 +145,41 @@ public class ClassiAsCreatorActivity extends Activity implements
 
 		getId_scuola();
 		getId_anno_scolastico();
-		
+
+		spinnerNomiClasse = (Spinner) findViewById(R.id.spinnerNomiClasse);
+		spinnerNomiClasse
+				.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+		spinnerSpecializzazioni = (Spinner) findViewById(R.id.spinnerSpecializzazioni);
+		spinnerSpecializzazioni
+				.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+						// TODO Auto-generated method stub
+
+					}
+				});
 
 		spinnerRecords = (Spinner) findViewById(R.id.spinnerRecords);
 		spinnerRecords.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -151,21 +190,19 @@ public class ClassiAsCreatorActivity extends Activity implements
 				// TODO Auto-generated method stub
 				id_classe = (Long) view.getTag();
 				// Salva id_anno_scolastico nelle preferenze
-				saveTableIdIntoPreferences("id_classe",
-						id_classe);
-//
-//				try {
-//					JSONObject jsonObject = jArrayClassiAnnoScolastico
-//							.getJSONObject(position);
-//
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				saveTableIdIntoPreferences("id_classe", id_classe);
+				//
+				// try {
+				// JSONObject jsonObject = jArrayClassiAnnoScolastico
+				// .getJSONObject(position);
+				//
+				// } catch (JSONException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
 
 				Toast.makeText(getApplicationContext(),
-						"id_classe:" + id_classe,
-						Toast.LENGTH_SHORT).show();
+						"id_classe:" + id_classe, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
 				setNextTabVisiblity(View.VISIBLE, 5);
 			}
@@ -173,10 +210,10 @@ public class ClassiAsCreatorActivity extends Activity implements
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		etIdScuolaClasse = (EditText) findViewById(R.id.etIdScuolaClasse);
 		etIdAsClasse = (EditText) findViewById(R.id.etIdAsClasse);
 
@@ -278,6 +315,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
 		tvRecordsCount = (TextView) findViewById(R.id.tvRecordsCount);
 
+		new LoadAllDistinctNomeClasseTask().execute();
+		new LoadAllDistinctSpecializzazioniTask().execute();
+
 		Thread timer = new Thread() {
 
 			@Override
@@ -337,13 +377,76 @@ public class ClassiAsCreatorActivity extends Activity implements
 					new GetScuolaDescriptionTask().execute();
 					new GetAnnoScolasticoDescriptionTask().execute();
 
-
 					setNextTabVisiblity(View.VISIBLE, 5);
 				}
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Impossibile caricare le CLassi dell'Anno Scolastico!",
 						Toast.LENGTH_LONG).show();
+			}
+		}
+
+	}
+
+	private class LoadAllDistinctNomeClasseTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return CaricaAllDistinctNomeClasse();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				NomiClasseArrayAdapter classiAsAdapter = new NomiClasseArrayAdapter(
+						getApplicationContext(), jArrayNomiClasse,
+						nomiClasseArray);
+
+				classiAsAdapter
+						.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+				// Apply the adapter to the spinner
+				spinnerNomiClasse.setAdapter(classiAsAdapter);
+			}
+		}
+
+	}
+
+	private class LoadAllDistinctSpecializzazioniTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return CaricaAllDistinctSpecializzazioni();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				SpecializzazioniArrayAdapter classiAsAdapter = new SpecializzazioniArrayAdapter(
+						getApplicationContext(), jArraySpecializzazioni,
+						specializzazioniArray);
+
+				classiAsAdapter
+						.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+				// Apply the adapter to the spinner
+				spinnerSpecializzazioni.setAdapter(classiAsAdapter);
 			}
 		}
 
@@ -358,7 +461,7 @@ public class ClassiAsCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		setAllTabsVisibilityFrom(View.GONE,5);
+		setAllTabsVisibilityFrom(View.GONE, 5);
 
 		getId_scuola();
 		getId_anno_scolastico();
@@ -382,6 +485,86 @@ public class ClassiAsCreatorActivity extends Activity implements
 				new LoadClassiAnnoScolasticoTask().execute();
 			}
 		}
+	}
+
+	public Boolean CaricaAllDistinctNomeClasse() {
+		// TODO Auto-generated method stub
+		nomiClasseArray = new ArrayList<String>();
+		String retrieveTableData = getPrefs
+				.getString("retrieveTableData", null);
+
+		String ip = getDatabaseIpFromPreferences();
+
+		String query = "SELECT DISTINCT `nome_classe` FROM `classi` WHERE 1\n"
+				+ "ORDER BY `nome_classe` ASC";
+
+		try {
+			jArrayNomiClasse = new MySqlAndroid().retrieveTableData(
+					getApplicationContext(),
+					"http://" + ip + "/" + retrieveTableData + "?sql="
+							+ URLEncoder.encode(query, "UTF-8"), null);
+			if (jArrayNomiClasse == null)
+				return false;
+
+			for (int i = 0; i < jArrayNomiClasse.length(); i++) {
+				JSONObject json_data;
+				try {
+					json_data = jArrayNomiClasse.getJSONObject(i);
+
+					nomiClasseArray.add(json_data.getString("nome_classe"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public Boolean CaricaAllDistinctSpecializzazioni() {
+		// TODO Auto-generated method stub
+		specializzazioniArray = new ArrayList<String>();
+		String retrieveTableData = getPrefs
+				.getString("retrieveTableData", null);
+
+		String ip = getDatabaseIpFromPreferences();
+
+		String query = "SELECT DISTINCT `specializzazione` FROM `classi` "
+				+ "WHERE 1 ORDER BY `specializzazione` ASC";
+
+		try {
+			jArraySpecializzazioni = new MySqlAndroid().retrieveTableData(
+					getApplicationContext(),
+					"http://" + ip + "/" + retrieveTableData + "?sql="
+							+ URLEncoder.encode(query, "UTF-8"), null);
+			if (jArraySpecializzazioni == null)
+				return false;
+
+			for (int i = 0; i < jArraySpecializzazioni.length(); i++) {
+				JSONObject json_data;
+				try {
+					json_data = jArraySpecializzazioni.getJSONObject(i);
+
+					specializzazioniArray.add(json_data
+							.getString("specializzazione"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	public Boolean CaricaClassiAnnoScolastico() {
@@ -540,7 +723,8 @@ public class ClassiAsCreatorActivity extends Activity implements
 			etIdClasse.setText("" + jsonObiect.getLong("id_classe") + "");
 
 			etNomeClasse.setText(jsonObiect.getString("nome_classe"));
-			etSpecializzazione.setText(jsonObiect.getString("specializzazione"));
+			etSpecializzazione
+					.setText(jsonObiect.getString("specializzazione"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

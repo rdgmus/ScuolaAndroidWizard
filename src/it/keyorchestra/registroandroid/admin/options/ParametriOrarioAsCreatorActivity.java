@@ -191,6 +191,8 @@ public class ParametriOrarioAsCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		setAllTabsVisibilityFrom(View.GONE,5);
+		
 		getId_scuola();
 		getId_anno_scolastico();
 
@@ -217,7 +219,7 @@ public class ParametriOrarioAsCreatorActivity extends Activity implements
 				new LoadParametriOrarioPeriodiAnnoScolasticoTask().execute();
 			}
 		} else {
-			setAllTabsVisibilityFrom(View.GONE, 4);
+			setAllTabsVisibilityFrom(View.GONE, 5);
 		}
 	}
 

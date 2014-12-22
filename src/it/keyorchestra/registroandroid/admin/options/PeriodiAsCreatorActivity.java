@@ -176,6 +176,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		setAllTabsVisibilityFrom(View.GONE,4);
+		
 		getId_scuola();
 		getId_anno_scolastico();
 
@@ -205,6 +207,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				e.printStackTrace();
 				new LoadPeriodiAnnoScolasticoTask().execute();
 			}
+		} else {
+			setAllTabsVisibilityFrom(View.GONE, 4);
 		}
 
 	}
@@ -1309,6 +1313,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					setAllTabsVisibilityFrom(View.GONE, 3);
 				}
 
 			}

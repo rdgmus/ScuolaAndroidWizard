@@ -32,7 +32,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class ParametriOrarioAsActivity extends Activity implements
+public class ParametriOrarioAsCreatorActivity extends Activity implements
 		ActivitiesCommonFunctions, CrudManagerInterface, OnFocusChangeListener,
 		MyDateTimePickersInterface {
 
@@ -127,8 +127,6 @@ public class ParametriOrarioAsActivity extends Activity implements
 			AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			new GetScuolaDescriptionTask().execute();
-			new GetAnnoScolasticoDescriptionTask().execute();
 
 			return CaricaParametriOrarioAnnoScolastico();
 		}
@@ -168,6 +166,11 @@ public class ParametriOrarioAsActivity extends Activity implements
 				Toast.makeText(getApplicationContext(),
 						"Parametri Orario Anno Scolastico caricati!",
 						Toast.LENGTH_LONG).show();
+				
+				new GetScuolaDescriptionTask().execute();
+				new GetAnnoScolasticoDescriptionTask().execute();
+
+				setNextTabVisiblity(View.VISIBLE, 4);
 
 			} else {
 				Toast.makeText(
@@ -206,7 +209,7 @@ public class ParametriOrarioAsActivity extends Activity implements
 					new LoadParametriOrarioPeriodiAnnoScolasticoTask()
 							.execute();
 				} else {
-					setAllTabsVisibilityFrom(View.VISIBLE, 4);
+					setNextTabVisiblity(View.VISIBLE, 4);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -266,7 +269,7 @@ public class ParametriOrarioAsActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.parametri_orario_as_activity);
+		setContentView(R.layout.parametri_orarioas_creator_activity);
 
 		databaseOps = new DatabaseOps(getBaseContext());
 

@@ -30,30 +30,28 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/userName"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/colorOrange"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/tvHash"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/hashValue"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/colorOrange"
-                android:visibility="invisible" />
-
+                android:visibility="visible" />
         </LinearLayout>
-
     </LinearLayout>
 
     <HorizontalScrollView
@@ -74,11 +72,12 @@
     <TabHost
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_weight="1.09" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TabWidget

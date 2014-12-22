@@ -67,5 +67,11 @@
     <string name="inizioLezioniHint">Inizio Lez.</string>
     <string name="durataOraHint">Ore [min.]</string>
     <string name="durataIntervalloHint">Intervallo [min.]</string>
+    <string name="isClasseHint">Id Cl.</string>
+    <string name="nomeClassHint">Nome Classe</string>
+    <string name="specializzazioneHint">Specializzazione</string>
+    <string name="classeHint">Classe</string>
+    <string name="classeDescription">classeImage</string>
+    <string name="idClasseHint">Id Cl.</string>
 
 </resources>

@@ -51,6 +51,10 @@ public class ScuolaWizard extends TabActivity implements
 	String TAB_AS_TAG = "TAB_AS_TAG";
 	String TAB_PERIODI_AS_TAG = "TAB_PERIODI_AS_TAG";
 	String TAB_PARAMETRI_ORARIO_AS_TAG = "TAB_PARAMETRI_ORARIO_AS_TAG";
+	String TAB_CLASSI_AS_TAG = "TAB_CLASSI_AS_TAG";
+	String TAB_STUDENTI_CLASSE_TAG = "TAB_STUDENTI_CLASSE_TAG";
+	String TAB_INSEGNANTI_CLASSE_TAG = "TAB_INSEGNANTI_CLASSE_TAG";
+	String TAB_MATERIE_CLASSE_TAG = "TAB_MATERIE_CLASSE_TAG";
 
 	/**
 	 * @return the tabHost
@@ -100,6 +104,10 @@ public class ScuolaWizard extends TabActivity implements
 		TabSpec tab2 = tabHost.newTabSpec(TAB_AS_TAG);
 		TabSpec tab3 = tabHost.newTabSpec(TAB_PERIODI_AS_TAG);
 		TabSpec tab4 = tabHost.newTabSpec(TAB_PARAMETRI_ORARIO_AS_TAG);
+		TabSpec tab5 = tabHost.newTabSpec(TAB_CLASSI_AS_TAG);
+		TabSpec tab6 = tabHost.newTabSpec(TAB_STUDENTI_CLASSE_TAG);
+		TabSpec tab7 = tabHost.newTabSpec(TAB_INSEGNANTI_CLASSE_TAG);
+		TabSpec tab8 = tabHost.newTabSpec(TAB_MATERIE_CLASSE_TAG);
 		
 		// Set the Tab name and Activity
 		// that will be opened when particular Tab will be selected
@@ -117,13 +125,33 @@ public class ScuolaWizard extends TabActivity implements
 
 		tab4.setIndicator("Param. Orario",
 				getResources().getDrawable(R.drawable.param_orario));
-		tab4.setContent(new Intent(this, ParametriOrarioAsActivity.class));
+		tab4.setContent(new Intent(this, ParametriOrarioAsCreatorActivity.class));
+
+		tab5.setIndicator("Classi",
+				getResources().getDrawable(R.drawable.classi128));
+		tab5.setContent(new Intent(this, ClassiAsCreatorActivity.class));
+
+		tab6.setIndicator("Studenti",
+				getResources().getDrawable(R.drawable.student128));
+		tab6.setContent(new Intent(this, Tab1Activity.class));
+
+		tab7.setIndicator("Insegnanti",
+				getResources().getDrawable(R.drawable.teacher128));
+		tab7.setContent(new Intent(this, Tab2Activity.class));
+
+		tab8.setIndicator("Materie",
+				getResources().getDrawable(R.drawable.materie128));
+		tab8.setContent(new Intent(this, Tab3Activity.class));
 
 		/** Add the tabs to the TabHost to display. */
 		tabHost.addTab(tab1);
 		tabHost.addTab(tab2);
 		tabHost.addTab(tab3);
 		tabHost.addTab(tab4);
+		tabHost.addTab(tab5);
+		tabHost.addTab(tab6);
+		tabHost.addTab(tab7);
+		tabHost.addTab(tab8);
 
 		int count = tabHost.getTabWidget().getChildCount();
 		for (int j = 1; j < count; j++) {
@@ -151,6 +179,18 @@ public class ScuolaWizard extends TabActivity implements
 					// destroy mars
 				}
 				if (TAB_PARAMETRI_ORARIO_AS_TAG.equals(tabId)) {
+					// destroy mars
+				}
+				if (TAB_CLASSI_AS_TAG.equals(tabId)) {
+					// destroy mars
+				}
+				if (TAB_STUDENTI_CLASSE_TAG.equals(tabId)) {
+					// destroy mars
+				}
+				if (TAB_MATERIE_CLASSE_TAG.equals(tabId)) {
+					// destroy mars
+				}
+				if (TAB_INSEGNANTI_CLASSE_TAG.equals(tabId)) {
 					// destroy mars
 				}
 			}

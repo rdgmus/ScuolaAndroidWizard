@@ -840,4 +840,10 @@ public class SchoolCreatorActivity extends Activity implements
 		}
 	}
 
+	@Override
+	public void syncronizeSpinner(Spinner spinner, String keyValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

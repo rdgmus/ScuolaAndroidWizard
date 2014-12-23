@@ -1,9 +1,12 @@
 package it.keyorchestra.registroandroid.admin.options.util;
 
+import it.keyorchestra.registroandroid.admin.options.dbMatthed.DatabaseOps;
+import android.content.Context;
 import android.text.Editable;
 import android.text.Html;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class FieldsValidator {
 	public static boolean Is_Valid_Database_Name(EditText edt)
@@ -111,9 +114,9 @@ public class FieldsValidator {
 			edt.setError(Html
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
-		} else if (!edt.getText().toString().matches("[a-zA-Z0-9 ]+")) {
+		} else if (!edt.getText().toString().matches("[0-9]?[a-zA-Z][a-zA-Z0-9 ]*")) {
 			edt.setError(Html
-					.fromHtml("<font color='red'>Formato accettato:[a-zA-Z0-9 ]+</font>"));
+					.fromHtml("<font color='red'>Formato accettato:[0-9]?[a-zA-Z][a-zA-Z0-9 ]*</font>"));
 			return false;
 		}
 		edt.setError(null);
@@ -279,6 +282,38 @@ public class FieldsValidator {
 
 		edt.setError(null);
 		return true;
+	}
+
+	/**
+	 * Controlla che il nome classe non esista già nell'anno scolastico
+	 * Necessita di una call al database che viene fornito come parametro si
+	 * spera valido e non null.
+	 * 
+	 * @param applicationContext
+	 * @param etNomeClasse
+	 * @param id_anno_scolastico
+	 * @param databaseOps
+	 * @return
+	 */
+	@Deprecated
+	public static boolean Is_Valid_NomeClasseForAS(Context applicationContext,
+			EditText etNomeClasse, long id_anno_scolastico,
+			DatabaseOps databaseOps) {
+		// TODO Auto-generated method stub
+		if (databaseOps == null) {
+			Toast.makeText(applicationContext, "DatabaseOps is NULL!", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		if (databaseOps.existsNomeClasseIntoAS(applicationContext, etNomeClasse
+				.getText().toString(), id_anno_scolastico)) {
+			etNomeClasse
+					.setError(Html
+							.fromHtml("<font color='red'>Una classe con lo stesso nome già esiste!</font>"));
+			return false;
+		} else {
+			etNomeClasse.setError(null);
+			return true;
+		}
 	}
 
 }

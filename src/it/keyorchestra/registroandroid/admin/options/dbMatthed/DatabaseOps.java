@@ -809,6 +809,7 @@ public class DatabaseOps {
 
 	/**
 	 * UPDATE tabella parametri_orario_as
+	 * 
 	 * @param applicationContext
 	 * @param beforeChangeBasket
 	 * @param afterChangeBasket
@@ -859,6 +860,7 @@ public class DatabaseOps {
 
 	/**
 	 * DELETE tabella parametri_orario_as
+	 * 
 	 * @param applicationContext
 	 * @param beforeChangeBasket
 	 * @return
@@ -924,6 +926,89 @@ public class DatabaseOps {
 					+ ")";
 			int result = st.executeUpdate(sql);
 			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Crea una classe nell'anno scolastico nel Bundle 
+	 * il campo anno_scolastico non viene passato nella query perchè
+	 * viene settato da un trigger che esegue anche la upperCase() su
+	 * i campi: nome_classe e specializzazione
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean createClasseAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+			sql = "INSERT INTO `classi`(`id_scuola`, `id_anno_scolastico`, "
+					+ "`nome_classe`, `specializzazione`) VALUES ("
+					+ beforeChangeBasket.getLong("id_scuola") + ","
+					+ beforeChangeBasket.getLong("id_anno_scolastico") + ","
+					+ "'" + beforeChangeBasket.getString("nome_classe") + "',"
+					+ "'" + beforeChangeBasket.getString("specializzazione")
+					+ "'" + ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Controlla se esiste nome_classe nell'anno scolastico indicato
+	 * 
+	 * @param context
+	 * @param nome_classe
+	 * @param id_anno_scolastico
+	 * @return
+	 */
+	public boolean existsNomeClasseIntoAS(Context context, String nome_classe,
+			long id_anno_scolastico) {
+		// TODO Auto-generated method stub
+
+		String url = getUrl(context);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "SELECT `nome_classe` FROM `classi` WHERE `id_anno_scolastico` = "
+					+ id_anno_scolastico
+					+ " AND `nome_classe` = '"
+					+ nome_classe + "'";
+			ResultSet result = st.executeQuery(sql);
+			while (result.next()) {
 				st.close();
 				conn.close();
 				return true;

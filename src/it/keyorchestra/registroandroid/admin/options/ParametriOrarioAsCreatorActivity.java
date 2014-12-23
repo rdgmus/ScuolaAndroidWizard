@@ -27,6 +27,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -882,6 +883,11 @@ public class ParametriOrarioAsCreatorActivity extends Activity implements
 		for (int j = tabIndex; j < count; j++) {
 			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
 		}
+	}
+
+	@Override
+	public void syncronizeSpinner(Spinner spinner, String keyValue) {
+		// TODO Auto-generated method stub
 	}
 
 }

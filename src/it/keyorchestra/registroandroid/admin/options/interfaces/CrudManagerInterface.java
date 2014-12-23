@@ -2,7 +2,7 @@ package it.keyorchestra.registroandroid.admin.options.interfaces;
 
 import org.json.JSONObject;
 
-import android.view.View;
+import android.widget.Spinner;
 
 public interface CrudManagerInterface {
 
@@ -91,4 +91,12 @@ public interface CrudManagerInterface {
 	 */
 	public void setAllTabsVisibilityFrom(int visibility, int tabIndex);
 
+	/**
+	 * Sincronizza lo spinner con il valore indicato in keyValue
+	 * ovvero setta la selezione dello spinner al suddetto valore
+	 * se esiste.
+	 * @param spinner
+	 * @param keyValue
+	 */
+	public void syncronizeSpinner(Spinner spinner, String keyValue);
 }

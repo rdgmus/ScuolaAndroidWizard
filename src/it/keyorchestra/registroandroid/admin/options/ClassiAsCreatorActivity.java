@@ -5,6 +5,7 @@ import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommon
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
 import it.keyorchestra.registroandroid.admin.options.util.ClassiArrayAdapter;
+import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.NomiClasseArrayAdapter;
 import it.keyorchestra.registroandroid.admin.options.util.SpecializzazioniArrayAdapter;
 
@@ -21,6 +22,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -154,7 +156,11 @@ public class ClassiAsCreatorActivity extends Activity implements
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
-
+//						if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+							etNomeClasse
+									.setText((CharSequence) spinnerNomiClasse
+											.getItemAtPosition(position));
+//						}
 					}
 
 					@Override
@@ -171,7 +177,11 @@ public class ClassiAsCreatorActivity extends Activity implements
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
-
+//						if (bCrudRollback.getVisibility() == Button.VISIBLE) {
+							etSpecializzazione
+									.setText((CharSequence) spinnerSpecializzazioni
+											.getItemAtPosition(position));
+//						}
 					}
 
 					@Override
@@ -201,8 +211,8 @@ public class ClassiAsCreatorActivity extends Activity implements
 				// e.printStackTrace();
 				// }
 
-				Toast.makeText(getApplicationContext(),
-						"id_classe:" + id_classe, Toast.LENGTH_SHORT).show();
+				// Toast.makeText(getApplicationContext(),
+				// "id_classe:" + id_classe, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
 				setNextTabVisiblity(View.VISIBLE, 5);
 			}
@@ -218,8 +228,12 @@ public class ClassiAsCreatorActivity extends Activity implements
 		etIdAsClasse = (EditText) findViewById(R.id.etIdAsClasse);
 
 		etIdClasse = (EditText) findViewById(R.id.etIdClasse);
+
 		etNomeClasse = (EditText) findViewById(R.id.etNomeClasse);
+		etNomeClasse.setOnFocusChangeListener(this);
+
 		etSpecializzazione = (EditText) findViewById(R.id.etSpecializzazione);
+		etSpecializzazione.setOnFocusChangeListener(this);
 
 		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
 		bCrudSelect.setOnClickListener(new OnClickListener() {
@@ -237,13 +251,11 @@ public class ClassiAsCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				removeAllTextIntoFields();
-				inizializzaNuovoRecord();
 				beforeChangeBasket = new Bundle();
 				beforeChangeBasket.putInt("action",
 						CrudManagerInterface.CRUD_ACTION.CREATE);
 
-				setCommitRollback(true);
+				new TestNomeClasseExistsForAsTask().execute();
 			}
 		});
 
@@ -270,13 +282,7 @@ public class ClassiAsCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				try {
-					UpdateRow(jArrayClassiAnnoScolastico.getJSONObject(0));
-					setCommitRollback(true);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				new TestNomeClasseExistsForAsTask().execute();
 			}
 		});
 
@@ -386,6 +392,53 @@ public class ClassiAsCreatorActivity extends Activity implements
 			}
 		}
 
+	}
+
+	private class TestNomeClasseExistsForAsTask extends
+			AsyncTask<Void, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			// Bisogna controllare che il nome classe non sia già stato
+			// utilizzato
+			return databaseOps.existsNomeClasseIntoAS(getApplicationContext(),
+					etNomeClasse.getText().toString(), id_anno_scolastico);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			// Bisogna controllare che il nome classe non sia già stato
+			// utilizzato
+			if (result) {
+				etNomeClasse
+						.setError(Html
+								.fromHtml("<font color='red'>Una classe con lo stesso nome già esiste!</font>"));
+
+				etNomeClasse.setFocusable(true);
+				etNomeClasse.requestFocus();
+			} else {
+				etNomeClasse.setError(null);
+				if (beforeChangeBasket.getInt("action") != CrudManagerInterface.CRUD_ACTION.CREATE) {
+					int position = spinnerRecords.getSelectedItemPosition();
+					try {
+						UpdateRow(jArrayClassiAnnoScolastico
+								.getJSONObject(position));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				setCommitRollback(true);
+			}
+		}
 	}
 
 	private class LoadAllDistinctNomeClasseTask extends
@@ -627,13 +680,49 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		// TODO Auto-generated method stub
-
+		if (hasFocus) {
+			Toast.makeText(getApplicationContext(),
+					"" + ((EditText) v).getHint(), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
 	public boolean UpdateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket = new Bundle();
+		try {
+			beforeChangeBasket.putLong("id_classe", data.getLong("id_classe"));
+			beforeChangeBasket.putLong("id_anno_scolastico",
+					data.getLong("id_anno_scolastico"));
+			beforeChangeBasket.putLong("id_scuola", data.getLong("id_scuola"));
+			beforeChangeBasket.putString("nome_classe",
+					data.getString("nome_classe"));
+			beforeChangeBasket.putString("specializzazione",
+					data.getString("specializzazione"));
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
+
+		afterChangeBasket = new Bundle();
+
+		afterChangeBasket.putLong("id_classe",
+				beforeChangeBasket.getLong("id_classe"));
+		afterChangeBasket.putLong("id_anno_scolastico",
+				beforeChangeBasket.getLong("id_anno_scolastico"));
+		afterChangeBasket.putLong("id_scuola",
+				beforeChangeBasket.getLong("id_scuola"));
+
+		afterChangeBasket.putString("nome_classe", etNomeClasse.getText()
+				.toString());
+		afterChangeBasket.putString("specializzazione", etSpecializzazione
+				.getText().toString());
+		afterChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
+		return true;
 	}
 
 	@Override
@@ -645,24 +734,115 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public boolean CreateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket.putLong("id_scuola",
+				(Long) etIdScuolaClasse.getTag());
+		beforeChangeBasket.putLong("id_anno_scolastico",
+				(Long) etIdAsClasse.getTag());
+		beforeChangeBasket.putString("nome_classe", etNomeClasse.getText()
+				.toString());
+		beforeChangeBasket.putString("specializzazione", etSpecializzazione
+				.getText().toString());
+
+		return true;
 	}
 
 	@Override
 	public boolean Select() {
 		// TODO Auto-generated method stub
-		return false;
+		getId_scuola();
+		getId_anno_scolastico();
+		new LoadClassiAnnoScolasticoTask().execute();
+		return true;
 	}
 
 	@Override
 	public void Clear() {
 		// TODO Auto-generated method stub
-
+		removeAllTextIntoFields();
+		etNomeClasse.setError(null);
+		etSpecializzazione.setError(null);
 	}
 
 	@Override
 	public void Commit() {
 		// TODO Auto-generated method stub
+		switch (beforeChangeBasket.getInt("action")) {
+		case CRUD_ACTION.UPDATE:
+			if (!FieldsValidator.Is_Valid_Name(etNomeClasse)) {
+				etNomeClasse.setFocusable(true);
+				etNomeClasse.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_Name(etSpecializzazione)) {
+				etSpecializzazione.setFocusable(true);
+				etSpecializzazione.requestFocus();
+				break;
+			}
+			int position = spinnerRecords.getSelectedItemPosition();
+			try {
+				UpdateRow(jArrayClassiAnnoScolastico.getJSONObject(position));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// new UpdateAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.DELETE:
+			// new DeleteAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.CREATE:
+			if (!FieldsValidator.Is_Valid_Name(etNomeClasse)) {
+				etNomeClasse.setFocusable(true);
+				etNomeClasse.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_Name(etSpecializzazione)) {
+				etSpecializzazione.setFocusable(true);
+				etSpecializzazione.requestFocus();
+				break;
+			}
+			CreateRow(null);
+			new CreateClasseAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		}
+	}
+
+	private class CreateClasseAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.createClasseAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadClassiAnnoScolasticoTask().execute();
+				new LoadAllDistinctNomeClasseTask().execute();
+				new LoadAllDistinctSpecializzazioniTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+				new LoadClassiAnnoScolasticoTask().execute();
+			}
+		}
 
 	}
 
@@ -675,7 +855,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public void removeAllTextIntoFields() {
 		// TODO Auto-generated method stub
-
+		etNomeClasse.setText("");
+		etSpecializzazione.setText("");
+		etIdClasse.setText("");
 	}
 
 	@Override
@@ -723,8 +905,12 @@ public class ClassiAsCreatorActivity extends Activity implements
 			etIdClasse.setText("" + jsonObiect.getLong("id_classe") + "");
 
 			etNomeClasse.setText(jsonObiect.getString("nome_classe"));
+			syncronizeSpinner(spinnerNomiClasse,
+					jsonObiect.getString("nome_classe"));
 			etSpecializzazione
 					.setText(jsonObiect.getString("specializzazione"));
+			syncronizeSpinner(spinnerSpecializzazioni,
+					jsonObiect.getString("specializzazione"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -740,7 +926,13 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
-
+		etNomeClasse
+				.setText((CharSequence) spinnerNomiClasse
+						.getItemAtPosition(spinnerNomiClasse
+								.getSelectedItemPosition()));
+		etSpecializzazione.setText((CharSequence) spinnerSpecializzazioni
+				.getItemAtPosition(spinnerSpecializzazioni
+						.getSelectedItemPosition()));
 	}
 
 	@Override
@@ -808,6 +1000,18 @@ public class ClassiAsCreatorActivity extends Activity implements
 	public void startAnimation(View ib, long durationInMilliseconds) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void syncronizeSpinner(Spinner spinner, String keyValue) {
+		// TODO Auto-generated method stub
+		for (int j = 0; j < spinner.getCount(); j++) {
+			if (keyValue
+					.equalsIgnoreCase((String) spinner.getItemAtPosition(j))) {
+				spinner.setSelection(j);
+				break;
+			}
+		}
 	}
 
 }

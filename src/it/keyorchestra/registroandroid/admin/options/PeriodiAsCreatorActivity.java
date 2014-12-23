@@ -390,8 +390,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				// TODO Auto-generated method stub
 				String periodo = (String) spinnerPeriods
 						.getItemAtPosition(position);
-				Toast.makeText(getApplicationContext(), "periodo:" + periodo,
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getApplicationContext(), "periodo:" + periodo,
+//						Toast.LENGTH_SHORT).show();
 				etPeriodoString.setText(periodo);
 				calculateEndDate();
 			}
@@ -414,8 +414,8 @@ public class PeriodiAsCreatorActivity extends Activity implements
 				// Salva id_anno_scolastico nelle preferenze
 				saveTableIdIntoPreferences("id_periodo", id_periodo);
 
-				Toast.makeText(getApplicationContext(),
-						"id_periodo:" + id_periodo, Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getApplicationContext(),
+//						"id_periodo:" + id_periodo, Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
 			}
 
@@ -853,7 +853,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 
 			etPeriodoString.setText(jsonObiect.getString("periodo"));
 
-			syncronizeSpinnerPeriods(jsonObiect.getString("periodo"));
+			syncronizeSpinner(spinnerPeriods,jsonObiect.getString("periodo"));
 
 			etStartPeriod.setText(jsonObiect.getString("start_period"));
 			etEndPeriod.setText(jsonObiect.getString("end_period"));
@@ -863,22 +863,7 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		}
 	}
 
-	/**
-	 * Sincronizza l'item selezionato nello spinner in base all'item introdotto
-	 * nella TextView
-	 * 
-	 * @param periodo
-	 */
-	private void syncronizeSpinnerPeriods(String periodo) {
-		// TODO Auto-generated method stub
-		for (int j = 0; j < spinnerPeriods.getCount(); j++) {
-			if (periodo.equalsIgnoreCase((String) spinnerPeriods
-					.getItemAtPosition(j))) {
-				spinnerPeriods.setSelection(j);
-				break;
-			}
-		}
-	}
+	
 
 	@Override
 	public void saveTableIdIntoPreferences(String field_name, long table_id) {
@@ -1369,6 +1354,18 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		int count = tabHost.getTabWidget().getChildCount();
 		for (int j = tabIndex; j < count; j++) {
 			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
+		}
+	}
+
+	@Override
+	public void syncronizeSpinner(Spinner spinner, String keyValue) {
+		// TODO Auto-generated method stub
+		for (int j = 0; j < spinner.getCount(); j++) {
+			if (keyValue.equalsIgnoreCase((String) spinner
+					.getItemAtPosition(j))) {
+				spinner.setSelection(j);
+				break;
+			}
 		}
 	}
 

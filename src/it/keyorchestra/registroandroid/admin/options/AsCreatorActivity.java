@@ -278,9 +278,9 @@ public class AsCreatorActivity extends Activity implements
 					e.printStackTrace();
 				}
 
-				Toast.makeText(getApplicationContext(),
-						"id_anno_scolastico:" + id_anno_scolastico,
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getApplicationContext(),
+//						"id_anno_scolastico:" + id_anno_scolastico,
+//						Toast.LENGTH_SHORT).show();
 				fillFieldsWithData(position);
 				setNextTabVisiblity(View.VISIBLE, 2);
 			}
@@ -1040,6 +1040,12 @@ public class AsCreatorActivity extends Activity implements
 		for (int j = tabIndex; j < count; j++) {
 			tabHost.getTabWidget().getChildAt(j).setVisibility(visibility);
 		}
+	}
+
+	@Override
+	public void syncronizeSpinner(Spinner spinner, String keyValue) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

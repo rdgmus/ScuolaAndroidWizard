@@ -114,9 +114,9 @@ public class FieldsValidator {
 			edt.setError(Html
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
-		} else if (!edt.getText().toString().matches("[0-9]?[a-zA-Z][a-zA-Z0-9 ]*")) {
+		} else if (!edt.getText().toString().matches("[0-9]?[a-zA-Z][a-zA-Z0-9._\\- ]*")) {
 			edt.setError(Html
-					.fromHtml("<font color='red'>Formato accettato:[0-9]?[a-zA-Z][a-zA-Z0-9 ]*</font>"));
+					.fromHtml("<font color='red'>Formato accettato:[0-9]?[a-zA-Z][a-zA-Z0-9._\\- ]*</font>"));
 			return false;
 		}
 		edt.setError(null);

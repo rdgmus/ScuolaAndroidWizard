@@ -393,6 +393,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 				if (spinnerRecords.getCount() == 0) {
 					removeAllTextIntoFields();
 					inizializzaNuovoRecord();
+					new GetScuolaDescriptionTask().execute();
+					new GetAnnoScolasticoDescriptionTask().execute();
+
 				} else {
 					new GetScuolaDescriptionTask().execute();
 					new GetAnnoScolasticoDescriptionTask().execute();

@@ -5,14 +5,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.Format;
 import java.util.Calendar;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.SumPathEffect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -424,8 +421,7 @@ public class DatabaseOps {
 			Statement st = conn.createStatement();
 			String sql = null;
 
-			sql = "DELETE FROM `anni_scolastici`"
-					+ " WHERE  id_anno_scolastico="
+			sql = "DELETE FROM `anni_scolastici`" + " WHERE  id_anno_scolastico="
 					+ beforeChangeBasket.getLong("id_anno_scolastico");
 			int result = st.executeUpdate(sql);
 			if (result == 1) {
@@ -940,10 +936,9 @@ public class DatabaseOps {
 	}
 
 	/**
-	 * Crea una classe nell'anno scolastico nel Bundle 
-	 * il campo anno_scolastico non viene passato nella query perchè
-	 * viene settato da un trigger che esegue anche la upperCase() su
-	 * i campi: nome_classe e specializzazione
+	 * Crea una classe nell'anno scolastico nel Bundle il campo anno_scolastico
+	 * non viene passato nella query perchè viene settato da un trigger che
+	 * esegue anche la upperCase() su i campi: nome_classe e specializzazione
 	 * 
 	 * @param applicationContext
 	 * @param beforeChangeBasket
@@ -1009,6 +1004,90 @@ public class DatabaseOps {
 					+ nome_classe + "'";
 			ResultSet result = st.executeQuery(sql);
 			while (result.next()) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Update tabella classi
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @param afterChangeBasket
+	 * @return
+	 */
+	public Boolean updateClasseAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket, Bundle afterChangeBasket) {
+		// TODO Auto-generated method stub
+		long id_classe = beforeChangeBasket.getLong("id_classe");
+		long id_anno_scolastico = beforeChangeBasket
+				.getLong("id_anno_scolastico");
+		long id_scuola = beforeChangeBasket.getLong("id_scuola");
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			addStartComma = false;
+
+			sql = "UPDATE `classi` " + "SET ";
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"nome_classe", sql);
+			sql = integrateSqlWithField(beforeChangeBasket, afterChangeBasket,
+					"specializzazione", sql);
+
+			sql += " WHERE id_classe=" + id_classe + " AND id_anno_scolastico="
+					+ id_anno_scolastico + " AND id_scuola=" + id_scuola;
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Cancella classe dal database
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean deleteClasseAnnoScolastico(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `classi`" + " WHERE  id_classe="
+					+ beforeChangeBasket.getLong("id_classe");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
 				st.close();
 				conn.close();
 				return true;

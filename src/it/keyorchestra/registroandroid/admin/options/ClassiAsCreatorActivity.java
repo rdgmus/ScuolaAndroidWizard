@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -156,11 +157,11 @@ public class ClassiAsCreatorActivity extends Activity implements
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
-//						if (bCrudRollback.getVisibility() == Button.VISIBLE) {
-							etNomeClasse
-									.setText((CharSequence) spinnerNomiClasse
-											.getItemAtPosition(position));
-//						}
+						// if (bCrudRollback.getVisibility() == Button.VISIBLE)
+						// {
+						etNomeClasse.setText((CharSequence) spinnerNomiClasse
+								.getItemAtPosition(position));
+						// }
 					}
 
 					@Override
@@ -177,11 +178,12 @@ public class ClassiAsCreatorActivity extends Activity implements
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
-//						if (bCrudRollback.getVisibility() == Button.VISIBLE) {
-							etSpecializzazione
-									.setText((CharSequence) spinnerSpecializzazioni
-											.getItemAtPosition(position));
-//						}
+						// if (bCrudRollback.getVisibility() == Button.VISIBLE)
+						// {
+						etSpecializzazione
+								.setText((CharSequence) spinnerSpecializzazioni
+										.getItemAtPosition(position));
+						// }
 					}
 
 					@Override
@@ -266,7 +268,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				try {
-					DeleteRow(jArrayClassiAnnoScolastico.getJSONObject(0));
+					int position = spinnerRecords.getSelectedItemPosition();
+					DeleteRow(jArrayClassiAnnoScolastico
+							.getJSONObject(position));
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -282,7 +286,17 @@ public class ClassiAsCreatorActivity extends Activity implements
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				new TestNomeClasseExistsForAsTask().execute();
+				// new TestNomeClasseExistsForAsTask().execute();
+				etNomeClasse.setError(null);
+				int position = spinnerRecords.getSelectedItemPosition();
+				try {
+					UpdateRow(jArrayClassiAnnoScolastico
+							.getJSONObject(position));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setCommitRollback(true);
 			}
 		});
 
@@ -384,6 +398,7 @@ public class ClassiAsCreatorActivity extends Activity implements
 					new GetAnnoScolasticoDescriptionTask().execute();
 
 					setNextTabVisiblity(View.VISIBLE, 5);
+
 				}
 			} else {
 				Toast.makeText(getApplicationContext(),
@@ -468,6 +483,8 @@ public class ClassiAsCreatorActivity extends Activity implements
 
 				// Apply the adapter to the spinner
 				spinnerNomiClasse.setAdapter(classiAsAdapter);
+				syncronizeSpinner(spinnerNomiClasse, etNomeClasse.getText()
+						.toString());
 			}
 		}
 
@@ -500,6 +517,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 
 				// Apply the adapter to the spinner
 				spinnerSpecializzazioni.setAdapter(classiAsAdapter);
+				syncronizeSpinner(spinnerSpecializzazioni, etSpecializzazione
+						.getText().toString());
+
 			}
 		}
 
@@ -728,7 +748,17 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public boolean DeleteRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket = new Bundle();
+		try {
+			beforeChangeBasket.putLong("id_classe", data.getLong("id_classe"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.DELETE);
+
+		return true;
 	}
 
 	@Override
@@ -785,11 +815,11 @@ public class ClassiAsCreatorActivity extends Activity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// new UpdateAnnoScolasticoTask().execute();
+			new UpdateClasseAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.DELETE:
-			// new DeleteAnnoScolasticoTask().execute();
+			new DeleteClasseAnnoScolasticoTask().execute();
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.CREATE:
@@ -808,6 +838,78 @@ public class ClassiAsCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		}
+	}
+
+	private class DeleteClasseAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.deleteClasseAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadClassiAnnoScolasticoTask().execute();
+				new LoadAllDistinctNomeClasseTask().execute();
+				new LoadAllDistinctSpecializzazioniTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
+	}
+
+	private class UpdateClasseAnnoScolasticoTask extends
+			AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.updateClasseAnnoScolastico(
+					getApplicationContext(), beforeChangeBasket,
+					afterChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadClassiAnnoScolasticoTask().execute();
+				new LoadAllDistinctNomeClasseTask().execute();
+				new LoadAllDistinctSpecializzazioniTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+				new LoadClassiAnnoScolasticoTask().execute();
+			}
+		}
+
 	}
 
 	private class CreateClasseAnnoScolasticoTask extends
@@ -834,9 +936,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 						Toast.LENGTH_SHORT).show();
 				// Ricarica i dati in tabella per mostrare lo stato attuale
 				// della tabella
-				new LoadClassiAnnoScolasticoTask().execute();
 				new LoadAllDistinctNomeClasseTask().execute();
 				new LoadAllDistinctSpecializzazioniTask().execute();
+				new LoadClassiAnnoScolasticoTask().execute();
 			} else {
 				Toast.makeText(getApplicationContext(), "Commit fallito!",
 						Toast.LENGTH_SHORT).show();
@@ -920,7 +1022,9 @@ public class ClassiAsCreatorActivity extends Activity implements
 	@Override
 	public void saveTableIdIntoPreferences(String field_name, long table_id) {
 		// TODO Auto-generated method stub
-
+		Editor editor = getPrefs.edit();
+		editor.putLong(field_name, table_id);
+		editor.apply();
 	}
 
 	@Override

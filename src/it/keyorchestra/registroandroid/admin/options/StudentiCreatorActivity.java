@@ -5,6 +5,7 @@ import it.keyorchestra.registroandroid.admin.options.interfaces.ActivitiesCommon
 import it.keyorchestra.registroandroid.admin.options.interfaces.CrudManagerInterface;
 import it.keyorchestra.registroandroid.admin.options.interfaces.MyDateTimePickersInterface;
 import it.keyorchestra.registroandroid.admin.options.mysqlandroid.MySqlAndroid;
+import it.keyorchestra.registroandroid.admin.options.util.FieldsValidator;
 import it.keyorchestra.registroandroid.admin.options.util.StudentiClasseArrayAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -200,21 +201,22 @@ public class StudentiCreatorActivity extends Activity implements
 		getId_anno_scolastico();
 		getId_classe();
 
-		cbAttivo = (CheckBox)findViewById(R.id.cbAttivo);
+		cbAttivo = (CheckBox) findViewById(R.id.cbAttivo);
 		cbAttivo.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
+
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				// TODO Auto-generated method stub
-				if(!isChecked){
+				if (!isChecked) {
 					now();
 					displayEndDate();
-				}else{
+				} else {
 					etRitiratoData.setText("null");
 				}
 			}
 		});
-		
+
 		etIdStudente = (EditText) findViewById(R.id.etIdStudente);
 		etIdScuolaStudente = (EditText) findViewById(R.id.etIdScuolaStudente);
 		etIdAsStudente = (EditText) findViewById(R.id.etIdAsStudente);
@@ -292,6 +294,100 @@ public class StudentiCreatorActivity extends Activity implements
 
 		});
 
+		// CRUD
+		bCrudClear = (Button) findViewById(R.id.bCrudClear);
+		bCrudClear.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Clear();
+			}
+		});
+
+		bCrudSelect = (Button) findViewById(R.id.bCrudSelect);
+		bCrudSelect.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Select();
+			}
+		});
+
+		bCrudDelete = (Button) findViewById(R.id.bCrudDelete);
+		bCrudDelete.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					DeleteRow(jArrayStudentiClasse.getJSONObject(spinnerRecords
+							.getSelectedItemPosition()));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setCommitRollback(true);
+			}
+		});
+
+		bCrudUpdate = (Button) findViewById(R.id.bCrudUpdate);
+		bCrudUpdate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try {
+					UpdateRow(jArrayStudentiClasse.getJSONObject(spinnerRecords
+							.getSelectedItemPosition()));
+					setCommitRollback(true);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+		bCrudCreate = (Button) findViewById(R.id.bCrudCreate);
+		bCrudCreate.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				// removeAllTextIntoFields();
+				inizializzaNuovoRecord();
+				beforeChangeBasket = new Bundle();
+				beforeChangeBasket.putInt("action",
+						CrudManagerInterface.CRUD_ACTION.CREATE);
+
+				setCommitRollback(true);
+			}
+		});
+
+		bCrudCommit = (Button) findViewById(R.id.bCrudCommit);
+		bCrudCommit.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Commit();
+				// setCommitRollback(false);
+			}
+		});
+
+		bCrudRollback = (Button) findViewById(R.id.bCrudRollback);
+		bCrudRollback.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Rollback();
+				setCommitRollback(false);
+			}
+		});
+
+		tvCrudMessage = (TextView) findViewById(R.id.tvCrudMessage);
 		new GetScuolaDescriptionTask().execute();
 		new GetAnnoScolasticoDescriptionTask().execute();
 		new GetClasseDescriptionTask().execute();
@@ -366,7 +462,7 @@ public class StudentiCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		super.onResume();
 
-		setAllTabsVisibilityFrom(View.GONE,6);
+		setAllTabsVisibilityFrom(View.GONE, 6);
 
 		getId_scuola();
 		getId_anno_scolastico();
@@ -374,7 +470,7 @@ public class StudentiCreatorActivity extends Activity implements
 		new GetScuolaDescriptionTask().execute();
 		new GetAnnoScolasticoDescriptionTask().execute();
 		new GetClasseDescriptionTask().execute();
-		
+
 		if (jArrayStudentiClasse == null)
 			return;
 		// SE LA SCUOLA SELEZIONATA E' CAMBIATA RICARICO FLI ANNI SCOLASTICI
@@ -457,7 +553,7 @@ public class StudentiCreatorActivity extends Activity implements
 			String startDate = etDataEntrata.getText().toString();
 			if (startDate.equals("null")) {
 				now();
-				startDate = mYear + "-" + pad(mMonth+1) + "-" + pad(mDay);
+				startDate = mYear + "-" + pad(mMonth + 1) + "-" + pad(mDay);
 			}
 			split = startDate.split("-");
 			DatePickerDialog dialogDataEntrata = new DatePickerDialog(this,
@@ -486,15 +582,15 @@ public class StudentiCreatorActivity extends Activity implements
 			String endDate = etRitiratoData.getText().toString();
 			if (endDate.equals("null")) {
 				now();
-				endDate = mYear + "-" + pad(mMonth+1) + "-" + pad(mDay);
+				endDate = mYear + "-" + pad(mMonth + 1) + "-" + pad(mDay);
 			}
 			split = endDate.split("-");
 			DatePickerDialog dialogRitiratoData = new DatePickerDialog(this,
 					mRitiratoDataSetListener, Integer.valueOf(split[0]),
 					Integer.valueOf(split[1]) - 1, Integer.valueOf(split[2]));
-			
-			dialogRitiratoData.setButton(DialogInterface.BUTTON_POSITIVE, "Set",
-					new DialogInterface.OnClickListener() {
+
+			dialogRitiratoData.setButton(DialogInterface.BUTTON_POSITIVE,
+					"Set", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							_which = which;
@@ -509,7 +605,7 @@ public class StudentiCreatorActivity extends Activity implements
 							}
 						}
 					});
-			
+
 			return dialogRitiratoData;
 		}
 		return null;
@@ -520,7 +616,7 @@ public class StudentiCreatorActivity extends Activity implements
 
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
-			switch(_which){
+			switch (_which) {
 			case DialogInterface.BUTTON_POSITIVE:
 				mYear = year;
 				mMonth = monthOfYear;
@@ -539,7 +635,7 @@ public class StudentiCreatorActivity extends Activity implements
 
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
-			switch(_which){
+			switch (_which) {
 			case DialogInterface.BUTTON_POSITIVE:
 				mYear = year;
 				mMonth = monthOfYear;
@@ -551,7 +647,7 @@ public class StudentiCreatorActivity extends Activity implements
 			case DialogInterface.BUTTON_NEGATIVE:
 				break;
 			}
-			
+
 		}
 	};
 
@@ -614,44 +710,200 @@ public class StudentiCreatorActivity extends Activity implements
 	@Override
 	public boolean UpdateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket = new Bundle();
+		try {
+			beforeChangeBasket.putLong("id_studente",
+					data.getLong("id_studente"));
+			beforeChangeBasket.putLong("id_classe", data.getLong("id_classe"));
+			beforeChangeBasket.putLong("id_anno_scolastico",
+					data.getLong("id_anno_scolastico"));
+			beforeChangeBasket.putString("cognome", data.getString("cognome"));
+			beforeChangeBasket.putString("nome", data.getString("nome"));
+			beforeChangeBasket.putString("data_entrata",
+					data.getString("data_entrata"));
+			beforeChangeBasket.putString("ritirato_data",
+					data.getString("ritirato_data"));
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
+
+		afterChangeBasket = new Bundle();
+
+		afterChangeBasket.putLong("id_studente",
+				beforeChangeBasket.getLong("id_studente"));
+		afterChangeBasket.putLong("id_classe",
+				beforeChangeBasket.getLong("id_classe"));
+		afterChangeBasket.putLong("id_anno_scolastico",
+				beforeChangeBasket.getLong("id_anno_scolastico"));
+
+		afterChangeBasket.putString("cognome", etCognomeStudente.getText()
+				.toString());
+		afterChangeBasket
+				.putString("nome", etNomeStudente.getText().toString());
+		afterChangeBasket.putString("data_entrata", etDataEntrata.getText()
+				.toString());
+		afterChangeBasket.putString("ritirato_data", etRitiratoData.getText()
+				.toString());
+		afterChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.UPDATE);
+		return true;
 	}
 
 	@Override
 	public boolean DeleteRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket = new Bundle();
+		try {
+			beforeChangeBasket.putLong("id_studente",
+					data.getLong("id_studente"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beforeChangeBasket.putInt("action",
+				CrudManagerInterface.CRUD_ACTION.DELETE);
+
+		return true;
 	}
 
 	@Override
 	public boolean CreateRow(JSONObject data) {
 		// TODO Auto-generated method stub
-		return false;
+		beforeChangeBasket.putLong("id_classe",
+				(Long) etIdClasseStudente.getTag());
+		beforeChangeBasket.putLong("id_anno_scolastico",
+				(Long) etIdAsStudente.getTag());
+		beforeChangeBasket.putString("cognome", etCognomeStudente.getText()
+				.toString());
+		beforeChangeBasket.putString("nome", etNomeStudente.getText()
+				.toString());
+		beforeChangeBasket.putInt("attivo", cbAttivo.isChecked()?1:0);
+		
+		beforeChangeBasket.putString("data_entrata", etDataEntrata.getText()
+				.toString());
+		beforeChangeBasket
+				.putString("ritirato_data", etRitiratoData.getText().toString());
+
+		return true;
 	}
 
 	@Override
 	public boolean Select() {
 		// TODO Auto-generated method stub
-		 new LoadStudentiClasseTask().execute();
-		 return true;
+		new LoadStudentiClasseTask().execute();
+		return true;
 	}
 
 	@Override
 	public void Clear() {
 		// TODO Auto-generated method stub
-
+		inizializzaNuovoRecord();
 	}
 
 	@Override
 	public void Commit() {
 		// TODO Auto-generated method stub
+		switch (beforeChangeBasket.getInt("action")) {
+		case CRUD_ACTION.UPDATE:
+			if (!FieldsValidator.Is_Valid_Name(etCognomeStudente)) {
+				etCognomeStudente.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_Name(etNomeStudente)) {
+				etNomeStudente.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_StartDate(etRitiratoData)) {
+				etRitiratoData.setFocusable(true);
+				etRitiratoData.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_EndDate(etDataEntrata)) {
+				etDataEntrata.setFocusable(true);
+				etDataEntrata.requestFocus();
+				break;
+			}
+			// new UpdateAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.DELETE:
+			// new DeleteAnnoScolasticoTask().execute();
+			setCommitRollback(false);
+			break;
+		case CRUD_ACTION.CREATE:
+			if (!FieldsValidator.Is_Valid_Name(etCognomeStudente)) {
+				etCognomeStudente.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_Name(etNomeStudente)) {
+				etNomeStudente.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_StartDate(etRitiratoData)) {
+				etRitiratoData.setFocusable(true);
+				etRitiratoData.requestFocus();
+				break;
+			}
+			if (!FieldsValidator.Is_Valid_EndDate(etDataEntrata)) {
+				etDataEntrata.setFocusable(true);
+				etDataEntrata.requestFocus();
+				break;
+			}
+			CreateRow(null);
+			new CreateStudenteTask().execute();
+			setCommitRollback(false);
+			break;
+		}
+	}
+
+	private class CreateStudenteTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.createStudente(getApplicationContext(),
+					beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadStudentiClasseTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
 
 	}
 
 	@Override
 	public void Rollback() {
 		// TODO Auto-generated method stub
+		etCognomeStudente.setError(null);
+		etNomeStudente.setError(null);
 
+		etDataEntrata.setFocusable(false);
+		etDataEntrata.setError(null);
+
+		etRitiratoData.setFocusable(false);
+		etRitiratoData.setError(null);
+		new LoadStudentiClasseTask().execute();
 	}
 
 	@Override
@@ -712,9 +964,9 @@ public class StudentiCreatorActivity extends Activity implements
 			etRitiratoData
 					.setText(jsonObiect.getString("ritirato_data") == null ? ""
 							: jsonObiect.getString("ritirato_data"));
-			
+
 			cbAttivo.setChecked(jsonObiect.getInt("attivo") == 1);
-			
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -738,7 +990,7 @@ public class StudentiCreatorActivity extends Activity implements
 		etDataEntrata.setText("");
 		etRitiratoData.setText("null");
 		cbAttivo.setChecked(true);
-		
+
 		now();
 		displayStartDate();
 	}

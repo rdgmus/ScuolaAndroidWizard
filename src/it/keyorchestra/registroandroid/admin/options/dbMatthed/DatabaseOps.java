@@ -1117,12 +1117,10 @@ public class DatabaseOps {
 			String sql = null;
 
 			sql = "SELECT `id_classe`,`nome_classe`,`specializzazione` FROM `classi` \n"
-					+ "WHERE `id_classe`="
-					+ id_classe;
+					+ "WHERE `id_classe`=" + id_classe;
 			ResultSet result = st.executeQuery(sql);
 			while (result.next()) {
-				description += "[" + result.getLong("id_classe")
-						+ "] ";
+				description += "[" + result.getLong("id_classe") + "] ";
 				description += result.getString("nome_classe");
 			}
 
@@ -1132,5 +1130,48 @@ public class DatabaseOps {
 			e.printStackTrace();
 		}
 		return description;
+	}
+
+	/**
+	 * Crea un nuovo studente nella classe prescelta
+	 * 
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean createStudente(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "INSERT INTO `studenti`(`id_classe`, `id_anno_scolastico`, "
+					+ "`cognome`, `nome`, `attivo`, `data_entrata`, `ritirato_data`) "
+					+ "VALUES (" + beforeChangeBasket.getLong("id_classe")
+					+ "," + beforeChangeBasket.getLong("id_anno_scolastico")
+					+ ", '" + beforeChangeBasket.getString("cognome") + "',"
+					+ "'" + beforeChangeBasket.getString("nome") + "',"
+					+ beforeChangeBasket.getInt("attivo") + "," + "'"
+					+ beforeChangeBasket.getString("data_entrata") + "'," + "'"
+					+ beforeChangeBasket.getString("ritirato_data") + "'" + ")";
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_color5"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etIdStudente"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/idStudenteHint"
+            android:inputType="number"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/etIdScuolaStudente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.07"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/scuolaFKHint"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etIdAsStudente"
+            android:layout_width="151dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.07"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/asFkHint"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etIdClasseStudente"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:hint="@string/classeHint"
+            android:lines="1"
+            android:maxLines="1"
+            android:textColor="@color/colorOrange"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etCognomeStudente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/cognomeHint"
+            android:inputType="textPersonName"
+            android:lines="1"
+            android:maxLines="1" />
+
+        <EditText
+            android:id="@+id/etNomeStudente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/nomeHint"
+            android:inputType="textPersonName"
+            android:lines="1"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <CheckBox
+            android:id="@+id/cbAttivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cbAttivoText" />
+
+        <EditText
+            android:id="@+id/etDataEntrata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/dataEntrataHint"
+            android:inputType="date" />
+
+        <Button
+            android:id="@+id/bChangeDataEntrata"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cambiaText" />
+
+        <EditText
+            android:id="@+id/etRitiratoData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/ritiratoDataHint"
+            android:inputType="date" />
+
+        <Button
+            android:id="@+id/bChangeRitiratoData"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cambiaText" />
+
+    </LinearLayout>
+
+</LinearLayout>

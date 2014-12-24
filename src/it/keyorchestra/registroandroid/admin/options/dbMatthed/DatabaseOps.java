@@ -421,7 +421,8 @@ public class DatabaseOps {
 			Statement st = conn.createStatement();
 			String sql = null;
 
-			sql = "DELETE FROM `anni_scolastici`" + " WHERE  id_anno_scolastico="
+			sql = "DELETE FROM `anni_scolastici`"
+					+ " WHERE  id_anno_scolastico="
 					+ beforeChangeBasket.getLong("id_anno_scolastico");
 			int result = st.executeUpdate(sql);
 			if (result == 1) {
@@ -1099,5 +1100,37 @@ public class DatabaseOps {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public String getClasseDescription(Context applicationContext,
+			long id_classe) {
+		// TODO Auto-generated method stub
+		String description = "";
+
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "SELECT `id_classe`,`nome_classe`,`specializzazione` FROM `classi` \n"
+					+ "WHERE `id_classe`="
+					+ id_classe;
+			ResultSet result = st.executeQuery(sql);
+			while (result.next()) {
+				description += "[" + result.getLong("id_classe")
+						+ "] ";
+				description += result.getString("nome_classe");
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return description;
 	}
 }

@@ -133,7 +133,7 @@ public class ScuolaWizard extends TabActivity implements
 
 		tab6.setIndicator("Studenti",
 				getResources().getDrawable(R.drawable.student128));
-		tab6.setContent(new Intent(this, Tab1Activity.class));
+		tab6.setContent(new Intent(this, StudentiCreatorActivity.class));
 
 		tab7.setIndicator("Insegnanti",
 				getResources().getDrawable(R.drawable.teacher128));

@@ -73,5 +73,11 @@
     <string name="classeHint">Classe</string>
     <string name="classeDescription">classeImage</string>
     <string name="idClasseHint">Id Cl.</string>
+    <string name="idStudenteHint">Id St.</string>
+    <string name="cognomeHint">Cognome</string>
+    <string name="nomeHint">Nome</string>
+    <string name="dataEntrataHint">Data Entrata</string>
+    <string name="ritiratoDataHint">Data Ritiro</string>
+    <string name="cbAttivoText">Attivo</string>
 
 </resources>

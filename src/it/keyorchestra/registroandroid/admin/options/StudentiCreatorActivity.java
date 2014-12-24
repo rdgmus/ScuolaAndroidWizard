@@ -457,7 +457,7 @@ public class StudentiCreatorActivity extends Activity implements
 			String startDate = etDataEntrata.getText().toString();
 			if (startDate.equals("null")) {
 				now();
-				startDate = mYear + "-" + pad(mMonth) + "-" + pad(mDay);
+				startDate = mYear + "-" + pad(mMonth+1) + "-" + pad(mDay);
 			}
 			split = startDate.split("-");
 			DatePickerDialog dialogDataEntrata = new DatePickerDialog(this,
@@ -476,7 +476,6 @@ public class StudentiCreatorActivity extends Activity implements
 					"Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_NEGATIVE) {
-								dialog.dismiss();
 								_which = which;
 							}
 						}
@@ -487,7 +486,7 @@ public class StudentiCreatorActivity extends Activity implements
 			String endDate = etRitiratoData.getText().toString();
 			if (endDate.equals("null")) {
 				now();
-				endDate = mYear + "-" + pad(mMonth) + "-" + pad(mDay);
+				endDate = mYear + "-" + pad(mMonth+1) + "-" + pad(mDay);
 			}
 			split = endDate.split("-");
 			DatePickerDialog dialogRitiratoData = new DatePickerDialog(this,
@@ -506,7 +505,6 @@ public class StudentiCreatorActivity extends Activity implements
 					"Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_NEGATIVE) {
-								dialog.dismiss();
 								_which = which;
 							}
 						}
@@ -548,6 +546,7 @@ public class StudentiCreatorActivity extends Activity implements
 				mDay = dayOfMonth;
 
 				displayEndDate();
+				cbAttivo.setChecked(false);
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
 				break;
@@ -733,15 +732,15 @@ public class StudentiCreatorActivity extends Activity implements
 	@Override
 	public void inizializzaNuovoRecord() {
 		// TODO Auto-generated method stub
-		etIdAsStudente.setText("");
+		etIdStudente.setText("");
 		etCognomeStudente.setText("");
 		etNomeStudente.setText("");
 		etDataEntrata.setText("");
-		etRitiratoData.setText("");
-
+		etRitiratoData.setText("null");
+		cbAttivo.setChecked(true);
+		
 		now();
 		displayStartDate();
-		displayEndDate();
 	}
 
 	/**

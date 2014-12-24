@@ -79,5 +79,6 @@
     <string name="dataEntrataHint">Data Entrata</string>
     <string name="ritiratoDataHint">Data Ritiro</string>
     <string name="cbAttivoText">Attivo</string>
+    <string name="ivStudentDescription">Studente</string>
 
 </resources>

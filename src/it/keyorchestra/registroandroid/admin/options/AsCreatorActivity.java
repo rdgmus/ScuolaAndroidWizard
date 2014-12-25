@@ -683,12 +683,12 @@ public class AsCreatorActivity extends Activity implements
 				etAnnoScolastico.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_StartDate(etStartDate)) {
+			if (!FieldsValidator.Is_Valid_Date(etStartDate)) {
 				etStartDate.setFocusable(true);
 				etStartDate.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etEndDate)) {
+			if (!FieldsValidator.Is_Valid_Date(etEndDate)) {
 				etEndDate.setFocusable(true);
 				etEndDate.requestFocus();
 				break;
@@ -705,12 +705,12 @@ public class AsCreatorActivity extends Activity implements
 				etAnnoScolastico.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_StartDate(etStartDate)) {
+			if (!FieldsValidator.Is_Valid_Date(etStartDate)) {
 				etStartDate.setFocusable(true);
 				etStartDate.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etEndDate)) {
+			if (!FieldsValidator.Is_Valid_Date(etEndDate)) {
 				etEndDate.setFocusable(true);
 				etEndDate.requestFocus();
 				break;

@@ -227,7 +227,7 @@ public class FieldsValidator {
 		return true;
 	}
 
-	public static boolean Is_Valid_StartDate(EditText edt) {
+	public static boolean Is_Valid_Date(EditText edt) {
 		// TODO Auto-generated method stub
 		if (edt.getText().toString().length() <= 0) {
 			edt.setError(Html
@@ -246,16 +246,16 @@ public class FieldsValidator {
 		return true;
 	}
 
-	public static boolean Is_Valid_EndDate(EditText edt) {
+	public static boolean Is_Valid_DateOrNull(EditText edt) {
 		// TODO Auto-generated method stub
 		if (edt.getText().toString().length() <= 0) {
 			edt.setError(Html
 					.fromHtml("<font color='red'>Informazione necessaria</font>"));
 			return false;
 		} else {
-			if (!edt.getText().toString().matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+			if (!edt.getText().toString().matches("[0-9]{4}-[0-9]{2}-[0-9]{2}|null")) {
 				edt.setError(Html
-						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}-[0-9]{2}-[0-9]{2}</font>"));
+						.fromHtml("<font color='red'>Formato accettato:[0-9]{4}-[0-9]{2}-[0-9]{2}|null</font>"));
 				return false;
 			}
 

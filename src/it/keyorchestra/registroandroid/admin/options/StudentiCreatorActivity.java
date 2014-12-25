@@ -817,12 +817,12 @@ public class StudentiCreatorActivity extends Activity implements
 				etNomeStudente.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_StartDate(etRitiratoData)) {
+			if (!FieldsValidator.Is_Valid_DateOrNull(etRitiratoData)) {
 				etRitiratoData.setFocusable(true);
 				etRitiratoData.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etDataEntrata)) {
+			if (!FieldsValidator.Is_Valid_DateOrNull(etDataEntrata)) {
 				etDataEntrata.setFocusable(true);
 				etDataEntrata.requestFocus();
 				break;
@@ -843,12 +843,12 @@ public class StudentiCreatorActivity extends Activity implements
 				etNomeStudente.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_StartDate(etRitiratoData)) {
+			if (!FieldsValidator.Is_Valid_DateOrNull(etRitiratoData)) {
 				etRitiratoData.setFocusable(true);
 				etRitiratoData.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etDataEntrata)) {
+			if (!FieldsValidator.Is_Valid_DateOrNull(etDataEntrata)) {
 				etDataEntrata.setFocusable(true);
 				etDataEntrata.requestFocus();
 				break;

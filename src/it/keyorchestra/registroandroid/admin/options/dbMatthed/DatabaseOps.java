@@ -1151,15 +1151,25 @@ public class DatabaseOps {
 			Statement st = conn.createStatement();
 			String sql = null;
 
+			String data_entrata = beforeChangeBasket.getString("data_entrata");
+			if(data_entrata.length()==0){
+				data_entrata = "null";
+			}
+			String ritirato_data = beforeChangeBasket.getString("ritirato_data");
+			if(ritirato_data.length()==0){
+				ritirato_data = "null";
+			}
+			
 			sql = "INSERT INTO `studenti`(`id_classe`, `id_anno_scolastico`, "
 					+ "`cognome`, `nome`, `attivo`, `data_entrata`, `ritirato_data`) "
 					+ "VALUES (" + beforeChangeBasket.getLong("id_classe")
 					+ "," + beforeChangeBasket.getLong("id_anno_scolastico")
 					+ ", '" + beforeChangeBasket.getString("cognome") + "',"
 					+ "'" + beforeChangeBasket.getString("nome") + "',"
-					+ beforeChangeBasket.getInt("attivo") + "," + "'"
-					+ beforeChangeBasket.getString("data_entrata") + "'," + "'"
-					+ beforeChangeBasket.getString("ritirato_data") + "'" + ")";
+					+ beforeChangeBasket.getInt("attivo") + "," + (data_entrata.equalsIgnoreCase("null")?"":"'")
+					+ beforeChangeBasket.getString("data_entrata") +(data_entrata.equalsIgnoreCase("null")?",":"',")
+					+(ritirato_data.equalsIgnoreCase("null")?"":"'")
+					+ beforeChangeBasket.getString("ritirato_data") + (ritirato_data.equalsIgnoreCase("null")?"":"'") + ")";
 			int result = st.executeUpdate(sql);
 			if (result == 1) {
 				st.close();

@@ -735,12 +735,12 @@ public class PeriodiAsCreatorActivity extends Activity implements
 		// TODO Auto-generated method stub
 		switch (beforeChangeBasket.getInt("action")) {
 		case CRUD_ACTION.UPDATE:
-			if (!FieldsValidator.Is_Valid_StartDate(etStartPeriod)) {
+			if (!FieldsValidator.Is_Valid_Date(etStartPeriod)) {
 				etStartPeriod.setFocusable(true);
 				etStartPeriod.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etEndPeriod)) {
+			if (!FieldsValidator.Is_Valid_Date(etEndPeriod)) {
 				etEndPeriod.setFocusable(true);
 				etEndPeriod.requestFocus();
 				break;
@@ -753,12 +753,12 @@ public class PeriodiAsCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.CREATE:
-			if (!FieldsValidator.Is_Valid_StartDate(etStartPeriod)) {
+			if (!FieldsValidator.Is_Valid_Date(etStartPeriod)) {
 				etStartPeriod.setFocusable(true);
 				etStartPeriod.requestFocus();
 				break;
 			}
-			if (!FieldsValidator.Is_Valid_EndDate(etStartPeriod)) {
+			if (!FieldsValidator.Is_Valid_Date(etStartPeriod)) {
 				etStartPeriod.setFocusable(true);
 				etStartPeriod.requestFocus();
 				break;

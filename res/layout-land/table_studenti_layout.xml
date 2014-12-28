@@ -66,8 +66,7 @@
             android:focusableInTouchMode="false"
             android:gravity="center_vertical|center_horizontal"
             android:hint="@string/classeHint"
-            android:lines="1"
-            android:maxLines="1"
+            android:inputType="textMultiLine"
             android:textColor="@color/colorOrange"
             android:textStyle="bold" />
 

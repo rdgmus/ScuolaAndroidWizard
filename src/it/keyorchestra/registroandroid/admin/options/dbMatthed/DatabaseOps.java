@@ -1184,4 +1184,40 @@ public class DatabaseOps {
 		}
 		return false;
 	}
+
+	/**
+	 * Cancella un record di Studente
+	 * @param applicationContext
+	 * @param beforeChangeBasket
+	 * @return
+	 */
+	public Boolean deleteStudente(Context applicationContext,
+			Bundle beforeChangeBasket) {
+		// TODO Auto-generated method stub
+		String url = getUrl(applicationContext);
+
+		Connection conn;
+		try {
+			DriverManager.setLoginTimeout(15);
+			conn = DriverManager.getConnection(url);
+			Statement st = conn.createStatement();
+			String sql = null;
+
+			sql = "DELETE FROM `studenti`"
+					+ " WHERE  id_studente="
+					+ beforeChangeBasket.getLong("id_studente");
+			int result = st.executeUpdate(sql);
+			if (result == 1) {
+				st.close();
+				conn.close();
+				return true;
+			}
+
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

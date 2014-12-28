@@ -781,12 +781,12 @@ public class StudentiCreatorActivity extends Activity implements
 				.toString());
 		beforeChangeBasket.putString("nome", etNomeStudente.getText()
 				.toString());
-		beforeChangeBasket.putInt("attivo", cbAttivo.isChecked()?1:0);
-		
+		beforeChangeBasket.putInt("attivo", cbAttivo.isChecked() ? 1 : 0);
+
 		beforeChangeBasket.putString("data_entrata", etDataEntrata.getText()
 				.toString());
-		beforeChangeBasket
-				.putString("ritirato_data", etRitiratoData.getText().toString());
+		beforeChangeBasket.putString("ritirato_data", etRitiratoData.getText()
+				.toString());
 
 		return true;
 	}
@@ -831,7 +831,7 @@ public class StudentiCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.DELETE:
-			// new DeleteAnnoScolasticoTask().execute();
+			new DeleteStudenteTask().execute();
 			setCommitRollback(false);
 			break;
 		case CRUD_ACTION.CREATE:
@@ -858,6 +858,38 @@ public class StudentiCreatorActivity extends Activity implements
 			setCommitRollback(false);
 			break;
 		}
+	}
+
+	private class DeleteStudenteTask extends AsyncTask<Void, Void, Boolean> {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return databaseOps.deleteStudente(getApplicationContext(),
+					beforeChangeBasket);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+
+			if (result) {
+				// STATO DEL COMMIT
+				Toast.makeText(getApplicationContext(), "Commit effettuato!",
+						Toast.LENGTH_SHORT).show();
+				// Ricarica i dati in tabella per mostrare lo stato attuale
+				// della tabella
+				new LoadStudentiClasseTask().execute();
+			} else {
+				Toast.makeText(getApplicationContext(), "Commit fallito!",
+						Toast.LENGTH_SHORT).show();
+			}
+		}
+
 	}
 
 	private class CreateStudenteTask extends AsyncTask<Void, Void, Boolean> {
